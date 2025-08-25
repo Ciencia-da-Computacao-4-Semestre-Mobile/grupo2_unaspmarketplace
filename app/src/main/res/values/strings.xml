@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Unasp Marketplace</string>
+    <string name="bem_vindo_ao_unasp_marketplace">Bem-vindo ao Unasp Marketplace!</string>
+    <string name="logo">Logo</string>
+    <string name="categorias">Categorias</string>
+    <string name="email">Email</string>
+    <string name="senha">Senha</string>
+    <string name="entrar">Entrar</string>
+</resources>

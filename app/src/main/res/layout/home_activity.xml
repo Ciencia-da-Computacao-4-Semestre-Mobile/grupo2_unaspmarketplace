@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:src="@drawable/logounaspmarketplace"
+                android:layout_width="40dp"
+                android:layout_height="40dp"/>
+
+            <TextView
+                android:text="Unasp Marketplace"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1" android:layout_height="30sp" android:layout_width="50sp"/>
+
+            <ImageView
+                android:src="@android:drawable/ic_menu_search"
+                android:layout_width="32dp"
+                android:layout_height="32dp"/>
+
+            <ImageView
+                android:src="@android:drawable/ic_menu_share"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="12dp"/>
+        </LinearLayout>
+
+        <!-- Banner -->
+        <ImageView
+            android:id="@+id/bannerPromo"
+            android:layout_width="match_parent"
+            android:layout_height="410sp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/banner_placeholder"/>
+
+        <!-- Texto categorias -->
+        <TextView
+            android:text="@string/categorias"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:padding="8dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+
+        <!-- RecyclerView Horizontal -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerCategorys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:orientation="horizontal"/>
+
+        <!-- Texto destaque -->
+        <TextView
+            android:text="Produtos em Destaque"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:padding="8dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <!-- RecyclerView Grid de Produtos -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerProducts"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="8dp"/>
+    </LinearLayout>
+
+
+
+</androidx.core.widget.NestedScrollView>
+
