@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Perfil"
+        android:icon="@android:drawable/ic_menu_myplaces"/>
+
+    <item
+        android:id="@+id/nav_orders"
+        android:title="Meus Pedidos"
+        android:icon="@android:drawable/ic_menu_agenda"/>
+
+    <item
+        android:id="@+id/nav_history"
+        android:title="Histórico"
+        android:icon="@android:drawable/ic_menu_recent_history"/>
+
+    <item
+        android:id="@+id/nav_post_item"
+        android:title="Postar Itens"
+        android:icon="@android:drawable/ic_menu_manage"/>
+
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Sair"
+        android:icon="@android:drawable/ic_lock_power_off"/>
+</menu>

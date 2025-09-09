@@ -6,4 +6,8 @@
     <string name="email">Email</string>
     <string name="senha">Senha</string>
     <string name="entrar">Entrar</string>
+    <string name="checkout">Finalizar Compra</string>
+    <string name="cart">Carrinho</string>
+    <string name="title">Unasp Marketplace</string>
+    <string name="new_product">Novo Produto</string>
 </resources>

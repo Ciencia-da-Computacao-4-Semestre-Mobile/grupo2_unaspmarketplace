@@ -23,6 +23,12 @@
         <!-- Tela Home -->
         <activity android:name=".HomeActivity" />
 
+        <!-- Tela Checkout -->
+        <activity android:name=".CartActivity" />
+
+        <!-- Tela de Cadastro de Produtos -->
+        <activity android:name=".PostItemActivity" />
+
     </application>
 
 </manifest>
