@@ -1,28 +1,31 @@
 package com.unasp.unaspmarketplace
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.unasp.unaspmarketplace.data.model.LoginViewModel
 
 class LoginActivity : AppCompatActivity() {
+    private val viewModel = LoginViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_activity)
 
-        val email = findViewById<EditText>(R.id.edtEmail)
-        val senha = findViewById<EditText>(R.id.edtSenha)
-        val btnLogin = findViewById<Button>(R.id.btnLogin)
+        findViewById<Button>(R.id.btnLogin).setOnClickListener {
+            val email = findViewById<EditText>(R.id.edtEmail).text.toString()
+            val password = findViewById<EditText>(R.id.edtSenha).text.toString()
 
-        btnLogin.setOnClickListener {
-            if (email.text.isNullOrBlank() || senha.text.isNullOrBlank()) {
-                Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
+            viewModel.login(email, password)
+        }
+
+        viewModel.loginState.observe(this) { success ->
+            if (success) {
+                Toast.makeText(this, "Login feito!", Toast.LENGTH_SHORT).show()
             } else {
-                // Simulação de login bem-sucedido
-                startActivity(Intent(this, HomeActivity::class.java))
-                finish()
+                Toast.makeText(this, "Falha no login", Toast.LENGTH_SHORT).show()
             }
         }
     }

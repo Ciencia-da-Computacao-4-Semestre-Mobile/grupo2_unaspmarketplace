@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "524313708339",
+    "project_id": "unaspmarketplace",
+    "storage_bucket": "unaspmarketplace.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524313708339:android:76a5b6d58c6e1682492046",
+        "android_client_info": {
+          "package_name": "com.unasp.unaspmarketplace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "524313708339-2tmt7fo1ackpjsc435il2vsuaf09jlas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLyCg1Qry1LBmZQRChjEA8RThV3o946os"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "524313708339-2tmt7fo1ackpjsc435il2vsuaf09jlas.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
