@@ -33,7 +33,7 @@ class HomeActivity : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerCategory.adapter = CategoryAdapter(categorys)
 
-        // Lista de produtos mock
+
         val produtos = listOf(
             Product("Notebook Dell", 3500.0, R.drawable.note_dell),
             Product("Camiseta Azul", 79.9, R.drawable.tshit_blue_nike),
