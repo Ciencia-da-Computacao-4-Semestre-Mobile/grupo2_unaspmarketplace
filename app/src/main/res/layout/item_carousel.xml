@@ -1,14 +1,15 @@
-<!--<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dp"           
-    app:cardCornerRadius="16dp"      
-    app:cardElevation="4dp">         
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
 
+    <!-- ImageView para a imagem do carrossel -->
     <ImageView
         android:id="@+id/carousel_image_view"
         android:layout_width="match_parent"
@@ -17,5 +18,4 @@
         android:scaleType="centerCrop"
         tools:src="@drawable/eletronicobanner" />
 
-</androidx.cardview.widget.CardView>
--->
+</androidx.cardview.widget.CardView> <!-- <<<< Verifique se esta linha de fechamento existe! -->

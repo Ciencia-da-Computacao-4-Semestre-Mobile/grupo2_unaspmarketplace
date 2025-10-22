@@ -7,7 +7,11 @@
     android:layout_height="match_parent"
     tools:context=".activity.HomePageActivity">
 
-    <!-- 1. SEU CABEÇALHO (HEADER) - Sem alterações -->
+    <!-- =================================================================== -->
+    <!--   SEÇÃO 1: CONTEÚDO PRINCIPAL DA PÁGINA                           -->
+    <!-- =================================================================== -->
+
+    <!-- 1. HEADER -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="0dp"
@@ -19,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Conteúdo do Header (Logo e Busca)... -->
+        <!-- Container do Logo -->
         <androidx.cardview.widget.CardView
             android:id="@+id/logo_container"
             android:layout_width="37dp"
@@ -41,6 +45,8 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/logobrancounaspmarketplace" />
         </androidx.cardview.widget.CardView>
+
+        <!-- Barra de Pesquisa -->
         <EditText
             android:id="@+id/search_bar"
             android:layout_width="0dp"
@@ -56,9 +62,7 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- =================================================================== -->
-    <!--   NOVA SEÇÃO: ÁREA DE CONTEÚDO PRINCIPAL (INSERIDA AQUI)          -->
-    <!-- =================================================================== -->
+    <!-- 2. ÁREA DE CONTEÚDO PRINCIPAL (FUNDO CINZA) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/main_content_background"
         android:layout_width="0dp"
@@ -75,18 +79,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_container">
 
-        <!-- O RecyclerView exibirá a lista de produtos em um grid -->
+        <!-- Grid de Produtos -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/products_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:padding="4dp" />
-
     </androidx.cardview.widget.CardView>
 
-
-    <!-- 3. RODAPÉ COM SOMBRA E ÍCONES - Sem alterações -->
+    <!-- 3. RODAPÉ (FOOTER) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/footer_bar_container"
         android:layout_width="0dp"
@@ -98,7 +100,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- O LinearLayout horizontal vai distribuir os 4 botões igualmente -->
+        <!-- LinearLayout com os 4 ícones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -188,9 +190,46 @@
                     android:textColor="#FFFFFF"
                     android:textSize="12sp" />
             </LinearLayout>
-
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
+
+
+    <!-- =================================================================== -->
+    <!--   SEÇÃO 2: COMPONENTES DO MENU LATERAL (FICAM NA FRENTE)          -->
+    <!-- =================================================================== -->
+
+    <!-- 4. FUNDO ESCURECIDO (SCRIM) -->
+    <!-- Ficará visível quando o menu abrir para dar foco ao painel. -->
+    <View
+        android:id="@+id/scrim_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#99000000"
+        android:visibility="gone"
+        android:alpha="0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 5. PAINEL DO MENU LATERAL -->
+    <!-- Este é o painel cinza que deslizará da esquerda. -->
+    <FrameLayout
+        android:id="@+id/menu_panel"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:background="#D9D9D9"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/header_container"
+        app:layout_constraintBottom_toTopOf="@id/footer_bar_container"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!--
+            O CONTEÚDO DO SEU MENU VIRÁ AQUI DENTRO.
+            Por enquanto, está vazio como solicitado.
+            (Ex: Um outro RecyclerView, botões, etc.)
+        -->
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
