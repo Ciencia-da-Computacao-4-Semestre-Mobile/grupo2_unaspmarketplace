@@ -7,62 +7,15 @@
     android:layout_height="match_parent"
     tools:context=".activity.HomePageActivity">
 
-    <!-- =================================================================== -->
-    <!--   SEÇÃO 1: CONTEÚDO PRINCIPAL DA PÁGINA                           -->
-    <!-- =================================================================== -->
+    <!-- 1. HEADER (componentizado) -->
+    <include
+        android:id="@+id/header_include"
+        layout="@layout/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 1. HEADER -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/header_container"
-        android:layout_width="0dp"
-        android:layout_height="89dp"
-        android:background="#004080"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Container do Logo -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/logo_container"
-            android:layout_width="37dp"
-            android:layout_height="37dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:onClick="irParaHomePage"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="40dp"
-            app:cardElevation="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-            <ImageView
-                android:id="@+id/logo_unasp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="Logo Unasp Marketplace"
-                android:scaleType="centerCrop"
-                android:src="@drawable/logobrancounaspmarketplace" />
-        </androidx.cardview.widget.CardView>
-
-        <!-- Barra de Pesquisa -->
-        <EditText
-            android:id="@+id/search_bar"
-            android:layout_width="0dp"
-            android:layout_height="37dp"
-            android:layout_marginStart="16dp"
-            android:background="@drawable/search_bar_background"
-            android:hint="busque aqui"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/logo_container"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- 2. ÁREA DE CONTEÚDO PRINCIPAL (FUNDO CINZA) -->
+    <!-- 2. CONTEÚDO PRINCIPAL -->
     <androidx.cardview.widget.CardView
         android:id="@+id/main_content_background"
         android:layout_width="0dp"
@@ -74,12 +27,11 @@
         app:cardBackgroundColor="#D9D9D9"
         app:cardCornerRadius="10dp"
         app:cardElevation="0dp"
+        app:layout_constraintTop_toBottomOf="@id/header_include"
         app:layout_constraintBottom_toTopOf="@id/footer_bar_container"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_container">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Grid de Produtos -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/products_recycler_view"
             android:layout_width="match_parent"
@@ -88,7 +40,7 @@
             android:padding="4dp" />
     </androidx.cardview.widget.CardView>
 
-    <!-- 3. RODAPÉ (FOOTER) -->
+    <!-- 3. FOOTER (ainda inline, mas pode ser componentizado depois) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/footer_bar_container"
         android:layout_width="0dp"
@@ -100,7 +52,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- LinearLayout com os 4 ícones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -193,13 +144,7 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-
-    <!-- =================================================================== -->
-    <!--   SEÇÃO 2: COMPONENTES DO MENU LATERAL (FICAM NA FRENTE)          -->
-    <!-- =================================================================== -->
-
-    <!-- 4. FUNDO ESCURECIDO (SCRIM) -->
-    <!-- Ficará visível quando o menu abrir para dar foco ao painel. -->
+    <!-- 4. SCRIM -->
     <View
         android:id="@+id/scrim_view"
         android:layout_width="0dp"
@@ -212,24 +157,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 5. PAINEL DO MENU LATERAL -->
-    <!-- Este é o painel cinza que deslizará da esquerda. -->
+    <!-- 5. MENU LATERAL -->
     <FrameLayout
         android:id="@+id/menu_panel"
         android:layout_width="300dp"
         android:layout_height="0dp"
         android:background="#D9D9D9"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/header_container"
+        app:layout_constraintTop_toBottomOf="@id/header_include"
         app:layout_constraintBottom_toTopOf="@id/footer_bar_container"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <!--
-            O CONTEÚDO DO SEU MENU VIRÁ AQUI DENTRO.
-            Por enquanto, está vazio como solicitado.
-            (Ex: Um outro RecyclerView, botões, etc.)
-        -->
-
-    </FrameLayout>
-
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
