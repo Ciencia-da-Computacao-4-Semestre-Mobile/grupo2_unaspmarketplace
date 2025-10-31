@@ -1,10 +1,11 @@
 package com.unasp.unaspmarketplace.auth
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.userProfileChangeRequest
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.unasp.unaspmarketplace.data.firestore.UserRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
@@ -21,13 +22,13 @@ class AuthViewModel : ViewModel() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null) {
-                        val profileUpdates = userProfileChangeRequest {
-                            displayName = name
-                        }
+                        val profileUpdates = UserProfileChangeRequest.Builder()
+                            .setDisplayName(name)
+                            .build()
 
                         user.updateProfile(profileUpdates).addOnCompleteListener { updateTask ->
                             if (updateTask.isSuccessful) {
-                                viewModelScope.launch {
+                                CoroutineScope(Dispatchers.IO).launch {
                                     try {
                                         UserRepository.createUser(
                                             uid = user.uid,
@@ -65,7 +66,7 @@ class AuthViewModel : ViewModel() {
             if (success) {
                 val user = auth.currentUser
                 if (user != null) {
-                    viewModelScope.launch {
+                    CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val existingUser = UserRepository.getCurrentUser()
                             if (existingUser == null) {

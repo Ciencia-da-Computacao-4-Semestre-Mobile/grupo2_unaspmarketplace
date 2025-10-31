@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "524313708339-9vq01ea6u8g7f4utb3kf4fpvovg4cntp.apps.googleusercontent.com",
+          "client_id": "524313708339-u8t292e8nv5480r5d1s97o306sb5v8ee.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.unasp.unaspmarketplace",
-            "certificate_hash": "2b242d64a5646bf40c7b50a0b9288b3cccbf2be0"
+            "certificate_hash": "309aa317423b9cf10037d5b4654c8f4642b07086"
           }
         },
         {

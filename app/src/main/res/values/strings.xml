@@ -6,9 +6,13 @@
     <string name="email">Email</string>
     <string name="senha">Senha</string>
     <string name="entrar">Entrar</string>
+    <string name="entrar_com_google">Entrar com Google</string>
+    <string name="ou">ou</string>
+    <string name="github">GitHub</string>
+    <string name="google">Google</string>
     <string name="checkout">Finalizar Compra</string>
     <string name="cart">Carrinho</string>
     <string name="title">Unasp Marketplace</string>
     <string name="new_product">Novo Produto</string>
-    <string name="default_web_client_id">806193610269-ifqrtqvf8ifktdcn4qp5fcblt60vi5i0.apps.googleusercontent.com</string>
+    <string name="default_web_client_id">524313708339-2tmt7fo1ackpjsc435il2vsuaf09jlas.apps.googleusercontent.com</string>
 </resources>
