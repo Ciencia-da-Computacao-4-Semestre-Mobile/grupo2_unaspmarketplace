@@ -19,7 +19,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:scaleType="centerCrop"
-            android:backgroundTint="@color/blue_unasp"
+            android:backgroundTint="@color/blue_primary"
             android:src="@drawable/logounaspmarketplace" />
 
         <TextView
