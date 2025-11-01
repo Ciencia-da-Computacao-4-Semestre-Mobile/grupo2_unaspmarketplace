@@ -10,10 +10,10 @@ import com.unasp.unaspmarketplace.modelos.CategoryAdapter
 import com.unasp.unaspmarketplace.modelos.Product
 import com.unasp.unaspmarketplace.modelos.ProductAdapter
 import android.content.Intent
-import android.widget.ImageView
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.GravityCompat
 
 class HomeActivity : AppCompatActivity() {
@@ -33,7 +33,6 @@ class HomeActivity : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerCategory.adapter = CategoryAdapter(categorys)
 
-
         val produtos = listOf(
             Product("Notebook Dell", 3500.0, R.drawable.note_dell),
             Product("Camiseta Azul", 79.9, R.drawable.tshit_blue_nike),
@@ -45,21 +44,45 @@ class HomeActivity : AppCompatActivity() {
         recyclerProduct.layoutManager = GridLayoutManager(this, 2)
         recyclerProduct.adapter = ProductAdapter(produtos)
 
-        val btnCart = findViewById<ImageView>(R.id.btnCart)
-        btnCart.setOnClickListener {
-            val intent = Intent(this, CartActivity::class.java)
-            startActivity(intent)
-        }
-
+        // Configuração do menu lateral
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         val navigationView = findViewById<NavigationView>(R.id.navigationView)
-        val btnMenu = findViewById<ImageView>(R.id.btnMenu)
 
-        // Abre o menu ao clicar no ícone
-        btnMenu.setOnClickListener {
+        // Verificar se deve abrir o menu automaticamente
+        if (intent.getBooleanExtra("openMenu", false)) {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
+        // Configuração da hotbar inferior
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_menu -> {
+                    // Abre o menu lateral
+                    drawerLayout.openDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_home -> {
+                    // Já estamos na home, não precisa fazer nada
+                    Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.nav_notifications -> {
+                    // Implementar navegação para notificações
+                    Toast.makeText(this, "Notificações em breve", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.nav_cart -> {
+                    // Navegar para o carrinho
+                    val intent = Intent(this, CartActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Configuração do menu lateral
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_post_item -> {

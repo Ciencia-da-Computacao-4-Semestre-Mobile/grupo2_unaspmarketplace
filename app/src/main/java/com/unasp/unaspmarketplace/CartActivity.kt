@@ -1,5 +1,6 @@
 package com.unasp.unaspmarketplace
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.math.BigDecimal
 
 
@@ -94,6 +96,39 @@ class CartActivity : AppCompatActivity() {
             }
         }
 
+        // Configuração da hotbar inferior
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation_cart)
+        bottomNavigation.selectedItemId = R.id.nav_cart // Marcar carrinho como selecionado
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_menu -> {
+                    // Voltar para home e abrir menu
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.putExtra("openMenu", true)
+                    startActivity(intent)
+                    finish()
+                    true
+                }
+                R.id.nav_home -> {
+                    // Voltar para home
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                    true
+                }
+                R.id.nav_notifications -> {
+                    // Implementar navegação para notificações
+                    Toast.makeText(this, "Notificações em breve", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.nav_cart -> {
+                    // Já estamos no carrinho
+                    Toast.makeText(this, "Você já está no Carrinho", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> false
+            }
+        }
 
     }
 
@@ -115,7 +150,7 @@ class CartActivity : AppCompatActivity() {
             val txtQuantity: TextView = itemView.findViewById(R.id.txtQuantity)
             val btnIncrease: Button = itemView.findViewById(R.id.btnIncrease)
             val btnDecrease: Button = itemView.findViewById(R.id.btnDecrease)
-            val btnRemove: ImageView = itemView.findViewById(R.id.btnRemove)
+            val btnRemove: Button = itemView.findViewById(R.id.btnRemove)
             val imgProduct: ImageView = itemView.findViewById(R.id.imgProduct)
         }
 
