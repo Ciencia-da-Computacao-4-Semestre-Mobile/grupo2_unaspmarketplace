@@ -57,10 +57,10 @@
             android:layout_height="50dp"
             android:layout_marginTop="24dp"
             android:background="@drawable/login_button_background"
-            android:gravity="center"
-            android:orientation="horizontal"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/ou"
+            android:text="@string/forgot_password"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -150,6 +150,35 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_in"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/sign_in_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cadastre-se"
+                android:textColor="@android:color/holo_blue_bright"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"/>
+
+        </LinearLayout>
+
     </LinearLayout>
+
+
 
 </FrameLayout>
