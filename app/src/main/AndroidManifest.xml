@@ -36,6 +36,9 @@
         <!-- Tela de Cadastro de Produtos -->
         <activity android:name=".PostItemActivity" />
 
+        <!-- Tela de Detalhes do Produto -->
+        <activity android:name=".ProductDetailActivity" />
+
     </application>
 
 </manifest>

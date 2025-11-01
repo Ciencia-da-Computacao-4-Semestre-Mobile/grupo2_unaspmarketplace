@@ -1,20 +1,28 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="150dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="160dp"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:elevation="4dp"
-    android:padding="8dp">
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/imgProduct"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:scaleType="centerCrop"/>
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
+            android:background="@color/gray_500"
+            android:alpha="0.1"
+            app:cornerRadius="6dp"/>
 
         <TextView
             android:id="@+id/txtProductName"
@@ -22,13 +30,41 @@
             android:layout_height="wrap_content"
             android:text="Produto"
             android:textStyle="bold"
-            android:layout_marginTop="4dp"/>
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="8dp"
+            android:maxLines="2"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/txtProductCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Categoria"
+            android:textSize="12sp"
+            android:textColor="@color/blue_default"
+            android:layout_marginTop="2dp"/>
 
         <TextView
             android:id="@+id/txtProductPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="R$ 0,00"
-            android:textColor="@android:color/holo_green_dark"/>
+            android:textColor="@color/blue_default"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Indicador de clique -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="👆 Toque para ver detalhes"
+            android:textSize="10sp"
+            android:textColor="@color/gray_500"
+            android:gravity="center"
+            android:layout_marginTop="4dp"
+            android:alpha="0.7"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

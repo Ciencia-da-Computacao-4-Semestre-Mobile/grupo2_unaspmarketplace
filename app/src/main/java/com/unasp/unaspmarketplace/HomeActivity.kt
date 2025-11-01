@@ -7,20 +7,53 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.unasp.unaspmarketplace.modelos.Category
 import com.unasp.unaspmarketplace.modelos.CategoryAdapter
-import com.unasp.unaspmarketplace.modelos.Product
 import com.unasp.unaspmarketplace.modelos.ProductAdapter
 import android.content.Intent
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.GravityCompat
+import com.unasp.unaspmarketplace.models.Product
+import com.unasp.unaspmarketplace.repository.ProductRepository
+import com.unasp.unaspmarketplace.utils.CartManager
+import com.unasp.unaspmarketplace.utils.CartBadgeManager
+import kotlinx.coroutines.launch
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
+    private lateinit var productRepository: ProductRepository
+    private lateinit var productAdapter: ProductAdapter
+    private lateinit var recyclerProducts: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
 
+        // Inicializar repositório
+        productRepository = ProductRepository()
+
+        setupCategories()
+        setupProducts()
+        setupNavigation()
+
+        // Carregar produtos
+        loadProducts()
+
+        // Registrar listener do carrinho
+        CartManager.addListener(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        CartManager.removeListener(this)
+    }
+
+    override fun onCartUpdated(itemCount: Int, totalPrice: Double) {
+        CartBadgeManager.updateBadge(itemCount)
+    }
+
+    private fun setupCategories() {
         val categorys = listOf(
             Category("Roupas", R.drawable.tshirt_logo),
             Category("Eletrônicos", R.drawable.computer_logo),
@@ -32,18 +65,18 @@ class HomeActivity : AppCompatActivity() {
         recyclerCategory.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerCategory.adapter = CategoryAdapter(categorys)
+    }
 
-        val produtos = listOf(
-            Product("Notebook Dell", 3500.0, R.drawable.note_dell),
-            Product("Camiseta Azul", 79.9, R.drawable.tshit_blue_nike),
-            Product("Livro Kotlin", 120.0, R.drawable.book_kotlin),
-            Product("Fone Bluetooth", 250.0, R.drawable.fone_apple)
-        )
+    private fun setupProducts() {
+        recyclerProducts = findViewById(R.id.recyclerProducts)
+        recyclerProducts.layoutManager = GridLayoutManager(this, 2)
 
-        val recyclerProduct = findViewById<RecyclerView>(R.id.recyclerProducts)
-        recyclerProduct.layoutManager = GridLayoutManager(this, 2)
-        recyclerProduct.adapter = ProductAdapter(produtos)
+        // Inicializar adapter com lista vazia
+        productAdapter = ProductAdapter(mutableListOf())
+        recyclerProducts.adapter = productAdapter
+    }
 
+    private fun setupNavigation() {
         // Configuração do menu lateral
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         val navigationView = findViewById<NavigationView>(R.id.navigationView)
@@ -55,6 +88,11 @@ class HomeActivity : AppCompatActivity() {
 
         // Configuração da hotbar inferior
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+
+        // Configurar badge do carrinho
+        CartBadgeManager.setupCartBadge(bottomNavigation)
+        CartBadgeManager.updateBadge(CartManager.getTotalItemCount())
+
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_menu -> {
@@ -89,7 +127,6 @@ class HomeActivity : AppCompatActivity() {
                     val intent = Intent(this, PostItemActivity::class.java)
                     startActivity(intent)
                 }
-
                 R.id.nav_profile -> {
                     Toast.makeText(this, "Perfil", Toast.LENGTH_SHORT).show()
                 }
@@ -97,5 +134,80 @@ class HomeActivity : AppCompatActivity() {
             drawerLayout.closeDrawers() // fecha o menu depois do clique
             true
         }
+    }
+
+    private fun loadProducts() {
+        lifecycleScope.launch {
+            try {
+                val result = productRepository.getActiveProducts()
+
+                if (result.isSuccess) {
+                    val products = result.getOrNull() ?: emptyList()
+                    runOnUiThread {
+                        productAdapter.updateProducts(products)
+
+                        if (products.isEmpty()) {
+                            Toast.makeText(this@HomeActivity, "Nenhum produto encontrado. Que tal publicar o primeiro?", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(this@HomeActivity, "Carregados ${products.size} produtos!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    val error = result.exceptionOrNull()
+                    val errorMessage = error?.message ?: "Erro desconhecido"
+                    runOnUiThread {
+                        Toast.makeText(this@HomeActivity, "Erro Firebase: $errorMessage", Toast.LENGTH_LONG).show()
+
+                        // Carregar produtos de exemplo como fallback
+                        loadSampleProducts()
+                        Toast.makeText(this@HomeActivity, "Carregando produtos de exemplo...", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Toast.makeText(this@HomeActivity, "Erro de conexão: ${e.message}", Toast.LENGTH_LONG).show()
+                    loadSampleProducts()
+                    Toast.makeText(this@HomeActivity, "Carregando produtos de exemplo...", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun loadSampleProducts() {
+        // Produtos de exemplo caso não consiga carregar do Firebase
+        val sampleProducts = listOf(
+            Product(
+                name = "Notebook Dell",
+                description = "Notebook Dell Inspiron",
+                price = 3500.0,
+                category = "Eletrônicos",
+                stock = 5,
+                active = true
+            ),
+            Product(
+                name = "Camiseta Azul",
+                description = "Camiseta Nike azul",
+                price = 79.9,
+                category = "Roupas",
+                stock = 10,
+                active = true
+            ),
+            Product(
+                name = "Livro Kotlin",
+                description = "Livro sobre programação Kotlin",
+                price = 120.0,
+                category = "Livros",
+                stock = 3,
+                active = true
+            )
+        )
+
+        productAdapter.updateProducts(sampleProducts)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Recarregar produtos quando voltar para a tela
+        loadProducts()
     }
 }
