@@ -76,7 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/forgot_password"
+            android:text="@string/login_forgot_password"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -157,10 +157,11 @@
             android:layout_marginTop="20dp">
 
 
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sign_in"
+                android:text="@string/login_in_to_sign"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -169,8 +170,9 @@
                 android:id="@+id/sign_in_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cadastre-se"
-                android:textColor="@android:color/holo_blue_bright"
+                android:layout_marginLeft="2dp"
+                android:text="@string/btn_login_in_to_sign"
+                android:textColor="#0073e6"
                 android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true"/>
