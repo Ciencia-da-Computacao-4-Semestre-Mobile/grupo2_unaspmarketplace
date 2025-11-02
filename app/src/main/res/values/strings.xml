@@ -19,6 +19,7 @@
     <string name="sign_in_name">Nome Completo</string>
     <string name="sign_in_password_confirm">Confirme sua senha</string>
     <string name="btn_sign_in">Criar e acessar</string>
+    <string name="login_remember_me">Lembrar de mim</string>
     <string name="default_web_client_id">524313708339-2tmt7fo1ackpjsc435il2vsuaf09jlas.apps.googleusercontent.com</string>
 
 </resources>
