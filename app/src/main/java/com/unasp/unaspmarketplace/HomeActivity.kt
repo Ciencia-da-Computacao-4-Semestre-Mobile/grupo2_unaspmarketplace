@@ -19,6 +19,7 @@ import com.unasp.unaspmarketplace.models.Product
 import com.unasp.unaspmarketplace.repository.ProductRepository
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
+import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
@@ -29,6 +30,9 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
+
+        // Verificar e garantir que os dados do usuário existam
+        ensureUserData()
 
         // Inicializar repositório
         productRepository = ProductRepository()
@@ -42,6 +46,16 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
 
         // Registrar listener do carrinho
         CartManager.addListener(this)
+    }
+
+    private fun ensureUserData() {
+        lifecycleScope.launch {
+            try {
+                UserUtils.ensureUserDataExists()
+            } catch (e: Exception) {
+                // Log error but don't crash the app
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -128,7 +142,8 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     startActivity(intent)
                 }
                 R.id.nav_profile -> {
-                    Toast.makeText(this, "Perfil", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
                 }
             }
             drawerLayout.closeDrawers() // fecha o menu depois do clique
@@ -139,6 +154,9 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private fun loadProducts() {
         lifecycleScope.launch {
             try {
+                // Primeiro vamos tentar criar um produto de teste se não houver nenhum
+                createTestProductIfNeeded()
+
                 val result = productRepository.getActiveProducts()
 
                 if (result.isSuccess) {
@@ -148,6 +166,8 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
 
                         if (products.isEmpty()) {
                             Toast.makeText(this@HomeActivity, "Nenhum produto encontrado. Que tal publicar o primeiro?", Toast.LENGTH_LONG).show()
+                            // Tentar carregar produtos de exemplo
+                            loadSampleProducts()
                         } else {
                             Toast.makeText(this@HomeActivity, "Carregados ${products.size} produtos!", Toast.LENGTH_SHORT).show()
                         }
@@ -170,6 +190,34 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     Toast.makeText(this@HomeActivity, "Carregando produtos de exemplo...", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+    }
+
+    private suspend fun createTestProductIfNeeded() {
+        try {
+            // Verificar se já existem produtos
+            val existingProducts = productRepository.getActiveProducts()
+            if (existingProducts.isSuccess && existingProducts.getOrNull()?.isEmpty() == true) {
+                // Criar um produto de teste
+                val testProduct = Product(
+                    name = "Produto Teste",
+                    description = "Este é um produto de teste criado automaticamente",
+                    price = 99.99,
+                    category = "Eletrônicos",
+                    stock = 10,
+                    imageUrls = emptyList(),
+                    active = true
+                )
+
+                val saveResult = productRepository.saveProduct(testProduct)
+                if (saveResult.isSuccess) {
+                    android.util.Log.d("HomeActivity", "Produto de teste criado com sucesso")
+                } else {
+                    android.util.Log.e("HomeActivity", "Erro ao criar produto de teste: ${saveResult.exceptionOrNull()?.message}")
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("HomeActivity", "Erro ao verificar/criar produto de teste: ${e.message}")
         }
     }
 

@@ -63,7 +63,7 @@
                 android:layout_height="300dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="12dp">
 
                 <ImageView
                     android:id="@+id/imgProductDetail"
@@ -74,6 +74,15 @@
                     android:alpha="0.1"
                     android:src="@drawable/ic_launcher_background" />
             </androidx.cardview.widget.CardView>
+
+            <!-- RecyclerView para imagens secundárias -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerProductImages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <!-- Nome do Produto -->
             <TextView

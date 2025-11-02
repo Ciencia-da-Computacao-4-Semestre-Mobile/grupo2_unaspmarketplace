@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.unasp.unaspmarketplace.ProductDetailActivity
 import com.unasp.unaspmarketplace.R
 import com.unasp.unaspmarketplace.models.Product
@@ -30,8 +31,18 @@ class ProductAdapter(private var products: MutableList<Product>) :
     override fun onBindViewHolder(holder: ProdutoViewHolder, position: Int) {
         val product = products[position]
 
-        // Por enquanto usar imagem padrão até implementarmos upload de imagens
-        holder.img.setImageResource(R.drawable.ic_launcher_background)
+        // Carregar primeira imagem do produto ou usar placeholder
+        if (product.imageUrls.isNotEmpty()) {
+            Glide.with(holder.itemView.context)
+                .load(product.imageUrls.first())
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_background)
+                .centerCrop()
+                .into(holder.img)
+        } else {
+            holder.img.setImageResource(R.drawable.ic_launcher_background)
+        }
+
         holder.name.text = product.name
         holder.price.text = "R$ %.2f".format(product.price)
 
@@ -49,16 +60,14 @@ class ProductAdapter(private var products: MutableList<Product>) :
                 putExtra("productStock", product.stock)
                 putExtra("productCategory", product.category)
                 putExtra("productSellerId", product.sellerId)
-                putExtra("productSellerName", product.sellerName)
-                putExtra("productActive", product.active)
+                putExtra("productImageUrls", product.imageUrls.toTypedArray())
             }
             context.startActivity(intent)
         }
     }
 
-    override fun getItemCount() = products.size
+    override fun getItemCount(): Int = products.size
 
-    // Método para atualizar a lista de produtos
     fun updateProducts(newProducts: List<Product>) {
         products.clear()
         products.addAll(newProducts)
