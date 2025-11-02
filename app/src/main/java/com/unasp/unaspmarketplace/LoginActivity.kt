@@ -56,8 +56,8 @@ class LoginActivity : AppCompatActivity() {
             observeLoginState()
 
             // 🔹 Novo trecho: texto clicável para cadastro
-            val Register = findViewById<TextView>(R.id.sign_in_text)
-            Register.setOnClickListener {
+            val register = findViewById<TextView>(R.id.sign_in_text)
+            register.setOnClickListener {
                 val intent = Intent(this, RegisterActivity::class.java)
                 startActivity(intent)
             }
