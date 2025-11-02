@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.FirebaseApp
 import com.unasp.unaspmarketplace.auth.GoogleAuthHelper
 import com.unasp.unaspmarketplace.data.model.LoginViewModel
+import android.widget.TextView
 
 class LoginActivity : AppCompatActivity() {
     private val viewModel = LoginViewModel()
@@ -48,12 +49,19 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         try {
-            // Initialize Firebase
             FirebaseApp.initializeApp(this)
-
             setContentView(R.layout.login_activity)
+
             setupLoginButtons()
             observeLoginState()
+
+            // 🔹 Novo trecho: texto clicável para cadastro
+            val register = findViewById<TextView>(R.id.sign_in_text)
+            register.setOnClickListener {
+                val intent = Intent(this, RegisterActivity::class.java)
+                startActivity(intent)
+            }
+
         } catch (e: Exception) {
             Log.e("LoginActivity", "Error in onCreate", e)
             Toast.makeText(this, "Erro ao inicializar a tela: ${e.message}", Toast.LENGTH_LONG).show()

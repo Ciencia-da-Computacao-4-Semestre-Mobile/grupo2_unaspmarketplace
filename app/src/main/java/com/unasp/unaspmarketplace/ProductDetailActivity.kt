@@ -138,10 +138,10 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
     private fun updateAddToCartButton() {
         btnAddToCart.isEnabled = product.stock > 0
         if (product.stock > 0) {
-            btnAddToCart.text = "🛒 Adicionar ao Carrinho"
+            btnAddToCart.text = "Adicionar ao Carrinho"
             btnAddToCart.alpha = 1.0f
         } else {
-            btnAddToCart.text = "❌ Produto Esgotado"
+            btnAddToCart.text = "Produto Esgotado"
             btnAddToCart.alpha = 0.6f
         }
     }
@@ -163,7 +163,7 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
             val totalItems = CartManager.getTotalItemCount()
             Toast.makeText(
                 this,
-                "✅ Adicionado ao carrinho!\n${product.name}\nQuantidade: $currentQuantity",
+                "Adicionado ao carrinho!\n${product.name}\nQuantidade: $currentQuantity",
                 Toast.LENGTH_LONG
             ).show()
 
@@ -172,7 +172,7 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
         } else {
             Toast.makeText(
                 this,
-                "❌ Erro: Estoque insuficiente!\nDisponível: ${product.stock} unidades",
+                "Erro: Estoque insuficiente!\nDisponível: ${product.stock} unidades",
                 Toast.LENGTH_LONG
             ).show()
         }
