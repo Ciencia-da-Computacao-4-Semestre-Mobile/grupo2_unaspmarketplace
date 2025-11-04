@@ -82,8 +82,10 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                 Toast.makeText(this, "Carrinho vazio!", Toast.LENGTH_SHORT).show()
             } else {
                 val total = CartManager.getTotalPrice()
-                Toast.makeText(this, "Compra finalizada!\nTotal: R$ %.2f".format(total), Toast.LENGTH_LONG).show()
-                CartManager.clearCart()
+                // Navegar para a tela de pagamento
+                val intent = Intent(this, PaymentActivity::class.java)
+                intent.putExtra("totalAmount", total)
+                startActivity(intent)
             }
         }
     }

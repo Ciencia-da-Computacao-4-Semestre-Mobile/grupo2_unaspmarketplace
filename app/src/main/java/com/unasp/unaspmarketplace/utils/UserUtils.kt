@@ -90,6 +90,21 @@ object UserUtils {
         }
     }
 
+    suspend fun updateUserWhatsApp(whatsappNumber: String): Boolean {
+        val currentUser = auth.currentUser ?: return false
+
+        return try {
+            firestore.collection(USERS_COLLECTION)
+                .document(currentUser.uid)
+                .update("whatsappNumber", whatsappNumber)
+                .await()
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Erro ao atualizar WhatsApp do usuário", e)
+            false
+        }
+    }
+
     suspend fun updateUserProfileImage(imageUrl: String): Boolean {
         val currentUser = auth.currentUser ?: return false
 
