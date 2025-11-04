@@ -6,8 +6,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
+import com.unasp.unaspmarketplace.adapters.ProductDetailImageAdapter
 import com.unasp.unaspmarketplace.models.Product
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
@@ -23,10 +27,13 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
     private lateinit var txtProductDescription: TextView
     private lateinit var txtSellerName: TextView
     private lateinit var imgProductDetail: ImageView
+    private lateinit var recyclerProductImages: RecyclerView
     private lateinit var txtQuantity: TextView
     private lateinit var btnDecrease: MaterialButton
     private lateinit var btnIncrease: MaterialButton
     private lateinit var btnAddToCart: MaterialButton
+
+    private lateinit var imageAdapter: ProductDetailImageAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +69,7 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
         txtProductDescription = findViewById(R.id.txtProductDescription)
         txtSellerName = findViewById(R.id.txtSellerName)
         imgProductDetail = findViewById(R.id.imgProductDetail)
+        recyclerProductImages = findViewById(R.id.recyclerProductImages)
         txtQuantity = findViewById(R.id.txtQuantity)
         btnDecrease = findViewById(R.id.btnDecrease)
         btnIncrease = findViewById(R.id.btnIncrease)
@@ -69,10 +77,32 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
 
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         btnBack.setOnClickListener { finish() }
+
+        // Configurar RecyclerView de imagens
+        setupImageRecycler()
+    }
+
+    private fun setupImageRecycler() {
+        imageAdapter = ProductDetailImageAdapter { imageUrl ->
+            // Quando uma imagem é clicada, mostrar na ImageView principal
+            Glide.with(this)
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_background)
+                .centerCrop()
+                .into(imgProductDetail)
+        }
+
+        recyclerProductImages.apply {
+            adapter = imageAdapter
+            layoutManager = LinearLayoutManager(this@ProductDetailActivity, LinearLayoutManager.HORIZONTAL, false)
+        }
     }
 
     private fun getProductFromIntent() {
         // Receber dados do produto via Intent
+        val imageUrls = intent.getStringArrayExtra("productImageUrls")?.toList() ?: emptyList()
+
         product = Product(
             id = intent.getStringExtra("productId") ?: "",
             name = intent.getStringExtra("productName") ?: "",
@@ -81,7 +111,7 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
             stock = intent.getIntExtra("productStock", 0),
             category = intent.getStringExtra("productCategory") ?: "",
             sellerId = intent.getStringExtra("productSellerId") ?: "",
-            sellerName = intent.getStringExtra("productSellerName") ?: "",
+            imageUrls = imageUrls,
             active = intent.getBooleanExtra("productActive", true)
         )
     }
@@ -92,10 +122,25 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
         txtProductPrice.text = "R$ %.2f".format(product.price)
         txtProductStock.text = "${product.stock} unidades"
         txtProductDescription.text = product.description
-        txtSellerName.text = product.sellerName.ifEmpty { "Vendedor Anônimo" }
+        txtSellerName.text = "Vendedor: ${product.sellerId}"
 
-        // Por enquanto usar imagem padrão
-        imgProductDetail.setImageResource(R.drawable.ic_launcher_background)
+        // Exibir imagens do produto
+        if (product.imageUrls.isNotEmpty()) {
+            // Mostrar primeira imagem na ImageView principal
+            Glide.with(this)
+                .load(product.imageUrls.first())
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_background)
+                .centerCrop()
+                .into(imgProductDetail)
+
+            // Atualizar adapter com todas as imagens
+            imageAdapter.updateImages(product.imageUrls)
+        } else {
+            // Usar imagem padrão se não houver imagens
+            imgProductDetail.setImageResource(R.drawable.ic_launcher_background)
+            imageAdapter.updateImages(emptyList())
+        }
 
         // Atualizar botões baseado no estoque
         updateQuantityControls()

@@ -21,5 +21,37 @@
     <string name="btn_sign_in">Criar e acessar</string>
     <string name="login_remember_me">Lembrar de mim</string>
     <string name="default_web_client_id">524313708339-2tmt7fo1ackpjsc435il2vsuaf09jlas.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">728278693617290</string>
+    <string name="facebook_client_token">594f2190665ae830b83cc7bc6a84ede9</string>
+    <string name="fb_login_protocol_scheme">fb728278693617290</string>
+
+    <!-- Payment Activity Strings -->
+    <string name="payment_method">Forma de Pagamento</string>
+    <string name="pickup_info_title">Local de Retirada</string>
+    <string name="pickup_info_description">Todos os produtos devem ser retirados na UNASP Store</string>
+    <string name="customer_info">Dados do Cliente</string>
+    <string name="full_name">Nome Completo</string>
+    <string name="whatsapp_number_optional">WhatsApp (opcional)</string>
+    <string name="choose_payment_method">Escolha sua forma de pagamento na retirada:</string>
+    <string name="payment_debit">Cartão de Débito</string>
+    <string name="payment_credit">Cartão de Crédito</string>
+    <string name="payment_pix">PIX</string>
+    <string name="payment_cash">Dinheiro</string>
+    <string name="confirm_payment">Gerar Pedido</string>
+    <string name="order_generated">Pedido Gerado com Sucesso!</string>
+    <string name="opening_whatsapp">Abrindo WhatsApp para enviar pedido...</string>
+    <string name="fill_all_fields">Preencha todos os campos obrigatórios</string>
+
+    <!-- Order Preview Activity Strings -->
+    <string name="order_preview">Preview do Pedido</string>
+    <string name="order_preview_info">Seu pedido será enviado automaticamente via WhatsApp</string>
+    <string name="send_now">Enviar Agora</string>
+    <string name="cancel">Cancelar</string>
+    <string name="redirecting_in">Redirecionando em %d segundos...</string>
+
+    <!-- Order Success Activity Strings -->
+    <string name="order_sent_success">Pedido Enviado!</string>
+    <string name="order_sent_message">Seu pedido foi enviado para a UNASP Store via WhatsApp.\nAguarde a confirmação do recebimento.</string>
+    <string name="back_to_home">Voltar ao Início</string>
 
 </resources>
