@@ -85,6 +85,26 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
+            // 🔹 Texto clicável para "Esqueci minha senha"
+            val forgotPassword = findViewById<TextView>(R.id.login_forgot_password)
+            forgotPassword.setOnClickListener {
+                val emailField = findViewById<EditText>(R.id.editTextEmail)
+                val email = emailField.text.toString()
+
+                if (email.isEmpty()) {
+                    Toast.makeText(this, "Digite seu e-mail para recuperar a senha", Toast.LENGTH_SHORT).show()
+                } else {
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(this, "E-mail de recuperação enviado!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "Erro: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                }
+            }
+
         } catch (e: Exception) {
             Log.e("LoginActivity", "Error in onCreate", e)
             Toast.makeText(this, "Erro ao inicializar a tela: ${e.message}", Toast.LENGTH_LONG).show()
@@ -108,7 +128,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         // Facebook login
-        findViewById<LinearLayout>(R.id.btnAppleLogin).setOnClickListener {
+        findViewById<LinearLayout>(R.id.btnFacebookLogin).setOnClickListener {
             signInWithFacebook()
         }
 

@@ -20,6 +20,7 @@
     <string name="sign_in_password_confirm">Confirme sua senha</string>
     <string name="btn_sign_in">Criar e acessar</string>
     <string name="login_remember_me">Lembrar de mim</string>
+    <string name="facebook">facebook</string>
     <string name="default_web_client_id">524313708339-2tmt7fo1ackpjsc435il2vsuaf09jlas.apps.googleusercontent.com</string>
     <string name="facebook_app_id">728278693617290</string>
     <string name="facebook_client_token">594f2190665ae830b83cc7bc6a84ede9</string>

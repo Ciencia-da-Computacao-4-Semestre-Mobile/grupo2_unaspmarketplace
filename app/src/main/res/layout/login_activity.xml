@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient">
@@ -51,14 +52,33 @@
             android:textColor="#333333"
             android:textColorHint="#757575" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/login_forgot_password"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <CheckBox
+                android:id="@+id/login_remember_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_remember_me"
+                android:textColor="#FFFFFF"
+                android:checked="false" />
+
+            <TextView
+                android:id="@+id/login_forgot_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/login_forgot_password"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/btnLogin"
@@ -132,7 +152,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/btnAppleLogin"
+                android:id="@+id/btnFacebookLogin"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginEnd="8dp"
@@ -146,7 +166,7 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:contentDescription="@string/google"
+                    android:contentDescription="@string/facebook"
                     android:src="@drawable/ic_facebook" />
             </LinearLayout>
 
@@ -173,11 +193,12 @@
                 android:id="@+id/sign_in_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="@string/btn_login_in_to_sign"
                 android:textColor="#0073e6"
                 android:textStyle="bold"
-                android:clickable="true"
-                android:focusable="true"/>
+                tools:ignore="TouchTargetSizeCheck" />
 
         </LinearLayout>
 
