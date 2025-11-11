@@ -29,7 +29,7 @@
             android:layout_marginTop="32dp"
             android:autofillHints="name"
             android:background="@drawable/edittext_background"
-            android:hint="@string/sign_in_name"
+            android:hint="@string/name"
             android:inputType="textPersonName"
             android:padding="16dp"
             android:textColor="#333333"
