@@ -6,7 +6,6 @@
     android:background="@drawable/bg_gradient">
 
 
-    <!-- Fundo imagem -->
     <ImageView
         android:id="@+id/bgImage"
         android:layout_width="match_parent"
@@ -17,7 +16,6 @@
         android:contentDescription="@null" />
 
 
-    <!-- conteudo do login -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -55,16 +53,16 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
             <CheckBox
                 android:id="@+id/login_remember_me"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="false"
                 android:text="@string/login_remember_me"
-                android:textColor="#FFFFFF"
-                android:checked="false" />
+                android:textColor="#FFFFFF" />
 
             <TextView
                 android:id="@+id/login_forgot_password"
@@ -100,7 +98,6 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
-
 
 
         <LinearLayout
@@ -175,9 +172,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp">
-
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
 
 
             <TextView
@@ -203,7 +199,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
 
 
 </FrameLayout>

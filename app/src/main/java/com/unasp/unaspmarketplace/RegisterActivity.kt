@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +25,14 @@ class RegisterActivity : AppCompatActivity() {
         val edtSenha = findViewById<EditText>(R.id.edtSenhaSignIn)
         val edtConfirmarSenha = findViewById<EditText>(R.id.edtConfirmarSenha)
         val btnCadastrar = findViewById<LinearLayout>(R.id.btnCadastrar)
+
+        // 🔹 TextView clicável para voltar ao login
+        val login = findViewById<TextView>(R.id.log_in_text)
+        login.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish() // fecha a tela de cadastro
+        }
 
         btnCadastrar.setOnClickListener {
             val nome = edtNome.text.toString().trim()
