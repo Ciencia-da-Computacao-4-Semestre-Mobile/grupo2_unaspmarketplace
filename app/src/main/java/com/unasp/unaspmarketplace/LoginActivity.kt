@@ -20,6 +20,9 @@ import com.unasp.unaspmarketplace.data.model.LoginViewModel
 import com.unasp.unaspmarketplace.utils.UserUtils
 import android.widget.TextView
 import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuth
+import android.widget.CheckBox
+
 
 class LoginActivity : AppCompatActivity() {
     private val viewModel = LoginViewModel()
@@ -85,10 +88,55 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-        } catch (e: Exception) {
-            Log.e("LoginActivity", "Error in onCreate", e)
-            Toast.makeText(this, "Erro ao inicializar a tela: ${e.message}", Toast.LENGTH_LONG).show()
-        }
+            // 🔹 Texto clicável para "Esqueci minha senha"
+            val forgotPassword = findViewById<TextView>(R.id.login_forgot_password)
+            forgotPassword.setOnClickListener {
+                val emailField = findViewById<EditText>(R.id.edtEmail)
+                val email = emailField.text.toString()
+
+                if (email.isEmpty()) {
+                    Toast.makeText(this, "Digite seu e-mail para recuperar a senha", Toast.LENGTH_SHORT).show()
+                } else {
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(this, "E-mail de recuperação enviado!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "Erro: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                }
+            }
+
+            val emailField = findViewById<EditText>(R.id.edtEmail)
+            val passwordField = findViewById<EditText>(R.id.edtSenha)
+            val loginButton = findViewById<LinearLayout>(R.id.btnLogin)
+            val checkBoxTerms = findViewById<CheckBox>(R.id.login_remember_me)
+
+            loginButton.setOnClickListener {
+                val email = emailField.text.toString()
+                val password = passwordField.text.toString()
+
+                if (!checkBoxTerms.isChecked) {
+                    Toast.makeText(this, "Você precisa aceitar os termos para continuar", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // Aqui você chama a função de login já implementada no projeto
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    // Exemplo: chamar FirebaseAuth ou lógica existente
+                    viewModel.login(email, password)
+                } else {
+                    Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+
+
+            } catch (e: Exception) {
+                    Log.e("LoginActivity", "Error in onCreate", e)
+                    Toast.makeText(this, "Erro ao inicializar a tela: ${e.message}", Toast.LENGTH_LONG).show()
+                }
     }
 
     private fun setupLoginButtons() {
@@ -108,7 +156,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         // Facebook login
-        findViewById<LinearLayout>(R.id.btnAppleLogin).setOnClickListener {
+        findViewById<LinearLayout>(R.id.btnFacebookLogin).setOnClickListener {
             signInWithFacebook()
         }
 
