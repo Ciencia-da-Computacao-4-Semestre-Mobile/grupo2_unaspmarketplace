@@ -143,15 +143,23 @@
                 android:textColor="@color/blue_default"
                 android:layout_marginBottom="8dp"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerImages"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:background="@color/gray_100"
-                android:alpha="0.2"
-                android:layout_marginBottom="8dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/gray_300"
+                app:strokeWidth="1dp"
+                android:layout_marginBottom="8dp">
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerImages"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:padding="8dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+            </com.google.android.material.card.MaterialCardView>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -248,7 +256,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:backgroundTint="@color/white"
-        android:elevation="8dp"
+        android:elevation="0dp"
         app:itemIconTint="@color/bottom_navigation_colors"
         app:itemTextColor="@color/bottom_navigation_colors"
         app:itemIconSize="24dp"
