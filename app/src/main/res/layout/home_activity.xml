@@ -88,7 +88,7 @@
                     android:src="@drawable/banner_placeholder"
                     android:contentDescription="@string/banner_description" />
             </androidx.cardview.widget.CardView>
-            <!-- Texto categorias -->
+            <!-- Texto categorias --> <!--carouel-->
             <TextView
                 android:text="@string/categorias"
                 android:textStyle="bold"
@@ -105,21 +105,41 @@
                 android:padding="8dp"
                 android:orientation="horizontal"/>
 
-            <!-- Texto destaque -->
-            <TextView
-                android:text="Produtos em Destaque"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:padding="8dp"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
-
-            <!-- RecyclerView Grid de Produtos -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerProducts"
+            <!-- Texto destaque --><!--Aqui começa a main-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/destaqueSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"/>
+                android:layout_margin="10dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/gray_350">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Título da sessão -->
+                    <TextView
+                        android:text="Produtos em Destaque"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:textColor="@color/gray_800"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="12dp" />
+
+                    <!-- Lista de produtos -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerProducts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingBottom="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -127,8 +147,8 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:layout_height="66dp"
+            android:background="@color/blue_default"
             android:elevation="8dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
