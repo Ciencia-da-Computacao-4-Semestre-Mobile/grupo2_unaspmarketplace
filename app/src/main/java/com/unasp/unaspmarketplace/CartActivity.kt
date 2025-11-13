@@ -127,10 +127,10 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     finish()
                     true
                 }
-                R.id.nav_notifications -> {
+                /*R.id.nav_notifications -> {
                     Toast.makeText(this, "Notificações em breve", Toast.LENGTH_SHORT).show()
                     true
-                }
+                }*/
                 R.id.nav_cart -> {
                     Toast.makeText(this, "Você já está no Carrinho", Toast.LENGTH_SHORT).show()
                     true

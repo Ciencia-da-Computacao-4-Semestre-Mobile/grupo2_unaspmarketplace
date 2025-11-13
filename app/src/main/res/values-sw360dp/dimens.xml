@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="header_height">93dp</dimen>
+    <dimen name="hotbar_height">117dp</dimen>
+</resources>

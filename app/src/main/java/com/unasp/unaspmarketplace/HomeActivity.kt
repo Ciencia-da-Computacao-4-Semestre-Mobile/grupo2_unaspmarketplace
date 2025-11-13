@@ -119,11 +119,11 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
                     true
                 }
-                R.id.nav_notifications -> {
+                /*R.id.nav_notifications -> {
                     // Implementar navegação para notificações
                     Toast.makeText(this, "Notificações em breve", Toast.LENGTH_SHORT).show()
                     true
-                }
+                }*/
                 R.id.nav_cart -> {
                     // Navegar para o carrinho
                     val intent = Intent(this, CartActivity::class.java)
@@ -133,7 +133,7 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                 else -> false
             }
         }
-
+        bottomNavigation.selectedItemId = R.id.nav_home
         // Configuração do menu lateral
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {

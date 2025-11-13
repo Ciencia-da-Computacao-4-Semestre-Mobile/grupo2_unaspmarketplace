@@ -18,8 +18,12 @@ class LoginViewModel : ViewModel() {
 
             loginState.postValue(success)
             if (!success && error != null) {
-                errorMessage.postValue(error)
+                // Se por algum motivo 'error' ainda for nulo aqui, usa uma string padrão.
+                // Isso garante para o Lint que NUNCA passaremos null.
+                errorMessage.postValue(error ?: "Ocorreu um erro desconhecido.")
             }
+            
+
         }
     }
 }
