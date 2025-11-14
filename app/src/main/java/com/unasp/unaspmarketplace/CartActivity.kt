@@ -2,16 +2,20 @@ package com.unasp.unaspmarketplace
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageView
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
@@ -22,12 +26,18 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private lateinit var txtTotal: TextView
     private lateinit var btnCheckout: Button
     private lateinit var cartAdapter: CartAdapter
+    private lateinit var toolbar: MaterialToolbar
+    private lateinit var emptyCartView: LinearLayout
+    private lateinit var cartFooter: LinearLayout
+    private lateinit var btnStartShopping: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.cart_activity)
 
         initViews()
+        setupToolbar()
         setupRecyclerView()
         setupButtons()
         setupBottomNavigation()
@@ -58,14 +68,22 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         txtTotal = findViewById(R.id.txtTotal)
         btnCheckout = findViewById(R.id.btnCheckout)
         recyclerCart = findViewById(R.id.recyclerCart)
+        emptyCartView = findViewById(R.id.emptyCartView)
+        cartFooter = findViewById(R.id.cart_footer)
+        btnStartShopping = findViewById(R.id.btnStartShopping)
+    }
 
-        val btnBack = findViewById<ImageView>(R.id.btnBack)
-        btnBack.setOnClickListener { finish() }
+    private fun setupToolbar() {
+        toolbar = findViewById(R.id.appbar_cart)
+        toolbar.subtitle = ""
+        toolbar.setNavigationOnClickListener { finish() }
 
-        val btnClearCart = findViewById<ImageView>(R.id.btnClearCart)
-        btnClearCart.setOnClickListener {
-            CartManager.clearCart()
-            Toast.makeText(this, "Carrinho limpo!", Toast.LENGTH_SHORT).show()
+        toolbar.setOnMenuItemClickListener { item ->
+            if (item.itemId == R.id.btnClearCart) {
+                CartManager.clearCart()
+                Toast.makeText(this, "Carrinho limpo!", Toast.LENGTH_SHORT).show()
+                true
+            } else false
         }
     }
 
@@ -88,6 +106,19 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                 startActivity(intent)
             }
         }
+
+        btnStartShopping.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun setEmptyState(isEmpty: Boolean) {
+        emptyCartView.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        recyclerCart.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        cartFooter.visibility = if (isEmpty) View.GONE else View.VISIBLE
+
+        btnCheckout.isEnabled = !isEmpty
+        btnCheckout.alpha = if (!isEmpty) 1.0f else 0.5f
     }
 
     private fun loadCartItems() {
@@ -98,11 +129,17 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         val cartItems = CartManager.getCartItems()
         cartAdapter.updateItems(cartItems)
 
+        setEmptyState(cartItems.isEmpty())
+
         val total = CartManager.getTotalPrice()
         txtTotal.text = "Total: R$ %.2f".format(total)
 
         btnCheckout.isEnabled = cartItems.isNotEmpty()
         btnCheckout.alpha = if (cartItems.isNotEmpty()) 1.0f else 0.5f
+
+        toolbar.subtitle = "${CartManager.getTotalItemCount()} itens" // Atualizar subtítulo com número de itens
+        val clearItem = toolbar.menu.findItem(R.id.btnClearCart)
+        clearItem?.isVisible = cartItems.isNotEmpty() // Mostrar botão limpar apenas se houver itens
     }
 
     private fun setupBottomNavigation() {

@@ -6,47 +6,22 @@
     android:background="@color/white">
 
     <!-- AppBar -->
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/appbar_cart"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="@color/white"
-        android:elevation="4dp"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <!-- Botão voltar -->
-        <ImageView
-            android:id="@+id/btnBack"
-            android:src="@android:drawable/ic_media_previous"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="4dp" />
-
-        <!-- Título -->
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/cart"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/blue_default"
-            android:gravity="center"
-            android:layout_marginStart="8dp"
-            android:layout_width="0dp"/>
-
-        <!-- Ícone esvaziar carrinho -->
-        <ImageView
-            android:id="@+id/btnClearCart"
-            android:src="@android:drawable/ic_menu_delete"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="4dp"/>
-    </LinearLayout>
+        android:layout_height="?attr/actionBarSize"
+        app:elevation="8dp"
+        android:background="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/cart_toolbar_menu"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationContentDescription="back"
+        app:title="@string/cart"
+        app:titleTextColor="@color/blue_default"
+        app:titleCentered="true"
+        app:subtitle="Itens"
+        app:subtitleTextColor="@color/gray_500"
+        app:subtitleCentered="true" />
 
     <!-- Lista de produtos no carrinho -->
     <androidx.recyclerview.widget.RecyclerView
@@ -58,6 +33,43 @@
         app:layout_constraintBottom_toTopOf="@id/cart_footer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- View para carrinho vazio -->
+    <LinearLayout
+        android:id="@+id/emptyCartView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/recyclerCart"
+        app:layout_constraintBottom_toBottomOf="@id/recyclerCart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/ic_shopping_cart"
+            android:alpha="0.3"
+            app:tint="@color/gray_500"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Carrinho vazio"
+            android:textSize="16sp"
+            android:textColor="@color/gray_500"
+            android:layout_marginTop="16dp"/>
+
+        <Button
+            android:id="@+id/btnStartShopping"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ir para a loja"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/blue_default"/>
+    </LinearLayout>
 
     <!-- Rodapé com total e botão -->
     <LinearLayout

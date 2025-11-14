@@ -57,7 +57,7 @@
             app:layout_constraintStart_toStartOf="@id/txtName"
             app:layout_constraintTop_toBottomOf="@id/txtName"/>
 
-        <!-- Quantity Controls -->
+        <!-- Controle de quantidade -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDecrease"
             android:layout_width="36dp"
@@ -75,6 +75,7 @@
             app:layout_constraintStart_toStartOf="@id/txtName"
             app:layout_constraintTop_toBottomOf="@id/txtPrice"/>
 
+        <!-- Quantidade -->
         <TextView
             android:id="@+id/txtQuantity"
             android:layout_width="40dp"
@@ -88,6 +89,7 @@
             app:layout_constraintTop_toTopOf="@id/btnDecrease"
             app:layout_constraintBottom_toBottomOf="@id/btnDecrease"/>
 
+        <!-- Botão de aumentar quantidade -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnIncrease"
             android:layout_width="36dp"
@@ -106,7 +108,7 @@
             app:layout_constraintTop_toTopOf="@id/btnDecrease"
             app:layout_constraintBottom_toBottomOf="@id/btnDecrease"/>
 
-        <!-- Remove Button - Top Right -->
+        <!-- Botão de remover item -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRemove"
             android:layout_width="32dp"
