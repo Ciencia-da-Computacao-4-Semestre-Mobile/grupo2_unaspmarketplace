@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    android:clipToPadding="false"
+    android:clipChildren="false" >
 
     <!-- Background: Fundo vermelho para swipe-to-delete -->
     <androidx.cardview.widget.CardView
@@ -66,7 +68,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <!-- Imagem do produto -->
             <com.google.android.material.imageview.ShapeableImageView
@@ -111,6 +115,8 @@
                 app:layout_constraintTop_toBottomOf="@id/txtName"/>
 
             <!-- Controle de quantidade -->
+
+            <!-- Botão de diminuir quantidade -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDecrease"
                 android:layout_width="36dp"
@@ -118,15 +124,16 @@
                 app:icon="@drawable/ic_remove"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                app:iconTint="@color/white"
-                android:backgroundTint="@color/gray_500"
+                app:iconTint="@color/blue_default"
+                android:backgroundTint="@color/white"
+                android:stateListAnimator="@null"
+                android:elevation="2dp"
                 app:cornerRadius="18dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:layout_marginTop="8dp"
                 style="@style/Widget.MaterialComponents.Button"
-                app:layout_constraintStart_toStartOf="@id/txtName"
-                app:layout_constraintTop_toBottomOf="@id/txtPrice"/>
+                app:layout_constraintEnd_toStartOf="@id/txtQuantity"
+                app:layout_constraintBottom_toBottomOf="@id/txtQuantity"/>
 
             <!-- Quantidade -->
             <TextView
@@ -139,8 +146,7 @@
                 android:gravity="center"
                 android:layout_marginStart="8dp"
                 app:layout_constraintStart_toEndOf="@id/btnDecrease"
-                app:layout_constraintTop_toTopOf="@id/btnDecrease"
-                app:layout_constraintBottom_toBottomOf="@id/btnDecrease"/>
+                app:layout_constraintBottom_toBottomOf="@id/imgProduct"/>
 
             <!-- Botão de aumentar quantidade -->
             <com.google.android.material.button.MaterialButton
@@ -150,16 +156,17 @@
                 app:icon="@drawable/ic_add"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                app:iconTint="@color/white"
-                android:backgroundTint="@color/blue_default"
+                app:iconTint="@color/blue_default"
+                android:backgroundTint="@color/white"
+                android:elevation="2dp"
                 app:cornerRadius="18dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:layout_marginStart="8dp"
                 style="@style/Widget.MaterialComponents.Button"
                 app:layout_constraintStart_toEndOf="@id/txtQuantity"
-                app:layout_constraintTop_toTopOf="@id/btnDecrease"
-                app:layout_constraintBottom_toBottomOf="@id/btnDecrease"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/txtQuantity"/>
 
             <!-- Botão de remover item -->
             <com.google.android.material.button.MaterialButton
@@ -170,8 +177,9 @@
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
                 app:iconSize="18dp"
-                app:iconTint="@color/white"
-                android:backgroundTint="@android:color/holo_red_dark"
+                app:iconTint="@android:color/holo_red_dark"
+                android:backgroundTint="@color/white"
+                android:elevation="0.5dp"
                 app:cornerRadius="16dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
