@@ -1,6 +1,7 @@
 package com.unasp.unaspmarketplace
 
 import android.content.Intent
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -13,12 +14,21 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
+import kotlin.compareTo
+import kotlin.div
+import kotlin.or
+import kotlin.text.compareTo
+import kotlin.text.get
+import kotlin.text.toFloat
+import kotlin.times
 
 class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
 
@@ -91,6 +101,93 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         cartAdapter = CartAdapter()
         recyclerCart.layoutManager = LinearLayoutManager(this)
         recyclerCart.adapter = cartAdapter
+        setupItemTouchHelper()
+    }
+
+    //Função para configurar o swipe to delete
+    private fun setupItemTouchHelper() {
+        val callback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) = false
+
+            override fun onSwiped(vh: RecyclerView.ViewHolder, dir: Int) {
+                val position = vh.adapterPosition
+                val items = CartManager.getCartItems()
+                if (position !in items.indices) return
+                val removed = items[position]
+                CartManager.removeFromCart(removed.product.id)
+                Snackbar.make(findViewById(android.R.id.content), "${removed.product.name} removido", Snackbar.LENGTH_LONG)
+                    .setAction("Desfazer") { CartManager.addToCart(removed.product, removed.quantity) }
+                    .show()
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                rv: RecyclerView,
+                vh: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                state: Int,
+                active: Boolean
+            ) {
+                if (state != ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    super.onChildDraw(c, rv, vh, dX, dY, state, active)
+                    return
+                }
+                val itemView = vh.itemView
+                val fg = itemView.findViewById<View>(R.id.view_foreground)
+                val bg = itemView.findViewById<View>(R.id.view_background)
+                val iconLeft = itemView.findViewById<ImageView>(R.id.icon_delete_left)
+                val iconRight = itemView.findViewById<ImageView>(R.id.icon_delete_right)
+
+                fg.translationX = dX
+                bg.visibility = if (dX == 0f) View.INVISIBLE else View.VISIBLE
+
+                val isRightSwipe = dX > 0
+                val activeIcon = if (isRightSwipe) iconLeft else iconRight
+                val inactiveIcon = if (isRightSwipe) iconRight else iconLeft
+
+                // Reset ícone oposto
+                inactiveIcon.visibility = View.INVISIBLE
+                inactiveIcon.alpha = 0f
+                inactiveIcon.scaleX = 0f
+                inactiveIcon.scaleY = 0f
+                inactiveIcon.translationX = 0f
+
+                val width = itemView.width.toFloat().coerceAtLeast(1f)
+                val absDx = kotlin.math.abs(dX)
+                val growthEnd = 0.25f * width
+
+                val growT = (absDx / growthEnd).coerceIn(0f, 1f)
+                activeIcon.visibility = View.VISIBLE
+                activeIcon.alpha = 1f
+                activeIcon.scaleX = growT
+                activeIcon.scaleY = growT
+
+                val slideT = ((absDx - growthEnd) / (width / 2f)).coerceIn(0f, 1f)
+                val centerX = width / 2f
+                val currentHalfW = (activeIcon.width * activeIcon.scaleX) / 2f
+                val baseCenterX = activeIcon.left.toFloat() + currentHalfW
+                val neededTx = centerX - baseCenterX
+                activeIcon.translationX = neededTx * slideT
+            }
+
+            override fun clearView(rv: RecyclerView, vh: RecyclerView.ViewHolder) {
+                super.clearView(rv, vh)
+                val itemView = vh.itemView
+                itemView.findViewById<View>(R.id.view_foreground).translationX = 0f
+                itemView.findViewById<View>(R.id.view_background).visibility = View.INVISIBLE
+                fun reset(iv: ImageView) {
+                    iv.visibility = View.INVISIBLE
+                    iv.alpha = 0f
+                    iv.scaleX = 0f
+                    iv.scaleY = 0f
+                    iv.translationX = 0f
+                }
+                reset(itemView.findViewById(R.id.icon_delete_left))
+                reset(itemView.findViewById(R.id.icon_delete_right))
+            }
+        }
+        ItemTouchHelper(callback).attachToRecyclerView(recyclerCart)
     }
 
     private fun setupButtons() {
