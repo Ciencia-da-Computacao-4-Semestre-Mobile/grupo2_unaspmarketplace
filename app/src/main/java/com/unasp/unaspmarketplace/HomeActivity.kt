@@ -10,17 +10,19 @@ import com.unasp.unaspmarketplace.modelos.CategoryAdapter
 import com.unasp.unaspmarketplace.modelos.ProductAdapter
 import android.content.Intent
 import androidx.drawerlayout.widget.DrawerLayout
-import android.widget.Toast
+import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.core.view.GravityCompat
 import com.unasp.unaspmarketplace.models.Product
 import com.unasp.unaspmarketplace.repository.ProductRepository
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
+import androidx.core.view.GravityCompat
+import android.widget.Toast
 
 class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private lateinit var productRepository: ProductRepository
@@ -91,17 +93,23 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     }
 
     private fun setupNavigation() {
-        // Configuração do menu lateral
-        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
-        val navigationView = findViewById<NavigationView>(R.id.navigationView)
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
-        // Verificar se deve abrir o menu automaticamente
-        if (intent.getBooleanExtra("openMenu", false)) {
-            drawerLayout.openDrawer(GravityCompat.START)
+        // Inflar o layout do menu suspenso
+        val sheetView = layoutInflater.inflate(R.layout.menu_top_sheet, null)
+        val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
+
+        // Configurar ações dos botões do menu
+        val btnPostItem = sheetView.findViewById<TextView>(R.id.btnPostItem)
+        btnPostItem.setOnClickListener {
+            // ação
+            dialog.dismiss() // Fecha o menu após a ação
         }
 
-        // Configuração da hotbar inferior
-        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        // Quando o menu for fechado, marcar o botão "Home"
+        dialog.setOnDismissListener {
+            bottomNavigation.selectedItemId = R.id.nav_home
+        }
 
         // Configurar badge do carrinho
         CartBadgeManager.setupCartBadge(bottomNavigation)
@@ -110,45 +118,27 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_menu -> {
-                    // Abre o menu lateral
-                    drawerLayout.openDrawer(GravityCompat.START)
+                    dialog.setContentView(sheetView)
+                    dialog.show()
                     true
                 }
                 R.id.nav_home -> {
-                    // Já estamos na home, não precisa fazer nada
                     Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
                     true
                 }
-                /*R.id.nav_notifications -> {
-                    // Implementar navegação para notificações
-                    Toast.makeText(this, "Notificações em breve", Toast.LENGTH_SHORT).show()
-                    true
-                }*/
                 R.id.nav_cart -> {
-                    // Navegar para o carrinho
-                    val intent = Intent(this, CartActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, CartActivity::class.java))
+                    true
+                }
+                R.id.nav_profile -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
                     true
                 }
                 else -> false
             }
         }
+
         bottomNavigation.selectedItemId = R.id.nav_home
-        // Configuração do menu lateral
-        navigationView.setNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_post_item -> {
-                    val intent = Intent(this, PostItemActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.nav_profile -> {
-                    val intent = Intent(this, ProfileActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-            drawerLayout.closeDrawers() // fecha o menu depois do clique
-            true
-        }
     }
 
     private fun loadProducts() {
@@ -255,7 +245,7 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
 
     override fun onResume() {
         super.onResume()
-        // Recarregar produtos quando voltar para a tela
-        loadProducts()
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNavigation.selectedItemId = R.id.nav_home
     }
 }

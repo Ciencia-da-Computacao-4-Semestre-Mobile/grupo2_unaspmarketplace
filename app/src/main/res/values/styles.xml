@@ -1,0 +1,19 @@
+<resources>
+
+    <!-- Estilos existentes -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorPrimaryDark">@color/blue_default</item>
+        <item name="colorAccent">@color/blue_primary</item>
+    </style>
+
+    <!-- Estilo para o menu suspenso vindo de cima -->
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/TopSheetStyle</item>
+    </style>
+
+    <style name="TopSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:layout_gravity">top</item>
+    </style>
+
+</resources>
