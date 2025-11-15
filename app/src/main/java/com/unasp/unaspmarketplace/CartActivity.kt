@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
@@ -42,6 +43,28 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private lateinit var btnStartShopping: Button
 
 
+    // Listener para ações do carrinho (remoção de itens, limpeza do carrinho)
+    private val cartActionsListener = object : CartManager.CartActionListener {
+        override fun onItemsRemoved(removed: List<com.unasp.unaspmarketplace.utils.CartItem>) {
+            val first = removed.firstOrNull() ?: return
+            Snackbar.make(findViewById(android.R.id.content),
+                "${first.product.name} removido",
+                Snackbar.LENGTH_LONG
+            ).setAction("Desfazer") {
+                removed.forEach { CartManager.addToCart(it.product, it.quantity) }
+            }.show()
+        }
+        override fun onCartCleared(removed: List<com.unasp.unaspmarketplace.utils.CartItem>) {
+            if (removed.isEmpty()) return
+            Snackbar.make(findViewById(android.R.id.content),
+                "Carrinho limpo",
+                Snackbar.LENGTH_LONG
+            ).setAction("Desfazer") {
+                removed.forEach { CartManager.addToCart(it.product, it.quantity) }
+            }.show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.cart_activity)
@@ -52,19 +75,22 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         setupButtons()
         setupBottomNavigation()
         loadCartItems()
-
-        // Registrar listener do carrinho
-        CartManager.addListener(this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStart() {
+        super.onStart()
+        CartManager.addListener(this)
+        CartManager.addActionListener(cartActionsListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
         CartManager.removeListener(this)
+        CartManager.removeActionListener(cartActionsListener)
     }
 
     override fun onResume() {
         super.onResume()
-        // Garantir que a UI esteja sincronizada quando voltar para a tela
         updateUI()
         CartBadgeManager.updateBadge(CartManager.getTotalItemCount())
     }
@@ -90,8 +116,12 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
 
         toolbar.setOnMenuItemClickListener { item ->
             if (item.itemId == R.id.btnClearCart) {
-                CartManager.clearCart()
-                Toast.makeText(this, "Carrinho limpo!", Toast.LENGTH_SHORT).show()
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Limpar carrinho")
+                    .setMessage("Tem certeza que deseja remover todos os itens?")
+                    .setPositiveButton("Limpar") { _, _ -> CartManager.clearCart() }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
                 true
             } else false
         }
@@ -115,9 +145,6 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                 if (position !in items.indices) return
                 val removed = items[position]
                 CartManager.removeFromCart(removed.product.id)
-                Snackbar.make(findViewById(android.R.id.content), "${removed.product.name} removido", Snackbar.LENGTH_LONG)
-                    .setAction("Desfazer") { CartManager.addToCart(removed.product, removed.quantity) }
-                    .show()
             }
 
             override fun onChildDraw(
@@ -318,17 +345,17 @@ class CartActivity : AppCompatActivity(), CartManager.CartUpdateListener {
             }
 
             // Botão decrementar (-)
-            holder.btnDecrease.isEnabled = item.quantity > 1
             holder.btnDecrease.setOnClickListener {
                 if (item.quantity > 1) {
                     CartManager.updateQuantity(product.id, item.quantity - 1)
+                } else {
+                    CartManager.removeFromCart(product.id)
                 }
             }
 
             // Botão remover
             holder.btnRemove.setOnClickListener {
                 CartManager.removeFromCart(product.id)
-                Toast.makeText(holder.itemView.context, "Item removido do carrinho", Toast.LENGTH_SHORT).show()
             }
         }
 
