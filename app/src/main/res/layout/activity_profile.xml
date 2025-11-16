@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/black"
     tools:context=".ProfileActivity">
 
     <!-- AppBar -->
@@ -28,6 +28,15 @@
             app:titleTextColor="@color/blue_default" />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <ImageView
+        android:id="@+id/bgImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_fundo"
+        android:alpha="0.3"
+        android:contentDescription="@null" />
 
     <!-- ScrollView para o conteúdo -->
     <androidx.core.widget.NestedScrollView
@@ -116,7 +125,7 @@
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/gray_light"
+                app:strokeColor="@color/gray_100"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
