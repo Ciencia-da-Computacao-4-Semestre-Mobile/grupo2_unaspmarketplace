@@ -10,6 +10,7 @@ import com.unasp.unaspmarketplace.modelos.CategoryAdapter
 import com.unasp.unaspmarketplace.modelos.ProductAdapter
 import android.content.Intent
 import androidx.drawerlayout.widget.DrawerLayout
+import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
@@ -93,48 +94,67 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     }
 
     private fun setupNavigation() {
+        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        val navigationView = findViewById<NavigationView>(R.id.navigationView)
 
-        R.id.nav_menu -> {
-            drawerLayout.openDrawer(GravityCompat.START)
-            true
-        }
-        dialog.setOnDismissListener {
-            suppressHomeToast = true
-            bottomNavigation.selectedItemId = R.id.nav_home
-        }
-
-        CartBadgeManager.setupCartBadge(bottomNavigation)
-        CartBadgeManager.updateBadge(CartManager.getTotalItemCount())
-
-        navigationView.setNavigationItemSelectedListener { item ->
+        // Listener da bottom navigation
+        bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_post_item -> {
-                    startActivity(Intent(this, PostItemActivity::class.java))
+                R.id.nav_menu -> {
+                    drawerLayout.openDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_home -> {
+                    Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.nav_cart -> {
+                    startActivity(Intent(this, CartActivity::class.java))
+                    true
                 }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ProfileActivity::class.java))
+                    true
                 }
-                R.id.nav_orders -> {
-                    // Ainda em desenvolvimento
-                    Toast.makeText(this, "Meus pedidos em breve", Toast.LENGTH_SHORT).show()
-                }
-                R.id.nav_history -> {
-                    // Ainda em desenvolvimento
-                    Toast.makeText(this, "Histórico em breve", Toast.LENGTH_SHORT).show()
-                }
+                else -> false
+            }
+        }
+
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerClosed(drawerView: View) {
+                bottomNavigation.selectedItemId = R.id.nav_home
+            }
+
+            override fun onDrawerOpened(drawerView: View) {}
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
+
+        // Badge do carrinho
+        CartBadgeManager.setupCartBadge(bottomNavigation)
+        CartBadgeManager.updateBadge(CartManager.getTotalItemCount())
+
+        // Listener do menu lateral
+        navigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_post_item -> startActivity(Intent(this, PostItemActivity::class.java))
+                R.id.nav_profile -> startActivity(Intent(this, ProfileActivity::class.java))
+                R.id.nav_orders -> Toast.makeText(this, "Meus pedidos em breve", Toast.LENGTH_SHORT).show()
+                R.id.nav_history -> Toast.makeText(this, "Histórico em breve", Toast.LENGTH_SHORT).show()
                 R.id.nav_logout -> {
                     val prefs = getSharedPreferences("user_session", MODE_PRIVATE)
                     prefs.edit().clear().apply()
-
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                 }
             }
             drawerLayout.closeDrawers()
+            bottomNavigation.selectedItemId = R.id.nav_home   // ✅ marca Home imediatamente
             true
         }
+
 
         bottomNavigation.selectedItemId = R.id.nav_home
     }

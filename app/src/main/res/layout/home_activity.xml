@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- CONTEÚDO PRINCIPAL --><!--Barra superior ate a parte do campo de pesquisa-->
+        <!-- CONTEÚDO PRINCIPAL -->
         <androidx.core.widget.NestedScrollView
             android:id="@+id/mainContent"
             android:layout_width="match_parent"
@@ -21,135 +21,131 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/white">
-
-            <!-- AppBar Simplificada -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/headerContainer"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/header_height"
-                android:background="@color/blue_default"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white">
 
-                <!-- Logo -->
-                <ImageView
-                    android:id="@+id/logoHeader"
-                    android:layout_width="37dp"
-                    android:layout_height="37dp"
-                    android:layout_marginBottom="12dp"
-                    android:src="@drawable/logounaspmarketplacebranco"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginEnd="5dp" />
+                <!-- Header -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/headerContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/header_height"
+                    android:background="@color/blue_default"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
 
-                <!-- Barra de pesquisa -->
+                    <ImageView
+                        android:id="@+id/logoHeader"
+                        android:layout_width="37dp"
+                        android:layout_height="37dp"
+                        android:layout_marginBottom="12dp"
+                        android:src="@drawable/logounaspmarketplacebranco"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginEnd="5dp" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/searchBarHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="37dp"
+                        android:layout_marginBottom="12dp"
+                        android:layout_marginLeft="10dp"
+                        app:cardCornerRadius="50dp"
+                        app:cardElevation="0dp"
+                        android:background="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/logoHeader"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <androidx.appcompat.widget.SearchView
+                            android:id="@+id/searchViewHeader"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:iconifiedByDefault="false"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:queryHint="Busque aqui"
+                            android:textColor="@color/gray_light"
+                            android:textColorHint="@color/gray_light" />
+                    </androidx.cardview.widget.CardView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Banner -->
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/searchBarHeader"
-                    android:layout_width="0dp"
-                    android:layout_height="37dp"
-                    android:layout_marginBottom="12dp"
-                    android:layout_marginLeft="10dp"
-                    app:cardCornerRadius="50dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="10dp"
                     app:cardElevation="0dp"
-                    android:background="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/logoHeader"
-                    app:layout_constraintEnd_toEndOf="parent">
+                    android:layout_margin="7dp"
+                    android:background="@android:color/transparent">
 
-                    <androidx.appcompat.widget.SearchView
-                        android:id="@+id/searchViewHeader"
+                    <ImageView
+                        android:id="@+id/bannerPromo"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:iconifiedByDefault="false"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:queryHint="Busque aqui"
-                        android:textColor="@color/gray_light"
-                        android:textColorHint="@color/gray_light" />
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/banner_placeholder"
+                        android:contentDescription="Banner promocional" />
                 </androidx.cardview.widget.CardView>
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Banner -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="0dp"
-                android:layout_margin="7dp"
-                android:background="@android:color/transparent">
+                <!-- Categorias -->
+                <TextView
+                    android:text="@string/categorias"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:padding="8dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"/>
 
-                <ImageView
-                    android:id="@+id/bannerPromo"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerCategorys"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/banner_placeholder"
-                    android:contentDescription="Banner promocional" />
-            </androidx.cardview.widget.CardView>
-            <!-- Texto categorias --> <!--carouel-->
-            <TextView
-                android:text="@string/categorias"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:padding="8dp"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
+                    android:padding="8dp"
+                    android:orientation="horizontal"/>
 
-            <!-- RecyclerView Horizontal -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerCategorys"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:orientation="horizontal"/>
-
-            <!-- Texto destaque --><!--Aqui começa a main-->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/destaqueSection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/gray_350">
-
-                <LinearLayout
+                <!-- Destaques -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/destaqueSection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_margin="10dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="8dp"
+                    app:cardBackgroundColor="@color/gray_350">
 
-                    <!-- Título da sessão -->
-                    <TextView
-                        android:text="Produtos em Destaque"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:textColor="@color/gray_800"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="12dp" />
-
-                    <!-- Lista de produtos -->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerProducts"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:paddingBottom="8dp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-        <!-- HOTBAR - BARRA DE NAVEGAÇÃO INFERIOR -->
+                        <TextView
+                            android:text="Produtos em Destaque"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:textColor="@color/gray_800"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="12dp" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerProducts"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            android:paddingBottom="8dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- HOTBAR -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
@@ -170,43 +166,17 @@
             app:itemPaddingTop="4dp"
             app:itemPaddingBottom="4dp"
             app:menu="@menu/bottom_navigation_menu" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- MENU LATERAL -->
-    <androidx.drawerlayout.widget.DrawerLayout
-    android:id="@+id/drawerLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <!-- Conteúdo principal -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <!-- Toolbar, conteúdo principal, etc -->
-        <include layout="@layout/toolbar" />
-        <FrameLayout
-            android:id="@+id/contentFrame"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:menu="@menu/bottom_navigation_menu" />
-    </LinearLayout>
-
-    <!-- Menu lateral -->
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        android:background="@color/white"
-        app:menu="@menu/drawer_menu" />
+    android:id="@+id/navigationView"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:background="@color/white"
+    app:itemIconTint="@android:color/black"
+    app:itemTextColor="@android:color/black"
+    app:itemBackground="@drawable/menu_item_background"
+    app:menu="@menu/drawer_menu"/>
 </androidx.drawerlayout.widget.DrawerLayout>

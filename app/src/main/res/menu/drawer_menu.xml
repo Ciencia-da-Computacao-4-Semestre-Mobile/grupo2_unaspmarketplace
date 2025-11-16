@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-
     <item
         android:id="@+id/nav_orders"
         android:title="Meus Pedidos"
-        android:icon="@android:drawable/ic_menu_agenda"/>
+        android:icon="@drawable/ic_orders" />
 
     <item
         android:id="@+id/nav_history"
         android:title="Histórico"
-        android:icon="@android:drawable/ic_menu_recent_history"/>
+        android:icon="@drawable/ic_history" />
 
     <item
         android:id="@+id/nav_post_item"
         android:title="Publicar Item"
-        android:icon="@android:drawable/ic_menu_add"/>
+        android:icon="@drawable/ic_add" />
 
     <item
         android:id="@+id/nav_logout"
         android:title="Sair"
-        android:icon="@android:drawable/ic_lock_power_off"/>
+        android:icon="@drawable/ic_arrow_back" />
 </menu>
