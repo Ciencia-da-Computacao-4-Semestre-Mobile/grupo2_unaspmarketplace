@@ -15,9 +15,6 @@ import com.google.android.gms.common.api.ApiException
 import com.unasp.unaspmarketplace.repository.UserRepository
 import kotlinx.coroutines.launch
 import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
-import com.unasp.unaspmarketplace.auth.FacebookAuthHelper
-import com.unasp.unaspmarketplace.auth.GitHubAuthHelper
 import com.unasp.unaspmarketplace.auth.GoogleAuthHelper
 import com.unasp.unaspmarketplace.utils.UserUtils
 
@@ -39,18 +36,24 @@ class RegisterActivity : AppCompatActivity() {
                             try {
                                 UserUtils.ensureUserDataExists()
                             } catch (e: Exception) {
-                                Log.e("ResgiterActivity", "Erro ao garantir dados do usuário", e)
+                                Log.e("RegisterActivity", "Erro ao garantir dados do usuário", e)
                             }
 
-                            runOnUiThread {
-                                Toast.makeText(this@RegisterActivity, "Cadastro com Google realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this@RegisterActivity, HomeActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                            }
+                            Toast.makeText(
+                                this@RegisterActivity,
+                                "Cadastro com Google realizado com sucesso!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            val intent = Intent(this@RegisterActivity, HomeActivity::class.java)
+                            startActivity(intent)
+                            finish()
                         }
                     } else {
-                        Toast.makeText(this@RegisterActivity, "Erro no login com Google: $error", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this@RegisterActivity,
+                            "Erro no login com Google: $error",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             } else {
@@ -58,13 +61,20 @@ class RegisterActivity : AppCompatActivity() {
             }
         } catch (e: ApiException) {
             Log.e("RegisterActivity", "Google sign-in failed", e)
-            Toast.makeText(this, "Erro no cadastro com Google: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Erro no cadastro com Google: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.register_activity)
+
+        // Inicializa Firebase (se não estiver inicializado no Application)
+        FirebaseApp.initializeApp(this)
 
         userRepository = UserRepository()
 
@@ -92,6 +102,12 @@ class RegisterActivity : AppCompatActivity() {
                 registerUser(nome, email, senha)
             }
         }
+
+        // 🔹 Botão de login com Google (se existir no layout)
+        val btnGoogle = findViewById<LinearLayout>(R.id.btnGoogleRegister)
+        btnGoogle?.setOnClickListener {
+            signInWithGoogle()
+        }
     }
 
     private fun validateInputs(nome: String, email: String, senha: String, confirmarSenha: String): Boolean {
@@ -113,6 +129,17 @@ class RegisterActivity : AppCompatActivity() {
                 return false
             }
             else -> return true
+        }
+    }
+
+    private fun signInWithGoogle() {
+        try {
+            val googleSignInClient = GoogleAuthHelper.getClient(this)
+            val signInIntent = googleSignInClient.signInIntent
+            googleSignInLauncher.launch(signInIntent)
+        } catch (e: Exception) {
+            Log.e("RegisterActivity", "Error starting Google sign-in", e)
+            Toast.makeText(this, "Erro ao iniciar login com Google: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 

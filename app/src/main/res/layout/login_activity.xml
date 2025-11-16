@@ -127,45 +127,6 @@
                     android:src="@drawable/ic_google" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/btnGitHubLogin"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="0.3"
-                android:background="@drawable/github_button_background"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:contentDescription="@string/github"
-                    android:src="@drawable/ic_github" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/btnFacebookLogin"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="0.3"
-                android:background="@drawable/facebook_button_background"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:contentDescription="@string/facebook"
-                    android:src="@drawable/ic_facebook" />
-            </LinearLayout>
-
         </LinearLayout>
 
         <LinearLayout

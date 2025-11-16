@@ -9,12 +9,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.facebook.CallbackManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.FirebaseApp
-import com.unasp.unaspmarketplace.auth.FacebookAuthHelper
-import com.unasp.unaspmarketplace.auth.GitHubAuthHelper
 import com.unasp.unaspmarketplace.auth.GoogleAuthHelper
 import com.unasp.unaspmarketplace.data.model.LoginViewModel
 import com.unasp.unaspmarketplace.utils.UserUtils
@@ -26,7 +23,6 @@ import android.widget.CheckBox
 
 class LoginActivity : AppCompatActivity() {
     private val viewModel = LoginViewModel()
-    private lateinit var facebookCallbackManager: CallbackManager
 
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -72,9 +68,6 @@ class LoginActivity : AppCompatActivity() {
         try {
             // Inicializar Firebase
             FirebaseApp.initializeApp(this)
-
-            // Criar callback manager para Facebook
-            facebookCallbackManager = FacebookAuthHelper.createCallbackManager()
 
             setContentView(R.layout.login_activity)
 
@@ -155,15 +148,6 @@ class LoginActivity : AppCompatActivity() {
             signInWithGoogle()
         }
 
-        // Facebook login
-        findViewById<LinearLayout>(R.id.btnFacebookLogin).setOnClickListener {
-            signInWithFacebook()
-        }
-
-        // GitHub login
-        findViewById<LinearLayout>(R.id.btnGitHubLogin).setOnClickListener {
-            signInWithGitHub()
-        }
     }
 
     private fun signInWithGoogle() {
@@ -174,81 +158,6 @@ class LoginActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e("LoginActivity", "Error starting Google sign-in", e)
             Toast.makeText(this, "Erro ao iniciar login com Google: ${e.message}", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun signInWithFacebook() {
-        try {
-            FacebookAuthHelper.signInWithFacebook(this, facebookCallbackManager) { success, error ->
-                if (success) {
-                    // Login bem-sucedido
-                    lifecycleScope.launch {
-                        try {
-                            UserUtils.ensureUserDataExists()
-                        } catch (e: Exception) {
-                            Log.e("LoginActivity", "Erro ao garantir dados do usuário", e)
-                        }
-
-                        runOnUiThread {
-                            Toast.makeText(this@LoginActivity, "Login com Facebook realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
-                    }
-                } else {
-                    // Verificar se é falha silenciosa (como no GitHub)
-                    if (error == "SILENT_FAIL") {
-                        Toast.makeText(this@LoginActivity, "Não foi possível fazer login com Facebook. Tente outro método.", Toast.LENGTH_LONG).show()
-                    } else {
-                        // Outros erros (cancelamento, rede, etc.)
-                        if (error?.contains("cancelado", ignoreCase = true) != true) {
-                            Toast.makeText(this@LoginActivity, error ?: "Erro no login com Facebook", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("LoginActivity", "Error starting Facebook sign-in", e)
-            Toast.makeText(this, "Erro ao iniciar login com Facebook: ${e.message}", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun signInWithGitHub() {
-        try {
-            GitHubAuthHelper.signInWithGitHub(this) { success, error ->
-                if (success) {
-                    // Login bem-sucedido
-                    lifecycleScope.launch {
-                        try {
-                            UserUtils.ensureUserDataExists()
-                        } catch (e: Exception) {
-                            Log.e("LoginActivity", "Erro ao garantir dados do usuário", e)
-                        }
-
-                        runOnUiThread {
-                            Toast.makeText(this@LoginActivity, "Login com GitHub realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
-                    }
-                } else {
-                    // Verificar se é falha silenciosa
-                    if (error == "SILENT_FAIL") {
-                        // Falha silenciosa - mostrar mensagem genérica
-                        Toast.makeText(this@LoginActivity, "Não foi possível fazer login com GitHub. Tente outro método.", Toast.LENGTH_LONG).show()
-                    } else {
-                        // Outros erros (cancelamento, rede, etc.)
-                        if (error?.contains("cancelado", ignoreCase = true) != true) {
-                            Toast.makeText(this@LoginActivity, error ?: "Erro no login com GitHub", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("LoginActivity", "Error starting GitHub sign-in", e)
-            Toast.makeText(this, "Erro ao iniciar login com GitHub: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -295,11 +204,5 @@ class LoginActivity : AppCompatActivity() {
         viewModel.errorMessage.observe(this) { error ->
             Toast.makeText(this, "Erro: $error", Toast.LENGTH_LONG).show()
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        // Tratar callback do Facebook
-        facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
     }
 }
