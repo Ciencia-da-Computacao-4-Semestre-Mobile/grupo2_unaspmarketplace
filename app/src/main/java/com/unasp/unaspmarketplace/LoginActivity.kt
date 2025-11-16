@@ -110,7 +110,7 @@ class LoginActivity : AppCompatActivity() {
 
             val emailField = findViewById<EditText>(R.id.edtEmail)
             val passwordField = findViewById<EditText>(R.id.edtSenha)
-            val loginButton = findViewById<LinearLayout>(R.id.btnLogin)
+            val loginButton = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnLogin)
             val checkBoxTerms = findViewById<CheckBox>(R.id.login_remember_me)
 
             loginButton.setOnClickListener {
@@ -141,7 +141,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setupLoginButtons() {
         // Email/Password login
-        findViewById<LinearLayout>(R.id.btnLogin).setOnClickListener {
+        findViewById<com.google.android.material.button.MaterialButton>(R.id.btnLogin).setOnClickListener {
             val email = findViewById<EditText>(R.id.edtEmail).text.toString().trim()
             val password = findViewById<EditText>(R.id.edtSenha).text.toString().trim()
 
