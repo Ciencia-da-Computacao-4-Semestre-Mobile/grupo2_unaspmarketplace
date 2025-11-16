@@ -28,6 +28,7 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private lateinit var productRepository: ProductRepository
     private lateinit var productAdapter: ProductAdapter
     private lateinit var recyclerProducts: RecyclerView
+    private var suppressHomeToast = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,6 +119,7 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         }
 
         dialog.setOnDismissListener {
+            suppressHomeToast = true
             bottomNavigation.selectedItemId = R.id.nav_home
         }
 
@@ -132,6 +134,10 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     true
                 }
                 R.id.nav_home -> {
+                    if (suppressHomeToast) {
+                        suppressHomeToast = false // resetar a flag
+                        return@setOnItemSelectedListener true
+                    }
                     Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
                     true
                 }
