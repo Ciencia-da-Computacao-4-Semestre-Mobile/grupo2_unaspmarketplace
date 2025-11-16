@@ -94,6 +94,12 @@
         <!-- Tela de Sucesso do Pedido -->
         <activity android:name=".OrderSuccessActivity" />
 
+        <!-- Tela de Histórico de Pedidos -->
+        <activity android:name=".OrderHistoryActivity" />
+
+        <!-- Tela de Itens Postados -->
+        <activity android:name=".PostedItemsActivity" />
+
     </application>
 
 </manifest>

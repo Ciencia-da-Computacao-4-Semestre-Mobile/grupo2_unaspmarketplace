@@ -15,7 +15,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.unasp.unaspmarketplace.models.Order
 import com.unasp.unaspmarketplace.models.OrderItem
 import com.unasp.unaspmarketplace.utils.CartManager
-import com.unasp.unaspmarketplace.utils.WhatsAppManager
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
 
@@ -146,20 +145,22 @@ class PaymentActivity : AppCompatActivity() {
         // Converter itens do carrinho para itens do pedido
         val orderItems = cartItems.map { cartItem ->
             OrderItem(
+                productId = cartItem.product.id,
                 productName = cartItem.product.name,
                 quantity = cartItem.quantity,
-                unitPrice = cartItem.product.price,
-                totalPrice = cartItem.totalPrice
+                unitPrice = cartItem.product.price
             )
         }
 
         // Criar o pedido
         val order = Order(
             id = Order.generateOrderId(),
+            userId = UserUtils.getCurrentUserId() ?: "",
             customerName = customerName,
             items = orderItems,
             orderDate = Order.getCurrentDate(),
-            paymentMethod = selectedPaymentMethod
+            paymentMethod = selectedPaymentMethod,
+            totalAmount = orderItems.sumOf { it.totalPrice }
         )
 
         // Mostrar confirmação
