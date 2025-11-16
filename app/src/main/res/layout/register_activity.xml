@@ -124,6 +124,25 @@
                     android:src="@drawable/ic_google" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/btnLinkedIn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="0.3"
+                android:background="@drawable/linkedin_button_background"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:contentDescription="@string/linkedIn"
+                    android:src="@drawable/ic_linkedin" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -147,6 +166,7 @@
                 android:id="@+id/log_in_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:text="@string/login_go_back"

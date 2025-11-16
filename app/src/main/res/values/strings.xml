@@ -14,7 +14,7 @@
     <!-- Login and SignIn Activity Strings -->
 
     <string name="entrar_com_google">Entrar com Google</string>
-    <string name="github">GitHub</string>
+    <string name="linkedIn">LinkedIn</string>
     <string name="google">Google</string>
     <string name="checkout">Finalizar Compra</string>
     <string name="cart">Carrinho</string>
