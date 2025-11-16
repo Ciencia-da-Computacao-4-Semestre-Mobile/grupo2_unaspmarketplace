@@ -95,23 +95,32 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private fun setupNavigation() {
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
-        // Inflar o layout do menu suspenso
         val sheetView = layoutInflater.inflate(R.layout.menu_top_sheet, null)
         val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
 
-        // Configurar ações dos botões do menu
         val btnPostItem = sheetView.findViewById<TextView>(R.id.btnPostItem)
         btnPostItem.setOnClickListener {
-            // ação
-            dialog.dismiss() // Fecha o menu após a ação
+            val intent = Intent(this, PostItemActivity::class.java)
+            startActivity(intent)
+            dialog.dismiss()
         }
 
-        // Quando o menu for fechado, marcar o botão "Home"
+        val btnLogout = sheetView.findViewById<TextView>(R.id.btnLogout)
+        btnLogout.setOnClickListener {
+            val prefs = getSharedPreferences("user_session", MODE_PRIVATE)
+            prefs.edit().clear().apply()
+
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+
+            dialog.dismiss()
+        }
+
         dialog.setOnDismissListener {
             bottomNavigation.selectedItemId = R.id.nav_home
         }
 
-        // Configurar badge do carrinho
         CartBadgeManager.setupCartBadge(bottomNavigation)
         CartBadgeManager.updateBadge(CartManager.getTotalItemCount())
 
