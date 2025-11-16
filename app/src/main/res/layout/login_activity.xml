@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
 
 
+    <!-- Fundo imagem -->
     <ImageView
         android:id="@+id/bgImage"
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
             android:layout_height="50dp"
             android:autofillHints="emailAddress"
             android:background="@drawable/edittext_background"
-            android:hint="@string/email"
+            android:hint="@string/default_email"
             android:inputType="textEmailAddress"
             android:padding="16dp"
             android:textColor="#333333"
@@ -51,39 +51,20 @@
             android:layout_marginTop="12dp"
             android:autofillHints="password"
             android:background="@drawable/edittext_background"
-            android:hint="@string/senha"
+            android:hint="@string/default_password"
             android:inputType="textPassword"
             android:padding="16dp"
             android:textColor="#333333"
             android:textColorHint="#757575" />
 
-        <LinearLayout
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/login_remember_me"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:text="@string/login_remember_me"
-                android:textColor="#FFFFFF" />
-
-            <TextView
-                android:id="@+id/login_forgot_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/login_forgot_password"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                tools:ignore="TouchTargetSizeCheck" />
-
-        </LinearLayout>
+            android:layout_marginTop="20dp"
+            android:text="@string/login_forgot_password"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
@@ -97,6 +78,7 @@
             android:backgroundTint="#005bb5"
             app:cornerRadius="8dp"
             android:gravity="center"/>
+
 
 
         <LinearLayout
@@ -132,8 +114,9 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
 
 
             <TextView
@@ -149,16 +132,16 @@
                 android:id="@+id/sign_in_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
                 android:text="@string/btn_login_in_to_sign"
                 android:textColor="#0073e6"
                 android:textStyle="bold"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:clickable="true"
+                android:focusable="true"/>
 
         </LinearLayout>
 
     </LinearLayout>
+
 
 
 </FrameLayout>
