@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient">
+    android:background="@color/black">
 
 
     <ImageView
@@ -12,10 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/fundo_app"
+        android:src="@drawable/img_fundo"
         android:alpha="0.3"
         android:contentDescription="@null" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,11 +24,18 @@
         android:padding="24dp">
 
 
+        <ImageView
+            android:id="@+id/login_logo"
+            android:layout_width="249dp"
+            android:layout_height="140dp"
+            android:scaleType="centerCrop"
+            android:paddingRight="5dp"
+            android:src="@drawable/logo_login" />
+
         <EditText
             android:id="@+id/edtEmail"
             android:layout_width="326dp"
             android:layout_height="50dp"
-            android:layout_marginTop="32dp"
             android:autofillHints="emailAddress"
             android:background="@drawable/edittext_background"
             android:hint="@string/email"
