@@ -9,6 +9,7 @@
     <string name="default_email">Email</string>
     <string name="default_name">Nome</string>
     <string name="default_password">Senha</string>
+    <string name="default_number">Numero</string>
 
     <!-- Login and SignIn Activity Strings -->
 
@@ -65,7 +66,13 @@
     <string name="back_to_home">Voltar ao Início</string>
 
     <!-- Profile Activity Strings -->
-    <string name="profile_btn_Change_Photo">Alterar foto</string>
     <string name="profile_actual_password">Senha Atual</string>
+    <string name="profile_update_password">Alterar Senha</string>
+    <string name="profile_new_password">Nova Senha</string>
+    <string name="profile_confirm_password">Confirmar Senha</string>
+    <string name="profile_save_changes">Salvar Alterações</string>
+    <string name="profile_delete_account">Excluir Conta</string>
+    <string name="profile_account_infos">Dados de cadastro</string>
+
 
 </resources>
