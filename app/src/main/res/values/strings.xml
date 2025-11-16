@@ -73,6 +73,7 @@
     <string name="profile_save_changes">Salvar Alterações</string>
     <string name="profile_delete_account">Excluir Conta</string>
     <string name="profile_account_infos">Dados de cadastro</string>
+    <string name="profile_toolbar_profile">Meu Perfil</string>
 
 
 </resources>
