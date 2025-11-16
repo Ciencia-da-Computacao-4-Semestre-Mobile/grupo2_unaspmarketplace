@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
 
 
-    <!-- Fundo imagem -->
     <ImageView
         android:id="@+id/bgImage"
         android:layout_width="match_parent"
@@ -57,14 +57,33 @@
             android:textColor="#333333"
             android:textColorHint="#757575" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/login_forgot_password"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/login_remember_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/login_remember_me"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/login_forgot_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/login_forgot_password"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
@@ -78,7 +97,6 @@
             android:backgroundTint="#005bb5"
             app:cornerRadius="8dp"
             android:gravity="center"/>
-
 
 
         <LinearLayout
@@ -114,9 +132,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp">
-
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
 
 
             <TextView
@@ -132,16 +149,16 @@
                 android:id="@+id/sign_in_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="@string/btn_login_in_to_sign"
                 android:textColor="#0073e6"
                 android:textStyle="bold"
-                android:clickable="true"
-                android:focusable="true"/>
+                tools:ignore="TouchTargetSizeCheck" />
 
         </LinearLayout>
 
     </LinearLayout>
-
 
 
 </FrameLayout>
