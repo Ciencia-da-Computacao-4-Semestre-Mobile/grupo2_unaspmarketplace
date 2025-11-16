@@ -12,7 +12,6 @@ import android.content.Intent
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.unasp.unaspmarketplace.models.Product
@@ -96,28 +95,10 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private fun setupNavigation() {
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
-        val sheetView = layoutInflater.inflate(R.layout.menu_top_sheet, null)
-        val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
-
-        val btnPostItem = sheetView.findViewById<TextView>(R.id.btnPostItem)
-        btnPostItem.setOnClickListener {
-            val intent = Intent(this, PostItemActivity::class.java)
-            startActivity(intent)
-            dialog.dismiss()
+        R.id.nav_menu -> {
+            drawerLayout.openDrawer(GravityCompat.START)
+            true
         }
-
-        val btnLogout = sheetView.findViewById<TextView>(R.id.btnLogout)
-        btnLogout.setOnClickListener {
-            val prefs = getSharedPreferences("user_session", MODE_PRIVATE)
-            prefs.edit().clear().apply()
-
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-
-            dialog.dismiss()
-        }
-
         dialog.setOnDismissListener {
             suppressHomeToast = true
             bottomNavigation.selectedItemId = R.id.nav_home
@@ -126,31 +107,33 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         CartBadgeManager.setupCartBadge(bottomNavigation)
         CartBadgeManager.updateBadge(CartManager.getTotalItemCount())
 
-        bottomNavigation.setOnItemSelectedListener { item ->
+        navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_menu -> {
-                    dialog.setContentView(sheetView)
-                    dialog.show()
-                    true
-                }
-                R.id.nav_home -> {
-                    if (suppressHomeToast) {
-                        suppressHomeToast = false // resetar a flag
-                        return@setOnItemSelectedListener true
-                    }
-                    Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.nav_cart -> {
-                    startActivity(Intent(this, CartActivity::class.java))
-                    true
+                R.id.nav_post_item -> {
+                    startActivity(Intent(this, PostItemActivity::class.java))
                 }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ProfileActivity::class.java))
-                    true
                 }
-                else -> false
+                R.id.nav_orders -> {
+                    // Ainda em desenvolvimento
+                    Toast.makeText(this, "Meus pedidos em breve", Toast.LENGTH_SHORT).show()
+                }
+                R.id.nav_history -> {
+                    // Ainda em desenvolvimento
+                    Toast.makeText(this, "Histórico em breve", Toast.LENGTH_SHORT).show()
+                }
+                R.id.nav_logout -> {
+                    val prefs = getSharedPreferences("user_session", MODE_PRIVATE)
+                    prefs.edit().clear().apply()
+
+                    val intent = Intent(this, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                }
             }
+            drawerLayout.closeDrawers()
+            true
         }
 
         bottomNavigation.selectedItemId = R.id.nav_home

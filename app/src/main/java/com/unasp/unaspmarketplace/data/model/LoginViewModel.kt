@@ -18,11 +18,7 @@ class LoginViewModel : ViewModel() {
 
             loginState.postValue(success)
             if (!success && error != null) {
-                // AQUI ESTÁ A CORREÇÃO:
-                // "Use o valor de 'error'. Se por acaso 'error' for nulo,
-                // use a string 'Ocorreu um erro desconhecido.' no lugar."
-                // Isso GARANTE que nunca passaremos um nulo para o postValue.
-                errorMessage.postValue(error ?: "Ocorreu um erro desconhecido.")
+                errorMessage.postValue(error)
             }
         }
     }
