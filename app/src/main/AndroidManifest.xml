@@ -89,7 +89,10 @@
         <activity android:name=".PaymentActivity" />
 
         <!-- Tela de Preview do Pedido -->
-        <activity android:name=".OrderPreviewActivity" />
+        <activity
+            android:name="com.unasp.unaspmarketplace.OrderPreviewActivity"
+            android:theme="@style/Theme.Transparent"
+            android:exported="false" />
 
         <!-- Tela de Sucesso do Pedido -->
         <activity android:name=".OrderSuccessActivity" />

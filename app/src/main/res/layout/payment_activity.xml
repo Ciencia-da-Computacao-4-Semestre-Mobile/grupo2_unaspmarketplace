@@ -8,33 +8,53 @@
     android:background="@color/white">
 
     <!-- Header -->
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/appbar_payment"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+        app:elevation="8dp"
+        android:outlineAmbientShadowColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationContentDescription="back"
+        app:title="@string/payment_method"
+        app:titleTextColor="@color/blue_default" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@color/blue_default"
         android:layout_marginBottom="24dp">
 
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@android:drawable/ic_media_previous"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="4dp" />
+        <TextView
+            android:id="@+id/txtOrderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/order_review"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/txtOrderSummary"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/payment_method"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/blue_default"
-            android:gravity="center"
-            android:layout_marginStart="8dp" />
+            android:text="1x Livro A, 2x Livro B, 1x Livro C"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="@id/txtOrderTitle"
+            app:layout_constraintBottom_toBottomOf="@id/txtOrderTitle"
+            app:layout_constraintStart_toEndOf="@id/txtOrderTitle" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Informação sobre retirada -->
     <LinearLayout

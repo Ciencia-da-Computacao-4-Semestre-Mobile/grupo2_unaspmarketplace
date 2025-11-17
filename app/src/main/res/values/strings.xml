@@ -38,8 +38,9 @@
 
     <!-- Payment Activity Strings -->
     <string name="payment_method">Forma de Pagamento</string>
+    <string name="order_review">Pedido: </string>
     <string name="pickup_info_title">Local de Retirada</string>
-    <string name="pickup_info_description">Todos os produtos devem ser retirados na UNASP Store</string>
+    <string name="pickup_info_description">Combinar com vendedor</string>
     <string name="customer_info">Dados do Cliente</string>
     <string name="full_name">Nome Completo</string>
     <string name="whatsapp_number_optional">WhatsApp (opcional)</string>

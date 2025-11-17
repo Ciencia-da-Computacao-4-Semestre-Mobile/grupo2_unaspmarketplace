@@ -27,6 +27,7 @@ class PaymentActivity : AppCompatActivity() {
     private lateinit var rbCredit: RadioButton
     private lateinit var rbPix: RadioButton
     private lateinit var rbCash: RadioButton
+    private var txtOrderSummary: TextView? = null
     private lateinit var txtTotal: TextView
     private lateinit var btnConfirmPayment: Button
 
@@ -56,9 +57,19 @@ class PaymentActivity : AppCompatActivity() {
         rbCash = findViewById(R.id.rbCash)
         txtTotal = findViewById(R.id.txtTotal)
         btnConfirmPayment = findViewById(R.id.btnConfirmPayment)
+        txtOrderSummary = findViewById(R.id.txtOrderSummary) as? TextView
 
-        val btnBack = findViewById<ImageView>(R.id.btnBack)
-        btnBack.setOnClickListener { finish() }
+        displayOrderSummary()
+    }
+
+    private fun displayOrderSummary() {
+        val cartItems = CartManager.getCartItems()
+        val summaryText = if (cartItems.isNotEmpty()) {
+            cartItems.joinToString(", ") { item -> "x${item.quantity} ${item.product.name}" }
+        } else {
+            "Nenhum item no carrinho"
+        }
+        txtOrderSummary?.text = summaryText
     }
 
     private fun loadUserData() {
@@ -164,7 +175,7 @@ class PaymentActivity : AppCompatActivity() {
         )
 
         // Mostrar confirmação
-        showOrderConfirmation(order, whatsappNumber)
+        goToOrderPreview(order, whatsappNumber)
     }
 
     private fun getSelectedPaymentMethod(): String {
@@ -175,34 +186,6 @@ class PaymentActivity : AppCompatActivity() {
             R.id.rbCash -> "Dinheiro"
             else -> ""
         }
-    }
-
-    private fun showOrderConfirmation(order: Order, customerWhatsApp: String?) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Confirmar Pedido")
-
-        val whatsappInfo = if (!customerWhatsApp.isNullOrBlank()) {
-            "\nWhatsApp: $customerWhatsApp"
-        } else ""
-
-        builder.setMessage(
-            "Nome: ${order.customerName}$whatsappInfo\n" +
-            "Itens: ${order.items.size} produto(s)\n" +
-            "Total: R$ %.2f\n".format(order.items.sumOf { it.totalPrice }) +
-            "Pagamento: ${order.paymentMethod} (na retirada)\n" +
-            "Local: ${order.pickupLocation}\n\n" +
-            "Deseja visualizar o pedido antes de enviar?"
-        )
-
-        builder.setPositiveButton("Visualizar") { _, _ ->
-            goToOrderPreview(order, customerWhatsApp)
-        }
-
-        builder.setNegativeButton("Cancelar") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        builder.show()
     }
 
     private fun goToOrderPreview(order: Order, customerWhatsApp: String?) {
@@ -216,7 +199,7 @@ class PaymentActivity : AppCompatActivity() {
         }
 
         startActivity(intent)
-        finish()
+        // finish()
     }
 }
 
