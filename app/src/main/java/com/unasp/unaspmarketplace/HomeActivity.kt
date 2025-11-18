@@ -145,10 +145,6 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     val intent = Intent(this, ProfileActivity::class.java)
                     startActivity(intent)
                 }
-                R.id.nav_order_history -> {
-                    val intent = Intent(this, OrderHistoryActivity::class.java)
-                    startActivity(intent)
-                }
                 R.id.nav_posted_items -> {
                     val intent = Intent(this, PostedItemsActivity::class.java)
                     startActivity(intent)

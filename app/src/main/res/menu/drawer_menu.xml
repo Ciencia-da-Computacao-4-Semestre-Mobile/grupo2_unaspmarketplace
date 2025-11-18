@@ -6,10 +6,10 @@
         android:title="Perfil"
         android:icon="@android:drawable/ic_menu_myplaces"/>
 
-    <item
-        android:id="@+id/nav_order_history"
-        android:title="Histórico de Pedidos"
-        android:icon="@android:drawable/ic_menu_agenda"/>
+<!--    <item-->
+<!--        android:id="@+id/nav_order_history"-->
+<!--        android:title="Histórico de Pedidos"-->
+<!--        android:icon="@android:drawable/ic_menu_agenda"/>-->
 
     <item
         android:id="@+id/nav_posted_items"
