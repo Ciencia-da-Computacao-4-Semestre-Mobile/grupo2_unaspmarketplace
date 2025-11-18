@@ -2,16 +2,18 @@ package com.unasp.unaspmarketplace
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.ImageView
 import android.widget.Toast
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,16 +43,32 @@ class PostItemActivity : AppCompatActivity() {
 
     private lateinit var imageAdapter: ProductImageAdapter
     private val storage = FirebaseStorage.getInstance()
-    private val selectedImages = mutableListOf<Uri>()
+
+    companion object {
+        private const val CAMERA_PERMISSION_CODE = 100
+        private const val STORAGE_PERMISSION_CODE = 101
+    }
 
     private val imagePickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.let { uri ->
-                imageAdapter.addImage(uri)
-                btnRemoveImage.isEnabled = imageAdapter.getImages().isNotEmpty()
+        try {
+            if (result.resultCode == RESULT_OK) {
+                result.data?.data?.let { uri ->
+                    // Verificar se o adapter está inicializado
+                    if (::imageAdapter.isInitialized) {
+                        imageAdapter.addImage(uri)
+                        btnRemoveImage.isEnabled = imageAdapter.getImages().isNotEmpty()
+                    } else {
+                        Toast.makeText(this, "Erro: adapter não inicializado", Toast.LENGTH_SHORT).show()
+                    }
+                } ?: run {
+                    Toast.makeText(this, "Nenhuma imagem selecionada", Toast.LENGTH_SHORT).show()
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Erro ao processar imagem: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -70,33 +88,47 @@ class PostItemActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        edtName = findViewById(R.id.edtName)
-        edtDescription = findViewById(R.id.edtDescription)
-        edtPrice = findViewById(R.id.edtPrice)
-        edtStock = findViewById(R.id.edtStock)
-        spinnerCategory = findViewById(R.id.spinnerCategory)
-        btnSave = findViewById(R.id.btnSave)
-        btnCancel = findViewById(R.id.btnCancel)
-        btnAddImage = findViewById(R.id.btnAddImage)
-        btnRemoveImage = findViewById(R.id.btnRemoveImage)
-        recyclerImages = findViewById(R.id.recyclerImages)
+        try {
+            edtName = findViewById(R.id.edtName)
+            edtDescription = findViewById(R.id.edtDescription)
+            edtPrice = findViewById(R.id.edtPrice)
+            edtStock = findViewById(R.id.edtStock)
+            spinnerCategory = findViewById(R.id.spinnerCategory)
+            btnSave = findViewById(R.id.btnSave)
+            btnCancel = findViewById(R.id.btnCancel)
+            btnAddImage = findViewById(R.id.btnAddImage)
+            btnRemoveImage = findViewById(R.id.btnRemoveImage)
+            recyclerImages = findViewById(R.id.recyclerImages)
 
-        val btnBack = findViewById<ImageView>(R.id.btnBack)
-        btnBack.setOnClickListener { finish() }
+            // Configurar toolbar
+            val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.appbar_post)
+            toolbar.setNavigationOnClickListener { finish() }
 
-        // Inicialmente desabilitar botão de remover
-        btnRemoveImage.isEnabled = false
+            // Inicialmente desabilitar botão de remover
+            btnRemoveImage.isEnabled = false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Erro ao inicializar interface: ${e.message}", Toast.LENGTH_LONG).show()
+            finish() // Se não conseguir inicializar as views, fechar a activity
+        }
     }
 
     private fun setupImageRecycler() {
-        imageAdapter = ProductImageAdapter(selectedImages) { position ->
-            imageAdapter.removeImage(position)
-            btnRemoveImage.isEnabled = imageAdapter.getImages().isNotEmpty()
-        }
+        try {
+            imageAdapter = ProductImageAdapter(mutableListOf()) { position ->
+                imageAdapter.removeImage(position)
+                btnRemoveImage.isEnabled = imageAdapter.getImages().isNotEmpty()
+            }
 
-        recyclerImages.apply {
-            adapter = imageAdapter
-            layoutManager = LinearLayoutManager(this@PostItemActivity, LinearLayoutManager.HORIZONTAL, false)
+            recyclerImages.apply {
+                adapter = imageAdapter
+                layoutManager = LinearLayoutManager(this@PostItemActivity, LinearLayoutManager.HORIZONTAL, false)
+                setHasFixedSize(true)
+                // Adicionar decoração para espaçamento se necessário
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Erro ao configurar galeria de imagens: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -151,17 +183,63 @@ class PostItemActivity : AppCompatActivity() {
     }
 
     private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        imagePickerLauncher.launch(intent)
+        try {
+            if (checkStoragePermission()) {
+                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                imagePickerLauncher.launch(intent)
+            } else {
+                requestStoragePermission()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Erro ao abrir galeria: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun checkStoragePermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestStoragePermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+            STORAGE_PERMISSION_CODE
+        )
     }
 
     private fun openCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (intent.resolveActivity(packageManager) != null) {
-            imagePickerLauncher.launch(intent)
-        } else {
-            Toast.makeText(this, "Câmera não disponível", Toast.LENGTH_SHORT).show()
+        try {
+            if (checkCameraPermission()) {
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                if (intent.resolveActivity(packageManager) != null) {
+                    imagePickerLauncher.launch(intent)
+                } else {
+                    Toast.makeText(this, "Câmera não disponível", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                requestCameraPermission()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Erro ao abrir câmera: ${e.message}", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun checkCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(android.Manifest.permission.CAMERA),
+            CAMERA_PERMISSION_CODE
+        )
     }
 
     private fun showRemoveImageDialog() {
@@ -307,6 +385,30 @@ class PostItemActivity : AppCompatActivity() {
         }
 
         return imageUrls
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            CAMERA_PERMISSION_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openCamera()
+                } else {
+                    Toast.makeText(this, "Permissão de câmera negada", Toast.LENGTH_SHORT).show()
+                }
+            }
+            STORAGE_PERMISSION_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openGallery()
+                } else {
+                    Toast.makeText(this, "Permissão de armazenamento negada", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun setupBottomNavigation() {

@@ -2,7 +2,6 @@ package com.unasp.unaspmarketplace.auth
 
 import android.app.Activity
 import android.util.Log
-import android.widget.Toast
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback

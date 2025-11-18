@@ -11,6 +11,13 @@
     <queries>
         <package android:name="com.whatsapp" />
         <package android:name="com.whatsapp.w4b" />
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="image/*" />
+        </intent>
     </queries>
 
     <application
@@ -86,6 +93,18 @@
 
         <!-- Tela de Sucesso do Pedido -->
         <activity android:name=".OrderSuccessActivity" />
+
+        <!-- Tela de Itens Postados -->
+        <activity android:name=".PostedItemsActivity" />
+
+        <!-- Telas de Recuperação de Senha -->
+        <activity
+            android:name=".VerifyResetCodeActivity"
+            android:parentActivityName=".LoginActivity" />
+
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:parentActivityName=".VerifyResetCodeActivity" />
 
     </application>
 

@@ -47,13 +47,21 @@ class ProductImageAdapter(
         private val btnRemove: ImageButton = itemView.findViewById(R.id.btnRemoveImage)
 
         fun bind(uri: Uri, position: Int) {
-            Glide.with(itemView.context)
-                .load(uri)
-                .centerCrop()
-                .into(imageView)
+            try {
+                Glide.with(itemView.context)
+                    .load(uri)
+                    .centerCrop()
+                    .placeholder(R.color.gray_light)
+                    .error(R.color.gray_light)
+                    .into(imageView)
 
-            btnRemove.setOnClickListener {
-                onRemoveClick(position)
+                btnRemove.setOnClickListener {
+                    onRemoveClick(position)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Fallback para erro de carregamento de imagem
+                imageView.setBackgroundColor(itemView.context.getColor(R.color.gray_light))
             }
         }
     }
