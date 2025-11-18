@@ -119,4 +119,18 @@ object UserUtils {
             false
         }
     }
+
+    /**
+     * Retorna o ID do usuário atualmente logado
+     */
+    fun getCurrentUserId(): String? {
+        return auth.currentUser?.uid
+    }
+
+    /**
+     * Verifica se há um usuário logado
+     */
+    fun isUserLoggedIn(): Boolean {
+        return auth.currentUser != null
+    }
 }

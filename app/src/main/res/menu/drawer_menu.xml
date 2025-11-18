@@ -6,20 +6,25 @@
         android:title="Perfil"
         android:icon="@android:drawable/ic_menu_myplaces"/>
 
-    <item
-        android:id="@+id/nav_orders"
-        android:title="Meus Pedidos"
-        android:icon="@android:drawable/ic_menu_agenda"/>
+<!--    <item-->
+<!--        android:id="@+id/nav_order_history"-->
+<!--        android:title="Histórico de Pedidos"-->
+<!--        android:icon="@android:drawable/ic_menu_agenda"/>-->
 
     <item
-        android:id="@+id/nav_history"
-        android:title="Histórico"
-        android:icon="@android:drawable/ic_menu_recent_history"/>
+        android:id="@+id/nav_posted_items"
+        android:title="Meus Itens Postados"
+        android:icon="@android:drawable/ic_menu_view"/>
 
     <item
         android:id="@+id/nav_post_item"
         android:title="Publicar Item"
         android:icon="@android:drawable/ic_menu_add"/>
+
+    <item
+        android:id="@+id/nav_history"
+        android:title="Configurações"
+        android:icon="@android:drawable/ic_menu_preferences"/>
 
     <item
         android:id="@+id/nav_logout"

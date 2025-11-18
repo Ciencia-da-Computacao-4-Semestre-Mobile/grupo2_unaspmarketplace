@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.unasp.unaspmarketplace.modelos.Category
-import com.unasp.unaspmarketplace.modelos.CategoryAdapter
-import com.unasp.unaspmarketplace.modelos.ProductAdapter
+import com.unasp.unaspmarketplace.models.Category
+import com.unasp.unaspmarketplace.models.CategoryAdapter
+import com.unasp.unaspmarketplace.models.ProductAdapter
 import android.content.Intent
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
@@ -144,6 +144,14 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                 R.id.nav_profile -> {
                     val intent = Intent(this, ProfileActivity::class.java)
                     startActivity(intent)
+                }
+                R.id.nav_posted_items -> {
+                    val intent = Intent(this, PostedItemsActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_logout -> {
+                    // Implementar logout
+                    Toast.makeText(this, "Logout em breve", Toast.LENGTH_SHORT).show()
                 }
             }
             drawerLayout.closeDrawers() // fecha o menu depois do clique

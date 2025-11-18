@@ -94,6 +94,18 @@
         <!-- Tela de Sucesso do Pedido -->
         <activity android:name=".OrderSuccessActivity" />
 
+        <!-- Tela de Itens Postados -->
+        <activity android:name=".PostedItemsActivity" />
+
+        <!-- Telas de Recuperação de Senha -->
+        <activity
+            android:name=".VerifyResetCodeActivity"
+            android:parentActivityName=".LoginActivity" />
+
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:parentActivityName=".VerifyResetCodeActivity" />
+
     </application>
 
 </manifest>

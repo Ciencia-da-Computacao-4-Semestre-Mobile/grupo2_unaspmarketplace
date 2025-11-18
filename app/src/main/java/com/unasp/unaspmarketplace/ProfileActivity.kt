@@ -13,7 +13,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.unasp.unaspmarketplace.models.User
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 class ProfileActivity : AppCompatActivity() {
 
