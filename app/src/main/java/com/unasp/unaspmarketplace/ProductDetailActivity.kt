@@ -11,8 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
+import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import com.unasp.unaspmarketplace.adapters.ProductDetailImageAdapter
 import com.unasp.unaspmarketplace.models.Product
+import com.unasp.unaspmarketplace.models.User
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
 
@@ -122,7 +127,9 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
         txtProductPrice.text = "R$ %.2f".format(product.price)
         txtProductStock.text = "${product.stock} unidades"
         txtProductDescription.text = product.description
-        txtSellerName.text = "Vendedor: ${product.sellerId}"
+
+        // Buscar nome real do vendedor
+        loadSellerName()
 
         // Exibir imagens do produto
         if (product.imageUrls.isNotEmpty()) {
@@ -256,6 +263,43 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
                     true
                 }
                 else -> false
+            }
+        }
+    }
+
+    /**
+     * Busca o nome real do vendedor pelo sellerId
+     */
+    private fun loadSellerName() {
+        if (product.sellerId.isEmpty()) {
+            txtSellerName.text = "Vendedor: Não informado"
+            return
+        }
+
+        lifecycleScope.launch {
+            try {
+                val firestore = FirebaseFirestore.getInstance()
+                val userDoc = firestore.collection("users")
+                    .document(product.sellerId)
+                    .get()
+                    .await()
+
+                if (userDoc.exists()) {
+                    val user = userDoc.toObject(User::class.java)
+                    val sellerName = user?.name ?: "Nome não disponível"
+                    runOnUiThread {
+                        txtSellerName.text = "Vendedor: $sellerName"
+                    }
+                } else {
+                    runOnUiThread {
+                        txtSellerName.text = "Vendedor: Usuário não encontrado"
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("ProductDetail", "Erro ao buscar vendedor", e)
+                runOnUiThread {
+                    txtSellerName.text = "Vendedor: Erro ao carregar"
+                }
             }
         }
     }

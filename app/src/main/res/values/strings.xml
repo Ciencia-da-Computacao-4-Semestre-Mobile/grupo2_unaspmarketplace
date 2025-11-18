@@ -88,13 +88,13 @@
 
 
     <!-- Profile Activity Strings -->
-    <string name="profile_actual_password">Senha Atual</string>
-    <string name="profile_update_password">Alterar Senha</string>
-    <string name="profile_new_password">Nova Senha</string>
-    <string name="profile_confirm_password">Confirmar Senha</string>
-    <string name="profile_save_changes">Salvar Alterações</string>
-    <string name="profile_delete_account">Excluir Conta</string>
-    <string name="profile_account_infos">Dados de cadastro</string>
+
+<!--    <string name="profile_new_password">Nova Senha</string>-->
+<!--    <string name="profile_confirm_password">Confirmar Senha</string>-->
+<!--    <string name="profile_save_changes">Salvar Alterações</string>-->
+<!--    <string name="profile_delete_account">Excluir Conta</string>-->
+<!--    <string name="profile_account_infos">Dados de cadastro</string>-->
+
     <string name="profile_toolbar_profile">Meu Perfil</string>
 
 

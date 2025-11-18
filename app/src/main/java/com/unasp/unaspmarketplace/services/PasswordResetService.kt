@@ -21,11 +21,25 @@ class PasswordResetService {
     companion object {
         private const val TAG = "PasswordResetService"
 
-        // Configurações do servidor de email (você pode usar Gmail SMTP)
+        // Configurações do servidor de email - CONFIGURE COM SUAS CREDENCIAIS REAIS
         private const val SMTP_HOST = "smtp.gmail.com"
         private const val SMTP_PORT = "587"
-        private const val EMAIL_USERNAME = "unaspmarketplace@gmail.com" // Substitua pelo seu email
-        private const val EMAIL_PASSWORD = "sua_senha_app" // Use senha de app do Gmail
+
+        // ⚠️ IMPORTANTE: Configure estas credenciais com valores reais
+        private const val EMAIL_USERNAME = "marketplace.unasp@gmail.com" // Substitua pelo email real
+        private const val EMAIL_PASSWORD = "password" // Use App Password do Gmail
+
+        // Detectar se as credenciais estão configuradas
+        private fun areCredentialsConfigured(): Boolean {
+            return EMAIL_USERNAME != "seu.email@gmail.com" &&
+                   EMAIL_USERNAME != "marketplace.unasp@gmail.com" &&
+                   EMAIL_PASSWORD != "sua_senha_de_app" &&
+                   EMAIL_PASSWORD != "password" &&
+                   EMAIL_USERNAME.isNotEmpty() &&
+                   EMAIL_PASSWORD.isNotEmpty() &&
+                   EMAIL_USERNAME.contains("@") &&
+                   EMAIL_PASSWORD.length >= 16  // Senhas de app do Gmail têm 16 chars
+        }
 
         @Volatile
         private var INSTANCE: PasswordResetService? = null
@@ -54,6 +68,7 @@ class PasswordResetService {
 
             // Gerar novo token
             val token = PasswordResetToken.generateToken()
+
             val resetToken = PasswordResetToken(
                 email = email,
                 token = token,
@@ -198,15 +213,32 @@ class PasswordResetService {
      * Envia email com o token de recuperação
      */
     private fun sendResetEmail(email: String, token: String) {
-        // Esta função enviaria o email em background
-        // Por enquanto, vamos simular o envio
+        // Verificar se credenciais estão configuradas
+        if (!areCredentialsConfigured()) {
+            Log.w(TAG, "🚨 CREDENCIAIS NÃO CONFIGURADAS!")
+            Log.w(TAG, "📧 Email destino: $email")
+            Log.w(TAG, "🔑 Token gerado: $token")
+            Log.w(TAG, "⏰ Válido por: 15 minutos")
+            Log.w(TAG, "🛠️ Configure EMAIL_USERNAME e EMAIL_PASSWORD para envio real")
+            Log.w(TAG, "📋 Instruções em: CONFIGURACAO_EMAIL_GMAIL.md")
+
+            // Armazenar token em SharedPreferences para debugging (temporário)
+            storeTokenForDebugging(email, token)
+            return
+        }
+
+        // Envio real de email quando credenciais estão configuradas
         Thread {
             try {
+                Log.i(TAG, "🚀 Iniciando envio de email para: $email")
+
                 val props = Properties().apply {
                     put("mail.smtp.host", SMTP_HOST)
                     put("mail.smtp.port", SMTP_PORT)
                     put("mail.smtp.auth", "true")
                     put("mail.smtp.starttls.enable", "true")
+                    put("mail.smtp.ssl.trust", SMTP_HOST)
+                    put("mail.debug", "true")  // Para debugging
                 }
 
                 val session = Session.getInstance(props, object : Authenticator() {
@@ -257,11 +289,47 @@ class PasswordResetService {
                 }
 
                 Transport.send(message)
-                Log.d(TAG, "Email enviado com sucesso para: $email")
+                Log.i(TAG, "✅ Email de recuperação enviado com sucesso para: $email")
 
+            } catch (e: MessagingException) {
+                Log.e(TAG, "❌ Erro de SMTP ao enviar email para $email: ${e.message}", e)
+                when {
+                    e.message?.contains("Authentication failed") == true -> {
+                        Log.e(TAG, "🔑 Erro de autenticação - verifique EMAIL_USERNAME e EMAIL_PASSWORD")
+                        Log.e(TAG, "💡 Use senha de app do Gmail, não a senha normal")
+                    }
+                    e.message?.contains("Connection") == true -> {
+                        Log.e(TAG, "🌐 Erro de conexão - verifique internet e firewall")
+                    }
+                    else -> {
+                        Log.e(TAG, "📧 Erro SMTP genérico - verifique configurações")
+                    }
+                }
             } catch (e: Exception) {
-                Log.e(TAG, "Erro ao enviar email", e)
+                Log.e(TAG, "❌ Erro geral ao enviar email para $email: ${e.message}", e)
             }
         }.start()
+    }
+
+    /**
+     * Armazena token temporariamente para debugging quando email não está configurado
+     */
+    private fun storeTokenForDebugging(email: String, token: String) {
+        try {
+            // Esta função poderia armazenar o token em SharedPreferences ou log especial
+            // Por agora, vamos apenas fazer log mais visível
+            Log.i(TAG, "")
+            Log.i(TAG, "🟡 ===============================================")
+            Log.i(TAG, "🟡 TOKEN DE RECUPERAÇÃO GERADO (SEM EMAIL)")
+            Log.i(TAG, "🟡 ===============================================")
+            Log.i(TAG, "🟡 Email: $email")
+            Log.i(TAG, "🟡 Token: $token")
+            Log.i(TAG, "🟡 Use este código na tela de verificação")
+            Log.i(TAG, "🟡 Válido por: 15 minutos")
+            Log.i(TAG, "🟡 ===============================================")
+            Log.i(TAG, "")
+        } catch (e: Exception) {
+            Log.e(TAG, "Erro ao armazenar token para debugging", e)
+        }
     }
 }
