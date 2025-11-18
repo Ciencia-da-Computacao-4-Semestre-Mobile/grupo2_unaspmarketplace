@@ -9,8 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.unasp.unaspmarketplace.models.Order
+import com.unasp.unaspmarketplace.models.OrderItem
 import com.unasp.unaspmarketplace.utils.CartManager
-import com.unasp.unaspmarketplace.utils.WhatsAppManager
 import com.unasp.unaspmarketplace.utils.WhatsAppHelper
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
@@ -84,21 +84,23 @@ class OrderPreviewActivity : AppCompatActivity() {
 
         // Converter itens do carrinho para itens do pedido
         val orderItems = cartItems.map { cartItem ->
-            com.unasp.unaspmarketplace.models.OrderItem(
+            OrderItem(
+                productId = cartItem.product.id,
                 productName = cartItem.product.name,
                 quantity = cartItem.quantity,
-                unitPrice = cartItem.product.price,
-                totalPrice = cartItem.totalPrice
+                unitPrice = cartItem.product.price
             )
         }
 
         // Criar o pedido
         order = Order(
             id = orderId,
+            userId = UserUtils.getCurrentUserId() ?: "",
             customerName = customerName,
             items = orderItems,
             orderDate = Order.getCurrentDate(),
-            paymentMethod = paymentMethod
+            paymentMethod = paymentMethod,
+            totalAmount = orderItems.sumOf { it.totalPrice }
         )
 
         // Mostrar preview do pedido

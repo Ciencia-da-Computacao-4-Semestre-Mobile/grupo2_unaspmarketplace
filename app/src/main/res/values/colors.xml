@@ -2,13 +2,26 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="blue_default">#0073e6</color>
-    <color name="purple_500">#673AB7</color>
-    <color name="gray_500">#9E9E9E</color>
-    <color name="blue_primary">#0073e6</color>
-    <color name="gray_light">#E0E0E0</color>
-    <color name="red">#F44336</color>
-    <color name="gray_300">#E0E0E0</color>
-    <color name="gray_100">#F5F5F5</color>
 
+    <!-- Cores principais do app -->
+    <color name="blue_primary">#0073e6</color>
+    <color name="blue_secondary">#005bb5</color>
+    <color name="blue_light">#4da6ff</color>
+    <color name="blue_default">#0073e6</color>
+
+    <!-- Cores de apoio -->
+    <color name="gray_100">#F5F5F5</color>
+    <color name="gray_300">#E0E0E0</color>
+    <color name="gray_500">#9E9E9E</color>
+    <color name="gray_700">#616161</color>
+    <color name="gray_900">#212121</color>
+    <color name="gray_light">#E0E0E0</color>
+
+    <!-- Cores de status -->
+    <color name="red">#F44336</color>
+    <color name="green">#4CAF50</color>
+    <color name="orange">#FF9800</color>
+
+    <!-- Cores deprecated (manter para compatibilidade) -->
+    <color name="purple_500">#673AB7</color>
 </resources>

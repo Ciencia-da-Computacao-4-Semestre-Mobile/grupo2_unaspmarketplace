@@ -1,4 +1,4 @@
-package com.unasp.unaspmarketplace.modelos
+package com.unasp.unaspmarketplace.models
 
 import android.view.LayoutInflater
 import android.view.View

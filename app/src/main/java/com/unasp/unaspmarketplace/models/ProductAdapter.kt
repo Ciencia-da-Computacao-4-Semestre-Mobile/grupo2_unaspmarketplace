@@ -1,4 +1,4 @@
-package com.unasp.unaspmarketplace.modelos
+package com.unasp.unaspmarketplace.models
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.unasp.unaspmarketplace.ProductDetailActivity
 import com.unasp.unaspmarketplace.R
-import com.unasp.unaspmarketplace.models.Product
 
 class ProductAdapter(private var products: MutableList<Product>) :
     RecyclerView.Adapter<ProductAdapter.ProdutoViewHolder>() {
