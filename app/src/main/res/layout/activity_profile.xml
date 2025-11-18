@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/black"
     tools:context=".ProfileActivity">
 
     <!-- AppBar -->
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:elevation="4dp"
+        android:elevation="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,12 +24,20 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:title="Meu Perfil"
+            app:title="@string/profile_toolbar_profile"
             app:titleTextColor="@color/blue_default" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- ScrollView para o conteúdo -->
+    <ImageView
+        android:id="@+id/bgImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_fundo"
+        android:alpha="0.3"
+        android:contentDescription="@null" />
+
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -53,7 +61,6 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp" />
 
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilName"
                 android:layout_width="match_parent"
@@ -61,17 +68,21 @@
                 android:layout_marginBottom="16dp"
                 android:hint="@string/default_name"
                 app:startIconDrawable="@drawable/ic_person"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/white_outline"
+                app:boxStrokeWidth="2dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName"
-                    android:maxLines="1" />
-
+                    android:maxLines="1"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Campo Email -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilEmail"
                 android:layout_width="match_parent"
@@ -79,7 +90,9 @@
                 android:layout_marginBottom="16dp"
                 android:hint="@string/default_email"
                 app:startIconDrawable="@drawable/ic_email"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/white_outline"
+                app:boxStrokeWidth="2dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEmail"
@@ -87,10 +100,12 @@
                     android:layout_height="wrap_content"
                     android:enabled="false"
                     android:inputType="textEmailAddress"
-                    android:maxLines="1" />
-
+                    android:maxLines="1"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Campo Telefone -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilPhoneNumber"
                 android:layout_width="match_parent"
@@ -98,16 +113,20 @@
                 android:layout_marginBottom="16dp"
                 android:hint="@string/default_number"
                 app:startIconDrawable="@drawable/ic_phone"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/white_outline"
+                app:boxStrokeWidth="2dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:maxLines="1" />
-
+                    android:inputType="phone|number"
+                    android:maxLines="1"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"/>
             </com.google.android.material.textfield.TextInputLayout>
+
 
             <!-- Seção Alterar Senha -->
             <com.google.android.material.card.MaterialCardView

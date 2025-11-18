@@ -12,12 +12,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import com.facebook.CallbackManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.FirebaseApp
+
 import com.google.firebase.auth.FirebaseAuth
 import com.unasp.unaspmarketplace.auth.FacebookAuthHelper
+
 import com.unasp.unaspmarketplace.auth.GoogleAuthHelper
 import com.unasp.unaspmarketplace.auth.GitHubAuthHelper
 import com.unasp.unaspmarketplace.services.PasswordResetService
@@ -28,7 +29,6 @@ import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private val viewModel = LoginViewModel()
-    private lateinit var facebookCallbackManager: CallbackManager
 
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -75,9 +75,6 @@ class LoginActivity : AppCompatActivity() {
             // Inicializar Firebase
             FirebaseApp.initializeApp(this)
 
-            // Criar callback manager para Facebook
-            facebookCallbackManager = FacebookAuthHelper.createCallbackManager()
-
             setContentView(R.layout.login_activity)
 
             setupLoginButtons()
@@ -117,15 +114,6 @@ class LoginActivity : AppCompatActivity() {
             signInWithGoogle()
         }
 
-        // Facebook login
-        findViewById<LinearLayout>(R.id.btnFacebookLogin).setOnClickListener {
-            signInWithFacebook()
-        }
-
-        // GitHub login
-        findViewById<LinearLayout>(R.id.btnGitHubLogin).setOnClickListener {
-            signInWithGitHub()
-        }
     }
 
     private fun signInWithGoogle() {
@@ -138,6 +126,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Erro ao iniciar login com Google: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
+
 
     private fun signInWithFacebook() {
         try {
@@ -259,6 +248,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         // Tratar callback do Facebook
@@ -346,4 +336,5 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
 }

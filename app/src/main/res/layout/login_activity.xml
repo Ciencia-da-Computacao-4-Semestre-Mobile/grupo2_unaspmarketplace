@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient">
+    android:background="@color/black">
 
 
-    <!-- Fundo imagem -->
     <ImageView
         android:id="@+id/bgImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/fundo_app"
+        android:src="@drawable/img_fundo"
         android:alpha="0.3"
         android:contentDescription="@null" />
 
-
-    <!-- conteudo do login -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,11 +24,18 @@
         android:padding="24dp">
 
 
+        <ImageView
+            android:id="@+id/login_logo"
+            android:layout_width="249dp"
+            android:layout_height="140dp"
+            android:scaleType="centerCrop"
+            android:paddingRight="5dp"
+            android:src="@drawable/logo_login" />
+
         <EditText
             android:id="@+id/edtEmail"
             android:layout_width="326dp"
             android:layout_height="50dp"
-            android:layout_marginTop="32dp"
             android:autofillHints="emailAddress"
             android:background="@drawable/edittext_background"
             android:hint="@string/default_email"
@@ -52,15 +57,36 @@
             android:textColor="#333333"
             android:textColorHint="#757575" />
 
-        <TextView
-            android:id="@+id/login_forgot_password"
+
+        <LinearLayout
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/login_forgot_password"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/login_remember_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25dp"
+                android:checked="false"
+                android:text="@string/login_remember_me"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/login_forgot_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/login_forgot_password"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
@@ -74,7 +100,6 @@
             android:backgroundTint="#005bb5"
             app:cornerRadius="8dp"
             android:gravity="center"/>
-
 
 
         <LinearLayout
@@ -106,12 +131,12 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/btnGitHubLogin"
+                android:id="@+id/btnLinkedIn"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="0.3"
-                android:background="@drawable/github_button_background"
+                android:background="@drawable/linkedin_button_background"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
@@ -120,28 +145,8 @@
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:contentDescription="@string/github"
-                    android:src="@drawable/ic_github" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/btnAppleLogin"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="0.3"
-                android:background="@drawable/facebook_button_background"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:contentDescription="@string/google"
-                    android:src="@drawable/ic_facebook" />
+                    android:contentDescription="@string/linkedIn"
+                    android:src="@drawable/ic_linkedin" />
             </LinearLayout>
 
         </LinearLayout>
@@ -149,9 +154,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp">
-
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
 
 
             <TextView
@@ -167,16 +171,17 @@
                 android:id="@+id/sign_in_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="@string/btn_login_in_to_sign"
                 android:textColor="#0073e6"
                 android:textStyle="bold"
-                android:clickable="true"
-                android:focusable="true"/>
+                tools:ignore="TouchTargetSizeCheck" />
 
         </LinearLayout>
 
     </LinearLayout>
-
 
 
 </FrameLayout>

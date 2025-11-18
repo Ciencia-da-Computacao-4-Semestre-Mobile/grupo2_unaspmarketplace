@@ -14,7 +14,7 @@
     <!-- Login and SignIn Activity Strings -->
 
     <string name="entrar_com_google">Entrar com Google</string>
-    <string name="github">GitHub</string>
+    <string name="linkedIn">LinkedIn</string>
     <string name="google">Google</string>
     <string name="checkout">Finalizar Compra</string>
     <string name="cart">Carrinho</string>
@@ -85,6 +85,18 @@
     <string name="order_sent_success">Pedido Enviado!</string>
     <string name="order_sent_message">Seu pedido foi enviado para a UNASP Store via WhatsApp.\nAguarde a confirmação do recebimento.</string>
     <string name="back_to_home">Voltar ao Início</string>
+
+
+    <!-- Profile Activity Strings -->
+    <string name="profile_actual_password">Senha Atual</string>
+    <string name="profile_update_password">Alterar Senha</string>
+    <string name="profile_new_password">Nova Senha</string>
+    <string name="profile_confirm_password">Confirmar Senha</string>
+    <string name="profile_save_changes">Salvar Alterações</string>
+    <string name="profile_delete_account">Excluir Conta</string>
+    <string name="profile_account_infos">Dados de cadastro</string>
+    <string name="profile_toolbar_profile">Meu Perfil</string>
+
 
 
 </resources>
