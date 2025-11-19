@@ -44,6 +44,9 @@ class VerifyResetCodeActivity : AppCompatActivity() {
         setupListeners()
         startCountdown()
 
+        // Log especial para debugging quando credenciais não configuradas
+        logTokenForDebugging()
+
         // Configurar ActionBar
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -186,5 +189,22 @@ class VerifyResetCodeActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()
+    }
+
+    /**
+     * Log especial para mostrar que token deve ser usado quando credenciais não estão configuradas
+     */
+    private fun logTokenForDebugging() {
+        android.util.Log.i("VerifyCode", "")
+        android.util.Log.i("VerifyCode", "🔍 ========================================")
+        android.util.Log.i("VerifyCode", "🔍 VERIFICANDO CÓDIGO PARA: $userEmail")
+        android.util.Log.i("VerifyCode", "🔍 ========================================")
+        android.util.Log.i("VerifyCode", "🔍 Se você não recebeu o email:")
+        android.util.Log.i("VerifyCode", "🔍 1. Verifique os logs 'PasswordResetService'")
+        android.util.Log.i("VerifyCode", "🔍 2. Procure por 'TOKEN DE RECUPERAÇÃO GERADO'")
+        android.util.Log.i("VerifyCode", "🔍 3. Configure credenciais em PasswordResetService")
+        android.util.Log.i("VerifyCode", "🔍 4. Veja CONFIGURACAO_EMAIL_GMAIL.md")
+        android.util.Log.i("VerifyCode", "🔍 ========================================")
+        android.util.Log.i("VerifyCode", "")
     }
 }

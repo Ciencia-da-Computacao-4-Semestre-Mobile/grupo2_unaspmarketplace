@@ -25,6 +25,9 @@ import com.unasp.unaspmarketplace.services.PasswordResetService
 import com.unasp.unaspmarketplace.utils.UserUtils
 import com.unasp.unaspmarketplace.data.model.LoginViewModel
 import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuth
+import android.widget.CheckBox
+
 
 
 class LoginActivity : AppCompatActivity() {
@@ -128,80 +131,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    private fun signInWithFacebook() {
-        try {
-            FacebookAuthHelper.signInWithFacebook(this, facebookCallbackManager) { success, error ->
-                if (success) {
-                    // Login bem-sucedido
-                    lifecycleScope.launch {
-                        try {
-                            UserUtils.ensureUserDataExists()
-                        } catch (e: Exception) {
-                            Log.e("LoginActivity", "Erro ao garantir dados do usuário", e)
-                        }
 
-                        runOnUiThread {
-                            Toast.makeText(this@LoginActivity, "Login com Facebook realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
-                    }
-                } else {
-                    // Verificar se é falha silenciosa (como no GitHub)
-                    if (error == "SILENT_FAIL") {
-                        Toast.makeText(this@LoginActivity, "Não foi possível fazer login com Facebook. Tente outro método.", Toast.LENGTH_LONG).show()
-                    } else {
-                        // Outros erros (cancelamento, rede, etc.)
-                        if (error?.contains("cancelado", ignoreCase = true) != true) {
-                            Toast.makeText(this@LoginActivity, error ?: "Erro no login com Facebook", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("LoginActivity", "Error starting Facebook sign-in", e)
-            Toast.makeText(this, "Erro ao iniciar login com Facebook: ${e.message}", Toast.LENGTH_LONG).show()
-        }
-    }
 
-    private fun signInWithGitHub() {
-        try {
-            GitHubAuthHelper.signInWithGitHub(this) { success: Boolean, error: String? ->
-                if (success) {
-                    // Login bem-sucedido
-                    lifecycleScope.launch {
-                        try {
-                            UserUtils.ensureUserDataExists()
-                        } catch (e: Exception) {
-                            Log.e("LoginActivity", "Erro ao garantir dados do usuário", e)
-                        }
 
-                        runOnUiThread {
-                            Toast.makeText(this@LoginActivity, "Login com GitHub realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
-                    }
-                } else {
-                    // Verificar se é falha silenciosa
-                    if (error == "SILENT_FAIL") {
-                        // Falha silenciosa - mostrar mensagem genérica
-                        Toast.makeText(this@LoginActivity, "Não foi possível fazer login com GitHub. Tente outro método.", Toast.LENGTH_LONG).show()
-                    } else {
-                        // Outros erros (cancelamento, rede, etc.)
-                        if (error?.contains("cancelado", ignoreCase = true) != true) {
-                            Toast.makeText(this@LoginActivity, error ?: "Erro no login com GitHub", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("LoginActivity", "Error starting GitHub sign-in", e)
-            Toast.makeText(this, "Erro ao iniciar login com GitHub: ${e.message}", Toast.LENGTH_LONG).show()
-        }
-    }
 
     private fun validateInput(email: String, password: String): Boolean {
         return when {
@@ -249,11 +181,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        // Tratar callback do Facebook
-        facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
-    }
+
 
     /**
      * Mostra diálogo para solicitar recuperação de senha
@@ -310,14 +238,14 @@ class LoginActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                Toast.makeText(this@LoginActivity, "Enviando código...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginActivity, "Enviando código por email...", Toast.LENGTH_SHORT).show()
 
                 val result = resetService.initiatePasswordReset(email)
 
                 if (result.isSuccess) {
                     Toast.makeText(
                         this@LoginActivity,
-                        "Código enviado para $email! Verifique sua caixa de entrada.",
+                        "Código enviado para $email!\nVerifique sua caixa de entrada e spam.",
                         Toast.LENGTH_LONG
                     ).show()
 
