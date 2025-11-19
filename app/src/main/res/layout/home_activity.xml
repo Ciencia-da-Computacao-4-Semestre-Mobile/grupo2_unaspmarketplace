@@ -177,6 +177,5 @@
     android:background="@color/white"
     app:itemIconTint="@android:color/black"
     app:itemTextColor="@android:color/black"
-    app:itemBackground="@drawable/menu_item_background"
     app:menu="@menu/drawer_menu"/>
 </androidx.drawerlayout.widget.DrawerLayout>

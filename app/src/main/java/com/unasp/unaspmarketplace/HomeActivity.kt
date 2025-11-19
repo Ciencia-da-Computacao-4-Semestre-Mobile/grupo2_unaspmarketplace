@@ -93,12 +93,13 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         recyclerProducts.adapter = productAdapter
     }
 
+    private var userClickedHome = false
+
     private fun setupNavigation() {
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
         val navigationView = findViewById<NavigationView>(R.id.navigationView)
 
-        // Listener da bottom navigation
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_menu -> {
@@ -106,7 +107,10 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     true
                 }
                 R.id.nav_home -> {
-                    Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
+                    if (userClickedHome) {
+                        Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
+                    }
+                    userClickedHome = false
                     true
                 }
                 R.id.nav_cart -> {
@@ -123,19 +127,15 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
 
         drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerClosed(drawerView: View) {
+                // seleção programática → não dispara Toast
+                userClickedHome = false
                 bottomNavigation.selectedItemId = R.id.nav_home
             }
-
             override fun onDrawerOpened(drawerView: View) {}
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerStateChanged(newState: Int) {}
         })
 
-        // Badge do carrinho
-        CartBadgeManager.setupCartBadge(bottomNavigation)
-        CartBadgeManager.updateBadge(CartManager.getTotalItemCount())
-
-        // Listener do menu lateral
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_post_item -> startActivity(Intent(this, PostItemActivity::class.java))
@@ -151,12 +151,22 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                 }
             }
             drawerLayout.closeDrawers()
-            bottomNavigation.selectedItemId = R.id.nav_home   // ✅ marca Home imediatamente
+            // seleção programática → não dispara Toast
+            userClickedHome = false
+            bottomNavigation.selectedItemId = R.id.nav_home
             true
         }
 
-
+        // clique inicial na Home → não dispara Toast
+        userClickedHome = false
         bottomNavigation.selectedItemId = R.id.nav_home
+
+        // Para capturar cliques manuais na Home
+        bottomNavigation.setOnItemReselectedListener { item ->
+            if (item.itemId == R.id.nav_home) {
+                Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun loadProducts() {
