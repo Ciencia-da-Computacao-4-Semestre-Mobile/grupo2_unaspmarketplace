@@ -71,6 +71,22 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // TEMPORÁRIO: Comentado para permitir acesso ao login
+        // TODO: Reativar depois de testar
+        /*
+        // Verificar se o usuário já está logado
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            // Usuário já está logado, redirecionar para Home
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+        */
+
+        // TEMPORÁRIO: Forçar logout para testes (remover depois)
+        forceLogoutForTesting()
+
         try {
             // Inicializar Firebase
             FirebaseApp.initializeApp(this)
@@ -262,4 +278,22 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * MÉTODO TEMPORÁRIO: Força logout completo para testes
+     * TODO: Remover após resolver problemas de sessão
+     */
+    private fun forceLogoutForTesting() {
+        try {
+            // Logout do Firebase Auth
+            FirebaseAuth.getInstance().signOut()
+
+            // Limpar Google Sign In
+            val googleSignInClient = GoogleAuthHelper.getClient(this)
+            googleSignInClient.signOut()
+
+            Log.d("LoginActivity", "Logout forçado realizado")
+        } catch (e: Exception) {
+            Log.e("LoginActivity", "Erro no logout forçado", e)
+        }
+    }
 }

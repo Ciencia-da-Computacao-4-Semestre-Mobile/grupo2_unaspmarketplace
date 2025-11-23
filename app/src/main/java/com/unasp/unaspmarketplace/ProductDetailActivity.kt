@@ -20,6 +20,8 @@ import com.unasp.unaspmarketplace.models.Product
 import com.unasp.unaspmarketplace.models.User
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
+import com.unasp.unaspmarketplace.utils.WhatsAppHelper
+import com.unasp.unaspmarketplace.utils.UserUtils
 
 class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private lateinit var product: Product
@@ -37,6 +39,7 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
     private lateinit var btnDecrease: MaterialButton
     private lateinit var btnIncrease: MaterialButton
     private lateinit var btnAddToCart: MaterialButton
+    private lateinit var btnContactSeller: MaterialButton
 
     private lateinit var imageAdapter: ProductDetailImageAdapter
 
@@ -79,6 +82,7 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
         btnDecrease = findViewById(R.id.btnDecrease)
         btnIncrease = findViewById(R.id.btnIncrease)
         btnAddToCart = findViewById(R.id.btnAddToCart)
+        btnContactSeller = findViewById(R.id.btnContactSeller)
 
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         btnBack.setOnClickListener { finish() }
@@ -152,6 +156,7 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
         // Atualizar botões baseado no estoque
         updateQuantityControls()
         updateAddToCartButton()
+        updateContactSellerButton()
     }
 
     private fun setupQuantityControls() {
@@ -198,6 +203,36 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
         }
     }
 
+    private fun updateContactSellerButton() {
+        lifecycleScope.launch {
+            try {
+                val currentUserId = UserUtils.getCurrentUserId()
+
+                if (currentUserId == product.sellerId) {
+                    // É o próprio produto do usuário
+                    runOnUiThread {
+                        btnContactSeller.text = "📦 Seu Produto"
+                        btnContactSeller.isEnabled = false
+                        btnContactSeller.alpha = 0.6f
+                    }
+                } else {
+                    // Produto de outro usuário
+                    runOnUiThread {
+                        btnContactSeller.text = "💬 Falar com o Vendedor"
+                        btnContactSeller.isEnabled = true
+                        btnContactSeller.alpha = 1.0f
+                    }
+                }
+            } catch (e: Exception) {
+                // Em caso de erro, manter o botão ativo
+                runOnUiThread {
+                    btnContactSeller.isEnabled = true
+                    btnContactSeller.alpha = 1.0f
+                }
+            }
+        }
+    }
+
     private fun setupButtons() {
         btnAddToCart.setOnClickListener {
             if (product.stock >= currentQuantity) {
@@ -205,6 +240,10 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
             } else {
                 Toast.makeText(this, "Estoque insuficiente!", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        btnContactSeller.setOnClickListener {
+            contactSeller()
         }
     }
 
@@ -302,5 +341,67 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
                 }
             }
         }
+    }
+
+    private fun contactSeller() {
+        lifecycleScope.launch {
+            try {
+                // Buscar dados do vendedor
+                val sellerDoc = FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(product.sellerId)
+                    .get()
+                    .await()
+
+                val seller = sellerDoc.toObject(User::class.java)
+
+                if (seller != null && seller.whatsappNumber.isNotBlank()) {
+                    // Buscar dados do comprador atual
+                    val currentUser = UserUtils.getCurrentUser()
+                    val buyerName = currentUser?.name ?: "Comprador"
+
+                    // Criar mensagem personalizada
+                    val message = formatContactMessage(seller.name, buyerName)
+
+                    runOnUiThread {
+                        Toast.makeText(this@ProductDetailActivity, "Abrindo WhatsApp...", Toast.LENGTH_SHORT).show()
+                        WhatsAppHelper.sendMessage(this@ProductDetailActivity, message, seller.whatsappNumber)
+                    }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(
+                            this@ProductDetailActivity,
+                            "Vendedor não possui WhatsApp cadastrado. Adicione o produto ao carrinho e finalize a compra.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("ProductDetail", "Erro ao contatar vendedor", e)
+                runOnUiThread {
+                    Toast.makeText(
+                        this@ProductDetailActivity,
+                        "Erro ao buscar dados do vendedor: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun formatContactMessage(sellerName: String, buyerName: String): String {
+        return """
+👋 Olá, $sellerName!
+
+Eu sou $buyerName e tenho interesse no seu produto:
+
+📦 *${product.name}*
+💰 R$ ${String.format("%.2f", product.price)}
+📂 Categoria: ${product.category}
+
+Gostaria de saber mais detalhes sobre o produto. Você pode me ajudar?
+
+_Mensagem enviada através do UNASP Marketplace_
+        """.trimIndent()
     }
 }

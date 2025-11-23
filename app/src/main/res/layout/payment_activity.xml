@@ -91,12 +91,12 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Campo de WhatsApp (opcional) -->
+    <!-- Campo de WhatsApp (obrigatório) -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="@string/whatsapp_number_optional"
+        android:hint="@string/whatsapp_number_required"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText

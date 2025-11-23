@@ -11,12 +11,14 @@ import com.unasp.unaspmarketplace.models.ProductAdapter
 import android.content.Intent
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.GravityCompat
 import com.unasp.unaspmarketplace.models.Product
 import com.unasp.unaspmarketplace.repository.ProductRepository
+import com.unasp.unaspmarketplace.repository.UserRepository
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
 import com.unasp.unaspmarketplace.utils.UserUtils
@@ -150,8 +152,7 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     startActivity(intent)
                 }
                 R.id.nav_logout -> {
-                    // Implementar logout
-                    Toast.makeText(this, "Logout em breve", Toast.LENGTH_SHORT).show()
+                    showLogoutConfirmationDialog()
                 }
             }
             drawerLayout.closeDrawers() // fecha o menu depois do clique
@@ -265,5 +266,43 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         super.onResume()
         // Recarregar produtos quando voltar para a tela
         loadProducts()
+    }
+
+    private fun showLogoutConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Confirmar Logout")
+            .setMessage("Tem certeza que deseja sair da sua conta?")
+            .setPositiveButton("Sair") { _, _ ->
+                performLogout()
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun performLogout() {
+        lifecycleScope.launch {
+            try {
+                // Limpar carrinho
+                CartManager.clearCart()
+
+                // Fazer logout através do repository
+                val userRepository = UserRepository()
+                userRepository.logout()
+
+                // Mostrar mensagem de sucesso
+                Toast.makeText(this@HomeActivity, "Logout realizado com sucesso", Toast.LENGTH_SHORT).show()
+
+                // Redirecionar para LoginActivity
+                val intent = Intent(this@HomeActivity, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+
+            } catch (e: Exception) {
+                Toast.makeText(this@HomeActivity, "Erro ao fazer logout: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
