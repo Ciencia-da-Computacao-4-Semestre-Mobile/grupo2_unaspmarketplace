@@ -2,14 +2,20 @@ package com.unasp.unaspmarketplace
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.unasp.unaspmarketplace.models.Order
@@ -20,8 +26,10 @@ import kotlinx.coroutines.launch
 
 class PaymentActivity : AppCompatActivity() {
 
-    private lateinit var edtCustomerName: TextInputEditText
-    private lateinit var edtWhatsappNumber: TextInputEditText
+    private var txtCustomerNameValue: TextView? = null
+    private var txtWhatsappValue: TextView? = null
+    private lateinit var txtPaymentSelected: TextView
+
     private lateinit var rgPaymentMethods: RadioGroup
     private lateinit var rbDebit: RadioButton
     private lateinit var rbCredit: RadioButton
@@ -30,6 +38,11 @@ class PaymentActivity : AppCompatActivity() {
     private var txtOrderSummary: TextView? = null
     private lateinit var txtTotal: TextView
     private lateinit var btnConfirmPayment: Button
+
+    private lateinit var btnEditCustomer: Button
+    private lateinit var btnEditPayment: Button
+
+    private lateinit var edtPickupLocation: TextInputEditText
 
     private var totalAmount: Double = 0.0
 
@@ -48,16 +61,26 @@ class PaymentActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        edtCustomerName = findViewById(R.id.edtCustomerName)
-        edtWhatsappNumber = findViewById(R.id.edtWhatsappNumber)
+        txtCustomerNameValue = findViewById(R.id.txtCustomerNameValue)
+        txtWhatsappValue = findViewById(R.id.txtWhatsappValue)
+        txtPaymentSelected = findViewById(R.id.txtPaymentSelected)
+
+
         rgPaymentMethods = findViewById(R.id.rgPaymentMethods)
         rbDebit = findViewById(R.id.rbDebit)
         rbCredit = findViewById(R.id.rbCredit)
         rbPix = findViewById(R.id.rbPix)
         rbCash = findViewById(R.id.rbCash)
+
         txtTotal = findViewById(R.id.txtTotal)
         btnConfirmPayment = findViewById(R.id.btnConfirmPayment)
         txtOrderSummary = findViewById(R.id.txtOrderSummary) as? TextView
+
+        btnEditCustomer = findViewById(R.id.btnEditCustomer)
+        btnEditPayment = findViewById(R.id.btnEditPayment)
+
+        edtPickupLocation = findViewById(R.id.edtPickupLocation)
+        edtPickupLocation.addTextChangedListener { updateButtonState() } // atualizar estado quando o usuário digitar o local
 
         displayOrderSummary()
     }
@@ -77,14 +100,12 @@ class PaymentActivity : AppCompatActivity() {
             try {
                 val currentUser = UserUtils.getCurrentUser()
                 currentUser?.let { user ->
-                    // Preencher nome se estiver disponível
-                    if (user.name.isNotBlank()) {
-                        edtCustomerName.setText(user.name)
+                    if (user.name.isNotBlank()) {  // Preencher nome se estiver disponível
+                        txtCustomerNameValue?.text = user.name
                     }
 
-                    // Preencher WhatsApp se estiver disponível
-                    if (user.whatsappNumber.isNotBlank()) {
-                        edtWhatsappNumber.setText(user.whatsappNumber)
+                    if (user.whatsappNumber.isNotBlank()) { // Preencher WhatsApp se estiver disponível
+                        txtWhatsappValue?.text = user.whatsappNumber
                     }
 
                     // Atualizar estado do botão após carregar dados
@@ -101,29 +122,90 @@ class PaymentActivity : AppCompatActivity() {
         btnConfirmPayment.setOnClickListener {
             generateOrder()
         }
+
+        btnEditCustomer.setOnClickListener {
+            showEditCustomerDialog()
+        }
+
+        btnEditPayment.setOnClickListener {
+            // alterna visibilidade do RadioGroup
+            rgPaymentMethods.visibility = if (rgPaymentMethods.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
     }
 
     private fun setupPaymentSelection() {
-        rgPaymentMethods.setOnCheckedChangeListener { _, _ ->
+        rgPaymentMethods.setOnCheckedChangeListener { _, checkedId ->
+            val method = when (checkedId) {
+                R.id.rbDebit -> "Cartão de Débito"
+                R.id.rbCredit -> "Cartão de Crédito"
+                R.id.rbPix -> "PIX"
+                R.id.rbCash -> "Dinheiro"
+                else -> ""
+            }
+            if (method.isNotEmpty()) {
+                txtPaymentSelected.text = method
+                // opcional: esconder opções depois de escolher
+                rgPaymentMethods.visibility = View.GONE
+            }
             updateButtonState()
         }
-
-        // Listeners para os campos de texto
-        edtCustomerName.setOnFocusChangeListener { _, _ ->
-            updateButtonState()
+        // inicializa texto do método a partir do radio checked (se houver)
+        val initial = when (rgPaymentMethods.checkedRadioButtonId) {
+            R.id.rbDebit -> "Cartão de Débito"
+            R.id.rbCredit -> "Cartão de Crédito"
+            R.id.rbPix -> "PIX"
+            R.id.rbCash -> "Dinheiro"
+            else -> txtPaymentSelected.text.toString()
         }
-
-        edtWhatsappNumber.setOnFocusChangeListener { _, _ ->
-            updateButtonState()
-        }
+        txtPaymentSelected.text = initial
     }
 
-    private fun updateButtonState() {
-        val hasName = edtCustomerName.text?.toString()?.trim()?.isNotEmpty() == true
-        val hasPaymentMethod = rgPaymentMethods.checkedRadioButtonId != -1
+    private fun showEditCustomerDialog() {
+        val container = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(48, 16, 48, 0)
+        }
 
+        val nameInput = EditText(this).apply {
+            hint = "Nome completo"
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setText(txtCustomerNameValue?.text ?: "")
+        }
+
+        val whatsappInput = EditText(this).apply {
+            hint = "WhatsApp"
+            inputType = InputType.TYPE_CLASS_PHONE
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                topMargin = 8
+            }
+            setText(txtWhatsappValue?.text ?: "")
+        }
+
+        container.addView(nameInput)
+        container.addView(whatsappInput)
+
+        AlertDialog.Builder(this)
+            .setTitle("Alterar dados do cliente")
+            .setView(container)
+            .setPositiveButton("Salvar") { dialog, _ ->
+                val newName = nameInput.text?.toString()?.trim().orEmpty()
+                val newWhats = whatsappInput.text?.toString()?.trim().orEmpty()
+                if (newName.isNotEmpty()) {
+                    txtCustomerNameValue?.text = newName
+                }
+                txtWhatsappValue?.text = newWhats
+                updateButtonState()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+    private fun updateButtonState() {
+        val hasName = txtCustomerNameValue?.text?.toString()?.trim()?.isNotEmpty() == true
+        val hasPaymentMethod = getSelectedPaymentMethod().isNotEmpty()
         btnConfirmPayment.isEnabled = hasName && hasPaymentMethod
-        btnConfirmPayment.alpha = if (hasName && hasPaymentMethod) 1.0f else 0.5f
+        btnConfirmPayment.alpha = if (btnConfirmPayment.isEnabled) 1.0f else 0.5f
     }
 
     private fun updateTotal() {
@@ -131,9 +213,10 @@ class PaymentActivity : AppCompatActivity() {
     }
 
     private fun generateOrder() {
-        val customerName = edtCustomerName.text?.toString()?.trim()
-        val whatsappNumber = edtWhatsappNumber.text?.toString()?.trim()
+        val customerName = txtCustomerNameValue?.text?.toString()?.trim()
+        val whatsappNumber = txtWhatsappValue?.text?.toString()?.trim()
         val selectedPaymentMethod = getSelectedPaymentMethod()
+        val pickupLocation = edtPickupLocation.text?.toString()?.trim()
 
         // Validações
         if (customerName.isNullOrEmpty()) {
@@ -143,6 +226,11 @@ class PaymentActivity : AppCompatActivity() {
 
         if (selectedPaymentMethod.isEmpty()) {
             Toast.makeText(this, "Selecione uma forma de pagamento", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (pickupLocation.isNullOrEmpty()) {
+            Toast.makeText(this, "Informe o local de retirada", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -175,7 +263,7 @@ class PaymentActivity : AppCompatActivity() {
         )
 
         // Mostrar confirmação
-        goToOrderPreview(order, whatsappNumber)
+        goToOrderPreview(order, whatsappNumber, pickupLocation)
     }
 
     private fun getSelectedPaymentMethod(): String {
@@ -184,11 +272,14 @@ class PaymentActivity : AppCompatActivity() {
             R.id.rbCredit -> "Cartão de Crédito"
             R.id.rbPix -> "PIX"
             R.id.rbCash -> "Dinheiro"
-            else -> ""
+            else -> {
+                // fallback para o texto exibido (por exemplo PIX padrão)
+                txtPaymentSelected.text?.toString()?.takeIf { it.isNotBlank() } ?: ""
+            }
         }
     }
 
-    private fun goToOrderPreview(order: Order, customerWhatsApp: String?) {
+    private fun goToOrderPreview(order: Order, customerWhatsApp: String?, pickupLocation: String?) {
         val intent = Intent(this, OrderPreviewActivity::class.java)
         intent.putExtra(OrderPreviewActivity.EXTRA_ORDER_ID, order.id)
         intent.putExtra(OrderPreviewActivity.EXTRA_CUSTOMER_NAME, order.customerName)
@@ -196,6 +287,10 @@ class PaymentActivity : AppCompatActivity() {
 
         if (!customerWhatsApp.isNullOrBlank()) {
             intent.putExtra(OrderPreviewActivity.EXTRA_CUSTOMER_WHATSAPP, customerWhatsApp)
+        }
+
+        if (!pickupLocation.isNullOrBlank()) {
+            intent.putExtra("EXTRA_PICKUP_LOCATION", pickupLocation)
         }
 
         startActivity(intent)
