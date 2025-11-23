@@ -42,8 +42,9 @@
                 android:layout_marginBottom="16dp"
                 app:cardUseCompatPadding="true"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/blue_default"
-                app:strokeWidth="1dp">
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="#D0E6F6"
+                app:strokeWidth="1dp" >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -78,8 +79,9 @@
                 android:layout_marginBottom="16dp"
                 app:cardUseCompatPadding="true"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/blue_default"
-                app:strokeWidth="1dp">
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="#D0E6F6"
+                app:strokeWidth="1dp" >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -104,11 +106,21 @@
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
-                        <Button
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnEditCustomer"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Alterar" />
+                            android:text="Alterar"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:minHeight="36dp"
+                            android:textAllCaps="false"
+                            android:textColor="@color/blue_default"
+                            android:backgroundTint="@android:color/transparent"
+                            app:strokeColor="@color/blue_default"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="8dp"
+                            app:rippleColor="@color/blue_primary" />
                     </LinearLayout>
 
                     <!-- Nome -->
@@ -144,7 +156,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="WhatsApp"
+                            android:text="WhatsApp:"
                             android:textStyle="bold"
                             android:textColor="@android:color/black" />
 
@@ -167,8 +179,9 @@
                 android:layout_marginBottom="16dp"
                 app:cardUseCompatPadding="true"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/blue_default"
-                app:strokeWidth="1dp">
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="#D0E6F6"
+                app:strokeWidth="1dp" >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -193,11 +206,21 @@
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
-                        <Button
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnEditPayment"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Alterar" />
+                            android:text="Alterar"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:minHeight="36dp"
+                            android:textAllCaps="false"
+                            android:textColor="@color/blue_default"
+                            android:backgroundTint="@android:color/transparent"
+                            app:strokeColor="@color/blue_default"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="8dp"
+                            app:rippleColor="@color/blue_primary" />
                     </LinearLayout>
 
                     <!-- Resumo da forma selecionada -->
@@ -261,8 +284,9 @@
                 android:layout_marginBottom="16dp"
                 app:cardUseCompatPadding="true"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/blue_default"
-                app:strokeWidth="1dp">
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="#D0E6F6"
+                app:strokeWidth="1dp" >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -283,7 +307,8 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Informe o local de retirada">
+                        android:hint="@string/pickup_info_input"
+                        app:boxBackgroundColor="#FAFBFC" >
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtPickupLocation"

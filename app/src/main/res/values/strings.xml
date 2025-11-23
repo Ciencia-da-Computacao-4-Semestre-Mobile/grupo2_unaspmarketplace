@@ -40,9 +40,9 @@
     <string name="payment_method">Forma de Pagamento</string>
     <string name="order_review">Pedido: </string>
     <string name="pickup_info_title">Local de Retirada</string>
-    <string name="pickup_info_description">Combinar com vendedor</string>
+    <string name="pickup_info_input">Informe local (dentro do campus)</string>
     <string name="customer_info">Dados do Cliente</string>
-    <string name="full_name">Nome Completo</string>
+    <string name="full_name">Nome Completo: </string>
     <string name="whatsapp_number_optional">WhatsApp (opcional)</string>
     <string name="choose_payment_method">Escolha sua forma de pagamento na retirada:</string>
     <string name="payment_debit">Cartão de Débito</string>
@@ -84,7 +84,7 @@
 
     <!-- Order Success Activity Strings -->
     <string name="order_sent_success">Pedido Enviado!</string>
-    <string name="order_sent_message">Seu pedido foi enviado para a UNASP Store via WhatsApp.\nAguarde a confirmação do recebimento.</string>
+    <string name="order_sent_message">Seu pedido foi enviado!\nAguarde a confirmação do recebimento.</string>
     <string name="back_to_home">Voltar ao Início</string>
 
 
