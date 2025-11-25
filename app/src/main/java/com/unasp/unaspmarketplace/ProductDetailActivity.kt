@@ -291,8 +291,10 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
                     finish()
                     true
                 }
-                R.id.nav_notifications -> {
-                    Toast.makeText(this, "Notificações em breve", Toast.LENGTH_SHORT).show()
+                R.id.nav_profile -> {
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.nav_cart -> {

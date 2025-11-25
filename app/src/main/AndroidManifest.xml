@@ -97,6 +97,12 @@
         <!-- Tela de Itens Postados -->
         <activity android:name=".PostedItemsActivity" />
 
+        <!-- Tela de Configurações -->
+        <activity android:name=".SettingsActivity" />
+
+        <!-- Tela de Histórico de Pedidos -->
+        <activity android:name=".OrderHistoryActivity" />
+
         <!-- Telas de Recuperação de Senha -->
         <activity
             android:name=".VerifyResetCodeActivity"

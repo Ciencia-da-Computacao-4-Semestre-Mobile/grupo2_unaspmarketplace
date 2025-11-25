@@ -333,9 +333,10 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
                     true
                 }
-                R.id.nav_notifications -> {
-                    // Implementar navegação para notificações
-                    Toast.makeText(this, "Notificações em breve", Toast.LENGTH_SHORT).show()
+                R.id.nav_profile -> {
+                    // Navegar para o perfil
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.nav_cart -> {
@@ -355,12 +356,12 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     val intent = Intent(this, PostItemActivity::class.java)
                     startActivity(intent)
                 }
-                R.id.nav_profile -> {
-                    val intent = Intent(this, ProfileActivity::class.java)
-                    startActivity(intent)
-                }
                 R.id.nav_posted_items -> {
                     val intent = Intent(this, PostedItemsActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_history -> {
+                    val intent = Intent(this, SettingsActivity::class.java)
                     startActivity(intent)
                 }
                 R.id.nav_logout -> {
