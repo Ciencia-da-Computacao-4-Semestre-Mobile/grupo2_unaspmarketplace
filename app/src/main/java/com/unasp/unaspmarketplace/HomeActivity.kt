@@ -23,11 +23,20 @@ import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
+import androidx.appcompat.widget.SearchView
+import android.widget.TextView
+import android.content.SharedPreferences
 
 class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private lateinit var productRepository: ProductRepository
     private lateinit var productAdapter: ProductAdapter
     private lateinit var recyclerProducts: RecyclerView
+    private lateinit var searchView: SearchView
+    private var allProducts = mutableListOf<Product>()
+    private var filteredProducts = mutableListOf<Product>()
+    private lateinit var searchPrefs: SharedPreferences
+    private lateinit var categoryAdapter: CategoryAdapter
+    private var selectedCategory: String = "Todos"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +48,12 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         // Inicializar repositório
         productRepository = ProductRepository()
 
+        // Inicializar SharedPreferences para histórico de busca
+        searchPrefs = getSharedPreferences("search_history", MODE_PRIVATE)
+
         setupCategories()
         setupProducts()
+        setupSearchView()
         setupNavigation()
 
         // Carregar produtos
@@ -71,6 +84,7 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
 
     private fun setupCategories() {
         val categorys = listOf(
+            Category("Todos", R.drawable.ic_launcher_foreground), // Categoria especial para mostrar todos
             Category("Roupas", R.drawable.tshirt_logo),
             Category("Eletrônicos", R.drawable.computer_logo),
             Category("Alimentos", R.drawable.apple_logo),
@@ -80,7 +94,28 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         val recyclerCategory = findViewById<RecyclerView>(R.id.recyclerCategorys)
         recyclerCategory.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recyclerCategory.adapter = CategoryAdapter(categorys)
+
+        // Criar adapter com callback para busca por categoria
+        categoryAdapter = CategoryAdapter(categorys) { categoryName ->
+            selectedCategory = categoryName
+
+            if (categoryName == "Todos") {
+                // Limpar busca e mostrar todos os produtos
+                clearSearch()
+                Toast.makeText(this, "Mostrando todos os produtos", Toast.LENGTH_SHORT).show()
+            } else {
+                // Quando uma categoria for clicada, fazer busca por essa categoria
+                searchView.setQuery(categoryName, true)
+
+                // Feedback visual para o usuário
+                Toast.makeText(this, "Buscando produtos em: $categoryName", Toast.LENGTH_SHORT).show()
+
+                // Limpar foco da SearchView para esconder o teclado
+                searchView.clearFocus()
+            }
+        }
+
+        recyclerCategory.adapter = categoryAdapter
     }
 
     private fun setupProducts() {
@@ -88,8 +123,185 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         recyclerProducts.layoutManager = GridLayoutManager(this, 2)
 
         // Inicializar adapter com lista vazia
-        productAdapter = ProductAdapter(mutableListOf())
+        productAdapter = ProductAdapter(filteredProducts)
         recyclerProducts.adapter = productAdapter
+    }
+
+    private fun setupSearchView() {
+        searchView = findViewById(R.id.searchView)
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (!query.isNullOrBlank()) {
+                    saveSearchToHistory(query)
+                }
+                searchProducts(query)
+                searchView.clearFocus()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                searchProducts(newText)
+                return true
+            }
+        })
+
+        // Configurar aparência da SearchView
+        searchView.queryHint = "Buscar produtos, categorias ou preços..."
+        searchView.isIconified = false
+        searchView.isSubmitButtonEnabled = false
+        searchView.clearFocus()
+
+        // Adicionar dica de uso quando o campo estiver vazio
+        showSearchSuggestions()
+    }
+
+    private fun showSearchSuggestions() {
+        // Criar uma TextView temporária para mostrar dicas de busca
+        val searchHints = listOf(
+            "💡 Dicas de busca:",
+            "• Digite o nome do produto",
+            "• Busque por categoria (Eletrônicos, Roupas, etc.)",
+            "• Use 'até 100' para preços baixos",
+            "• Use 'entre 50 e 200' para faixa de preço"
+        )
+
+        // Essas dicas podem ser mostradas em um Toast quando o usuário tocar no SearchView
+        searchView.setOnSearchClickListener {
+            Toast.makeText(this, searchHints.joinToString("\n"), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun searchProducts(query: String?) {
+        if (query.isNullOrBlank()) {
+            // Se a busca estiver vazia, mostrar todos os produtos
+            updateFilteredProducts(allProducts)
+        } else {
+            // Verificar se é busca por preço (ex: "menor que 100", "até 50", "entre 10 e 100")
+            val priceFiltered = when {
+                query.contains("menor que", ignoreCase = true) || query.contains("até", ignoreCase = true) -> {
+                    val price = extractPrice(query)
+                    if (price != null) allProducts.filter { it.price <= price } else null
+                }
+                query.contains("maior que", ignoreCase = true) || query.contains("acima", ignoreCase = true) -> {
+                    val price = extractPrice(query)
+                    if (price != null) allProducts.filter { it.price >= price } else null
+                }
+                query.contains("entre", ignoreCase = true) -> {
+                    val prices = extractPriceRange(query)
+                    if (prices != null) {
+                        allProducts.filter { it.price >= prices.first && it.price <= prices.second }
+                    } else null
+                }
+                else -> null
+            }
+
+            val filtered = if (priceFiltered != null) {
+                priceFiltered
+            } else {
+                // Busca normal por nome, categoria ou descrição
+                allProducts.filter { product ->
+                    product.name.contains(query, ignoreCase = true) ||
+                    product.category.contains(query, ignoreCase = true) ||
+                    product.description.contains(query, ignoreCase = true)
+                }
+            }
+
+            // Ordenar resultados por relevância (nome primeiro, depois categoria, depois descrição)
+            val sortedFiltered = filtered.sortedWith { p1, p2 ->
+                when {
+                    p1.name.contains(query, ignoreCase = true) && !p2.name.contains(query, ignoreCase = true) -> -1
+                    !p1.name.contains(query, ignoreCase = true) && p2.name.contains(query, ignoreCase = true) -> 1
+                    else -> p1.name.compareTo(p2.name, ignoreCase = true)
+                }
+            }
+
+            updateFilteredProducts(sortedFiltered)
+
+            // Mostrar toast com resultado da busca
+            if (sortedFiltered.isEmpty()) {
+                Toast.makeText(this, "Nenhum produto encontrado para \"$query\"", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "${sortedFiltered.size} produto(s) encontrado(s)", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // Extrair preço de queries como "menor que 100", "até 50"
+    private fun extractPrice(query: String): Double? {
+        val regex = Regex("""(\d+(?:\.\d+)?)""")
+        val match = regex.find(query)
+        return match?.value?.toDoubleOrNull()
+    }
+
+    // Extrair faixa de preço de queries como "entre 10 e 100"
+    private fun extractPriceRange(query: String): Pair<Double, Double>? {
+        val regex = Regex("""(\d+(?:\.\d+)?)\s*(?:e|a)\s*(\d+(?:\.\d+)?)""")
+        val match = regex.find(query)
+        return if (match != null) {
+            val min = match.groupValues[1].toDoubleOrNull()
+            val max = match.groupValues[2].toDoubleOrNull()
+            if (min != null && max != null) Pair(min, max) else null
+        } else null
+    }
+
+    private fun updateFilteredProducts(products: List<Product>) {
+        filteredProducts.clear()
+        filteredProducts.addAll(products)
+        productAdapter.notifyDataSetChanged()
+    }
+
+    private fun clearSearch() {
+        searchView.setQuery("", false)
+        searchView.clearFocus()
+        updateFilteredProducts(allProducts)
+
+        // Resetar seleção de categoria para "Todos"
+        selectedCategory = "Todos"
+        categoryAdapter.setSelectedCategory("Todos")
+    }
+
+    // Método público para atualizar produtos (útil quando um novo produto é adicionado)
+    fun refreshProducts() {
+        loadProducts()
+    }
+
+    // Salvar busca no histórico
+    private fun saveSearchToHistory(query: String) {
+        if (query.isBlank()) return
+
+        val history = getSearchHistory().toMutableSet()
+        history.add(query)
+
+        // Manter apenas as últimas 10 buscas
+        val limitedHistory = history.toList().takeLast(10).toSet()
+
+        searchPrefs.edit()
+            .putStringSet("search_history", limitedHistory)
+            .apply()
+    }
+
+    // Recuperar histórico de busca
+    private fun getSearchHistory(): Set<String> {
+        return searchPrefs.getStringSet("search_history", emptySet()) ?: emptySet()
+    }
+
+    // Limpar histórico de busca
+    private fun clearSearchHistory() {
+        searchPrefs.edit()
+            .remove("search_history")
+            .apply()
+    }
+
+    // Método para busca rápida por categoria (pode ser chamado programaticamente)
+    fun searchByCategory(category: String) {
+        searchView.setQuery(category, true)
+    }
+
+    // Método para busca rápida por preço
+    fun searchByPriceRange(min: Double, max: Double) {
+        val query = "entre $min e $max"
+        searchView.setQuery(query, true)
     }
 
     private fun setupNavigation() {
@@ -171,7 +383,12 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                 if (result.isSuccess) {
                     val products = result.getOrNull() ?: emptyList()
                     runOnUiThread {
-                        productAdapter.updateProducts(products)
+                        // Atualizar lista principal de produtos
+                        allProducts.clear()
+                        allProducts.addAll(products)
+
+                        // Inicialmente mostrar todos os produtos
+                        updateFilteredProducts(allProducts)
 
                         if (products.isEmpty()) {
                             Toast.makeText(this@HomeActivity, "Nenhum produto encontrado. Que tal publicar o primeiro?", Toast.LENGTH_LONG).show()
@@ -259,7 +476,10 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
             )
         )
 
-        productAdapter.updateProducts(sampleProducts)
+        // Atualizar lista principal e filtrada
+        allProducts.clear()
+        allProducts.addAll(sampleProducts)
+        updateFilteredProducts(allProducts)
     }
 
     override fun onResume() {
