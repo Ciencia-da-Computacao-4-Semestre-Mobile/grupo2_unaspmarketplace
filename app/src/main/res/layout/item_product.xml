@@ -1,70 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="160dp"
+    android:id="@+id/cardProduct"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:minHeight="100dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
+    app:cardUseCompatPadding="true">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <!-- Use ConstraintLayout to avoid squeezing and get better control of each area -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:padding="12dp">
 
+        <!-- Product image: fixed size, adjustViewBounds so it doesn't squeeze the rest -->
+
+        <!-- Text column: takes remaining horizontal space between image and actions -->
         <ImageView
             android:id="@+id/imgProduct"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/edittext_background"
+            android:contentDescription="@string/product_image"
             android:scaleType="centerCrop"
-            android:background="@color/gray_500"
-            android:alpha="0.1"
-            app:cornerRadius="6dp"/>
+            android:src="@drawable/ic_placeholder_img"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.484" />
 
-        <TextView
-            android:id="@+id/txtProductName"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/textContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Produto"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="8dp"
-            android:maxLines="2"
-            android:ellipsize="end"/>
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/imgProduct"
+            app:layout_constraintEnd_toStartOf="@id/actions"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/txtProductCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Categoria"
-            android:textSize="12sp"
-            android:textColor="@color/blue_default"
-            android:layout_marginTop="2dp"/>
+            <TextView
+                android:id="@+id/tvProductName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nome do Produto"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:maxLines="2"
+                android:ellipsize="end" />
 
-        <TextView
-            android:id="@+id/txtProductPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="R$ 0,00"
-            android:textColor="@color/blue_default"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:layout_marginTop="4dp"/>
+            <TextView
+                android:id="@+id/tvProductPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R$ 25,90"
+                android:textSize="14sp"
+                android:textColor="@color/blue_primary"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp" />
 
-        <!-- Indicador de clique -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="👆 Toque para ver detalhes"
-            android:textSize="10sp"
-            android:textColor="@color/gray_500"
+            <TextView
+                android:id="@+id/tvProductStock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Estoque: 5"
+                android:textSize="12sp"
+                android:textColor="@color/gray_500"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/tvProductStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Visível"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+        <!-- Actions: fixed column on the right so it never steals space from the text -->
+        <LinearLayout
+            android:id="@+id/actions"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             android:gravity="center"
-            android:layout_marginTop="4dp"
-            android:alpha="0.7"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-    </LinearLayout>
+            <!-- substitua no seu layout -->
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnEdit"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/ic_edit"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/edit"
+                app:tint="@color/black"
+                android:layout_marginBottom="6dp" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnToggleVisibility"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/ic_visibility"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/toggle_visibility"
+                app:tint="@color/black"
+                android:layout_marginBottom="6dp" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/ic_delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/delete"
+                app:tint="@color/black" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.cardview.widget.CardView>

@@ -87,6 +87,13 @@
     <string name="back_to_home">Voltar ao Início</string>
 
 
+        <string name="delete">Excluir</string>
+        <string name="edit">Editar</string>
+        <string name="toggle_visibility">Alterar visibilidade</string>
+        <string name="product_image">Imagem do produto</string>
+
+
+
     <!-- Profile Activity Strings -->
 
 <!--    <string name="profile_new_password">Nova Senha</string>-->
