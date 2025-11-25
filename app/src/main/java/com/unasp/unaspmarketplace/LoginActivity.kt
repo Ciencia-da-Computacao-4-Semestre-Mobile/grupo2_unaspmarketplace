@@ -25,6 +25,9 @@ import com.unasp.unaspmarketplace.services.PasswordResetService
 import com.unasp.unaspmarketplace.utils.UserUtils
 import com.unasp.unaspmarketplace.data.model.LoginViewModel
 import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuth
+import android.widget.CheckBox
+
 
 
 class LoginActivity : AppCompatActivity() {
