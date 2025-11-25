@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="10dp"
     android:background="@color/white">
 
     <!-- Header -->
@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="10dp"
         android:background="@color/blue_default"
         android:layout_marginBottom="24dp">
 
@@ -70,7 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/customer_info"
-        android:textSize="18sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         android:textColor="@color/blue_default"
         android:layout_marginBottom="8dp" />
@@ -130,8 +130,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/payment_debit"
-            android:textSize="16sp"
-            android:padding="16dp"
+            android:textSize="14sp"
+            android:padding="14dp"
             android:layout_marginBottom="8dp" />
 
         <RadioButton
@@ -139,27 +139,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/payment_credit"
-            android:textSize="16sp"
-            android:padding="16dp"
-            android:layout_marginBottom="8dp" />
-
-        <RadioButton
-            android:id="@+id/rbPix"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/payment_pix"
-            android:textSize="16sp"
-            android:padding="16dp"
+            android:textSize="14sp"
+            android:padding="14dp"
             android:layout_marginBottom="8dp" />
 
         <RadioButton
             android:id="@+id/rbCash"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:padding="14dp"
             android:text="@string/payment_cash"
-            android:textSize="16sp"
-            android:padding="16dp"
-            android:layout_marginBottom="8dp" />
+            android:textSize="14sp" />
+
+        <RadioButton
+            android:id="@+id/rbPix"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:padding="14dp"
+            android:text="@string/payment_pix"
+            android:textSize="14sp" />
 
     </RadioGroup>
 
@@ -169,7 +169,7 @@
         android:layout_height="wrap_content"
         android:background="@color/blue_default"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/txtTotal"

@@ -97,9 +97,12 @@ class SettingsActivity : AppCompatActivity() {
         val notificationsEnabled = sharedPreferences.getBoolean("notifications_enabled", true)
         switchNotifications.isChecked = notificationsEnabled
 
-        // Carregar tema atual
+        // Carregar tema atual - PADRÃO É SISTEMA
         val currentTheme = sharedPreferences.getInt("theme_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         updateThemeText(currentTheme)
+
+        // Aplicar o tema automaticamente (garante que o tema sistema seja aplicado)
+        AppCompatDelegate.setDefaultNightMode(currentTheme)
     }
 
     private fun saveNotificationSettings(enabled: Boolean) {
