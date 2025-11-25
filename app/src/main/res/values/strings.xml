@@ -3,6 +3,10 @@
     <string name="bem_vindo_ao_unasp_marketplace">Bem-vindo ao Unasp Marketplace!</string>
     <string name="logo">Logo</string>
     <string name="categorias">Categorias</string>
+    <string name="checkout">Finalizar Compra</string>
+    <string name="cart">Carrinho</string>
+    <string name="title">Unasp Marketplace</string>
+    <string name="new_product">Novo Produto</string>
 
 
     <!-- default Activity Strings -->
@@ -16,33 +20,30 @@
     <string name="entrar_com_google">Entrar com Google</string>
     <string name="linkedIn">LinkedIn</string>
     <string name="google">Google</string>
-    <string name="checkout">Finalizar Compra</string>
-    <string name="cart">Carrinho</string>
-    <string name="title">Unasp Marketplace</string>
-    <string name="new_product">Novo Produto</string>
     <string name="btn_log_in">Acessar</string>
     <string name="login_forgot_password">Esqueci minha senha</string>
     <string name="login_in_to_sign">Ainda não tem acesso?</string>
     <string name="btn_login_in_to_sign">Cadastre-se</string>
-
     <string name="sign_in_password_confirm">Confirme sua senha</string>
     <string name="btn_sign_in">Criar e acessar</string>
     <string name="login_remember_me">Lembrar de mim</string>
-    <string name="facebook">facebook</string>
     <string name="login_go_back_question">Ja possui uma conta?</string>
     <string name="login_go_back">Acessar</string>
     <string name="default_web_client_id">524313708339-2tmt7fo1ackpjsc435il2vsuaf09jlas.apps.googleusercontent.com</string>
-    <string name="facebook_app_id">728278693617290</string>
-    <string name="facebook_client_token">594f2190665ae830b83cc7bc6a84ede9</string>
     <string name="fb_login_protocol_scheme">fb728278693617290</string>
+
+    <!-- Facebook App Configuration -->
+    <string name="facebook_app_id">728278693617290</string>
+    <string name="facebook_client_token">fb728278693617290</string>
 
     <!-- Payment Activity Strings -->
     <string name="payment_method">Forma de Pagamento</string>
     <string name="pickup_info_title">Local de Retirada</string>
-    <string name="pickup_info_description">Todos os produtos devem ser retirados na UNASP Store</string>
+    <string name="pickup_info_description">Todos os produtos devem ser retirados no campus da UNASP</string>
     <string name="customer_info">Dados do Cliente</string>
     <string name="full_name">Nome Completo</string>
     <string name="whatsapp_number_optional">WhatsApp (opcional)</string>
+    <string name="whatsapp_number_required">WhatsApp (obrigatório)</string>
     <string name="choose_payment_method">Escolha sua forma de pagamento na retirada:</string>
     <string name="payment_debit">Cartão de Débito</string>
     <string name="payment_credit">Cartão de Crédito</string>
@@ -60,19 +61,23 @@
     <string name="profile_delete_account">Excluir Conta</string>
 
     <!-- Password Reset Strings -->
-    <string name="forgot_password">Esqueci minha senha</string>
-    <string name="verify_reset_code">Verificar Código</string>
+    <string name="reset_verify_reset_code">Verificar Código</string>
+    <string name="reset_code_sent_to_email">Código enviado para o email</string>
+    <string name="reset_verification_code">Codigo de verificação</string>
+    <string name="reset_code_time">Codigo valido por 15:00</string>
+    <string name="reset_resend_code">Reenviar Código</string>
+    <string name="reset_chose_new_password">Defina Sua Nova senha</string>
+    <string name="reset_new_password">Nova senha</string>
+    <string name="reset_confirm_new_password">Confirmar nova senha</string>
     <string name="reset_password">Redefinir Senha</string>
-    <string name="code_sent_to_email">Código enviado para</string>
-    <string name="enter_verification_code">Digite o código de verificação</string>
-    <string name="resend_code">Reenviar Código</string>
-    <string name="code_valid_for">Código válido por</string>
-    <string name="new_password">Nova senha</string>
-    <string name="confirm_new_password">Confirmar nova senha</string>
-    <string name="password_requirements">Requisitos da senha</string>
-    <string name="order_generated">Pedido Gerado com Sucesso!</string>
-    <string name="opening_whatsapp">Abrindo WhatsApp para enviar pedido...</string>
-    <string name="fill_all_fields">Preencha todos os campos obrigatórios</string>
+
+    <string name="reset_forgot_password">Esqueci minha senha</string>
+    <string name="reset_enter_verification_code">Digite o código de verificação</string>
+    <string name="reset_code_valid_for">Código válido por</string>
+    <string name="reset_password_requirements">Requisitos da senha</string>
+    <string name="reset_order_generated">Pedido Gerado com Sucesso!</string>
+    <string name="reset_opening_whatsapp">Abrindo WhatsApp para enviar pedido...</string>
+    <string name="reset_fill_all_fields">Preencha todos os campos obrigatórios</string>
 
     <!-- Order Preview Activity Strings -->
     <string name="order_preview">Preview do Pedido</string>
@@ -86,17 +91,8 @@
     <string name="order_sent_message">Seu pedido foi enviado para a UNASP Store via WhatsApp.\nAguarde a confirmação do recebimento.</string>
     <string name="back_to_home">Voltar ao Início</string>
 
-
-    <!-- Profile Activity Strings -->
-
-<!--    <string name="profile_new_password">Nova Senha</string>-->
-<!--    <string name="profile_confirm_password">Confirmar Senha</string>-->
-<!--    <string name="profile_save_changes">Salvar Alterações</string>-->
-<!--    <string name="profile_delete_account">Excluir Conta</string>-->
-<!--    <string name="profile_account_infos">Dados de cadastro</string>-->
-
+    <!-- Profile Activity Additional Strings -->
     <string name="profile_toolbar_profile">Meu Perfil</string>
-
 
 
 </resources>
