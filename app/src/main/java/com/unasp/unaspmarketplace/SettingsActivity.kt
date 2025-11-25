@@ -202,14 +202,14 @@ class SettingsActivity : AppCompatActivity() {
             • Interface moderna
             
             👥 EQUIPE:
-            • Desenvolvimento: Grupo 2
+            • Desenvolvimento: Kosta, Izabella, Rafael, Fofinho, José e Eduardo
             • Instituição: UNASP
-            • Ano: 2024
+            • Ano: 2025
             
             📧 CONTATO:
             marketplace@unasp.edu.br
             
-            © 2024 UNASP - Todos os direitos reservados
+            © 2025 UNASP - Todos os direitos reservados
         """.trimIndent()
 
         AlertDialog.Builder(this)
