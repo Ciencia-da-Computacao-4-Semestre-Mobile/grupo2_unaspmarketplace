@@ -4,13 +4,20 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 data class Order(
-    val id: String,
-    val customerName: String,
+    val id: String = "",
+    val userId: String = "", // ID do usuário que fez o pedido
+    val customerName: String = "",
     val pickupLocation: String = "UNASP Store",
-    val items: List<OrderItem>,
-    val orderDate: String,
-    val paymentMethod: String
+    val items: List<OrderItem> = emptyList(),
+    val orderDate: String = "",
+    val paymentMethod: String = "",
+    val status: String = "Concluído", // Pode ser expandido futuramente
+    val timestamp: Long = System.currentTimeMillis(),
+    val totalAmount: Double = 0.0
 ) {
+    // Construtor vazio necessário para o Firebase
+    constructor() : this("", "", "", "UNASP Store", emptyList(), "", "", "Concluído", System.currentTimeMillis(), 0.0)
+
     companion object {
         fun generateOrderId(): String {
             val timestamp = System.currentTimeMillis()
@@ -25,7 +32,7 @@ data class Order(
 
     fun formatForWhatsApp(): String {
         val itemsList = items.joinToString("\n") { "• ${it.productName} (Qtd: ${it.quantity}) - R$ ${String.format("%.2f", it.totalPrice)}" }
-        val totalAmount = items.sumOf { it.totalPrice }
+        val calculatedTotal = items.sumOf { it.totalPrice }
 
         return """
 🛒 *NOVO PEDIDO - UNASP MARKETPLACE*
@@ -39,16 +46,10 @@ data class Order(
 🛍️ *Itens Comprados:*
 $itemsList
 
-💰 *Total:* R$ ${String.format("%.2f", totalAmount)}
+💰 *Total:* R$ ${String.format("%.2f", calculatedTotal)}
 
 _Por favor, confirme o recebimento deste pedido._
         """.trimIndent()
     }
 }
 
-data class OrderItem(
-    val productName: String,
-    val quantity: Int,
-    val unitPrice: Double,
-    val totalPrice: Double
-)
