@@ -1,37 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardProduct"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/gray_200">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:padding="12dp">
 
+        <!-- Product image -->
         <ImageView
             android:id="@+id/imgProduct"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
+            android:contentDescription="@string/product_image"
             android:background="@drawable/edittext_background"
-            android:layout_marginEnd="12dp" />
+            android:transitionName="product_image_transition"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
+        <!-- Actions (Edit / Toggle / Delete) -->
         <LinearLayout
+            android:id="@+id/actions"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Use 48dp touch target with centered icon -->
+            <ImageButton
+                android:id="@+id/btnEdit"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_edit"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/edit"
+                app:tint="@color/black"
+                android:layout_marginBottom="6dp" />
+
+            <ImageButton
+                android:id="@+id/btnToggleVisibility"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_visibility"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/toggle_visibility"
+                app:tint="@color/black"
+                android:layout_marginBottom="6dp" />
+
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/delete"
+                app:tint="@color/black" />
+        </LinearLayout>
+
+        <!-- Text column -->
+        <LinearLayout
+            android:id="@+id/textColumn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/imgProduct"
+            app:layout_constraintEnd_toStartOf="@id/actions"
+            app:layout_constraintTop_toTopOf="@id/imgProduct"
+            app:layout_constraintBottom_toBottomOf="@id/imgProduct">
 
             <TextView
                 android:id="@+id/tvProductName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nome do Produto"
+                android:text="Nome do Produto Muito Legal e Comprido"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -57,6 +116,7 @@
                 android:textColor="@color/gray_500"
                 android:layout_marginTop="2dp" />
 
+            <!-- Status pill -->
             <TextView
                 android:id="@+id/tvProductStatus"
                 android:layout_width="wrap_content"
@@ -64,44 +124,15 @@
                 android:text="Visível"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:layout_marginTop="4dp" />
-
+                android:textColor="@color/white"
+                android:layout_marginTop="6dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:background="@drawable/bg_status_pill" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center">
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ImageButton
-                android:id="@+id/btnEdit"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_edit"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Editar"
-                android:layout_marginBottom="4dp" />
-
-            <ImageButton
-                android:id="@+id/btnToggleVisibility"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_visibility"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Alterar visibilidade"
-                android:layout_marginBottom="4dp" />
-
-            <ImageButton
-                android:id="@+id/btnDelete"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_delete"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Excluir" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
