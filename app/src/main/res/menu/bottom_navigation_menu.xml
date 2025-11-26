@@ -12,7 +12,7 @@
     <item
         android:id="@+id/nav_profile"
         android:title="Perfil"
-        android:icon="@android:drawable/ic_menu_myplaces"/>
+        android:icon="@drawable/ic_perfil"/>
 
     <!--<item
         android:id="@+id/nav_notifications"

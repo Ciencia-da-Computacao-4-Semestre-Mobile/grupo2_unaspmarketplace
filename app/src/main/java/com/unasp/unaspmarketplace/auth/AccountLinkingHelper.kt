@@ -45,10 +45,10 @@ object AccountLinkingHelper {
             .setTitle("Vincular Contas")
             .setMessage(
                 "Este email já está associado a uma conta existente.\n\n" +
-                "Você pode:\n" +
-                "• Vincular sua conta GitHub à conta existente\n" +
-                "• Usar o método de login original (Google/Email)\n" +
-                "• Ou usar uma conta GitHub diferente"
+                        "Você pode:\n" +
+                        "• Vincular sua conta GitHub à conta existente\n" +
+                        "• Usar o método de login original (Google/Email)\n" +
+                        "• Ou usar uma conta GitHub diferente"
             )
             .setPositiveButton("Vincular GitHub") { _, _ ->
                 onLinkAccount()
