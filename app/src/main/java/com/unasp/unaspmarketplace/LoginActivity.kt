@@ -6,7 +6,6 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.CheckBox
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -16,23 +15,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.FirebaseApp
 
-import com.google.firebase.auth.FirebaseAuth
-import com.unasp.unaspmarketplace.auth.FacebookAuthHelper
 
 import com.unasp.unaspmarketplace.auth.GoogleAuthHelper
-import com.unasp.unaspmarketplace.auth.GitHubAuthHelper
 import com.unasp.unaspmarketplace.services.PasswordResetService
 import com.unasp.unaspmarketplace.utils.UserUtils
 import com.unasp.unaspmarketplace.data.model.LoginViewModel
 import kotlinx.coroutines.launch
-import com.google.firebase.auth.FirebaseAuth
-import android.widget.CheckBox
 
 
 
 class LoginActivity : AppCompatActivity() {
     private val viewModel = LoginViewModel()
-
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->

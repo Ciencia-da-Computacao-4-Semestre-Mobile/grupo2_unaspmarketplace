@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_profile"
-        android:title="Perfil"
-        android:icon="@android:drawable/ic_menu_myplaces"/>
-
-    <item
         android:id="@+id/nav_orders"
         android:title="Meus Pedidos"
         android:icon="@android:drawable/ic_menu_agenda"/>
@@ -17,14 +12,14 @@
         android:icon="@android:drawable/ic_menu_recent_history"/>
 
     <item
-        android:id="@+id/nav_post_item"
-        android:title="Publicar Item"
-        android:icon="@drawable/ic_add" />
-
-    <item
-        android:id="@+id/nav_history"
+        android:id="@+id/nav_settings"
         android:title="Configurações"
         android:icon="@android:drawable/ic_menu_preferences"/>
+
+    <item
+        android:id="@+id/nav_posted_items"
+        android:title="Publicar Item"
+        android:icon="@drawable/ic_add" />
 
     <item
         android:id="@+id/nav_logout"

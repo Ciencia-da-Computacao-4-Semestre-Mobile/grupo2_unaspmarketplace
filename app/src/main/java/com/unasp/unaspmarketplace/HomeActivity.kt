@@ -7,15 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.unasp.unaspmarketplace.models.Category
 import com.unasp.unaspmarketplace.models.CategoryAdapter
-import com.unasp.unaspmarketplace.models.ProductAdapter
 import android.content.Intent
 import androidx.drawerlayout.widget.DrawerLayout
 import android.view.View
-import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.unasp.unaspmarketplace.models.Product
+import com.unasp.unaspmarketplace.modelos.ProductAdapter
 import com.unasp.unaspmarketplace.repository.ProductRepository
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
@@ -32,24 +31,28 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.home_activity)
+        setContentView(R.layout.home_activity) // use o layout correto do seu XML
 
-        // Verificar e garantir que os dados do usuário existam
+        // Sessão/usuário (se necessário para permissões ou personalização)
         ensureUserData()
 
-        // Inicializar repositório
+        // Repositório
         productRepository = ProductRepository()
 
+        // UI: RecyclerViews + Adapters
         setupCategories()
         setupProducts()
+
+        // Navegação (drawer, bottom nav, etc.)
         setupNavigation()
 
-        // Carregar produtos
+        // Carregar produtos (coroutines com lifecycleScope)
         loadProducts()
 
-        // Registrar listener do carrinho
+        // Listener do carrinho
         CartManager.addListener(this)
     }
+
 
     private fun ensureUserData() {
         lifecycleScope.launch {
@@ -87,11 +90,11 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private fun setupProducts() {
         recyclerProducts = findViewById(R.id.recyclerProducts)
         recyclerProducts.layoutManager = GridLayoutManager(this, 2)
-
-        // Inicializar adapter com lista vazia
         productAdapter = ProductAdapter(mutableListOf())
         recyclerProducts.adapter = productAdapter
+        recyclerProducts.setHasFixedSize(true)
     }
+
 
     private var userClickedHome = false
 
@@ -138,10 +141,21 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
 
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_post_item -> startActivity(Intent(this, PostItemActivity::class.java))
-                R.id.nav_profile -> startActivity(Intent(this, ProfileActivity::class.java))
+                //R. id.nav_post_item -> startActivity(Intent(this, PostItemActivity::class.java))
+
+                //R.id.nav_profile -> startActivity(Intent(this, ProfileActivity::class.java))
+
                 R.id.nav_orders -> Toast.makeText(this, "Meus pedidos em breve", Toast.LENGTH_SHORT).show()
+
+                R.id.nav_posted_items -> {
+                    val intent = Intent(this, PostedItemsActivity::class.java)
+                    startActivity(intent)
+                }
+
                 R.id.nav_history -> Toast.makeText(this, "Histórico em breve", Toast.LENGTH_SHORT).show()
+
+                R.id.nav_settings -> Toast.makeText(this, "Configurações em breve", Toast.LENGTH_SHORT).show()
+
                 R.id.nav_logout -> {
                     val prefs = getSharedPreferences("user_session", MODE_PRIVATE)
                     prefs.edit().clear().apply()
@@ -149,38 +163,34 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                 }
-                R.id.nav_posted_items -> {
-                    val intent = Intent(this, PostedItemsActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.nav_logout -> {
-                    // Implementar logout
-                    Toast.makeText(this, "Logout em breve", Toast.LENGTH_SHORT).show()
-                }
             }
+            drawerLayout.closeDrawers()
+            bottomNavigation.selectedItemId = R.id.nav_home
+            true
+        }
             drawerLayout.closeDrawers()
             // seleção programática → não dispara Toast
             userClickedHome = false
             bottomNavigation.selectedItemId = R.id.nav_home
             true
-        }
+    }
 
         // clique inicial na Home → não dispara Toast
-        userClickedHome = false
-        bottomNavigation.selectedItemId = R.id.nav_home
+        //userClickedHome = false
+        //bottomNavigation.selectedItemId = R.id.nav_home
 
         // Para capturar cliques manuais na Home
-        bottomNavigation.setOnItemReselectedListener { item ->
-            if (item.itemId == R.id.nav_home) {
-                Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+        //bottomNavigation.setOnItemReselectedListener { item ->
+        //    if (item.itemId == R.id.nav_home) {
+        //        Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
+        //   }
+        //}
+    //}
+
 
     private fun loadProducts() {
         lifecycleScope.launch {
             try {
-                // Primeiro vamos tentar criar um produto de teste se não houver nenhum
                 createTestProductIfNeeded()
 
                 val result = productRepository.getActiveProducts()

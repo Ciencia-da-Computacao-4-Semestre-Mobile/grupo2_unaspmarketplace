@@ -183,6 +183,40 @@
 
         </LinearLayout>
     </ScrollView>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+<!--        <ImageView-->
+<!--            android:id="@+id/imgProductDetail"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="200dp"-->
+<!--            android:scaleType="centerCrop"/>-->
+
+        <TextView
+            android:id="@+id/txtProductDetailName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/txtProductDetailPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue_default"
+            android:textSize="18sp"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/txtProductDetailDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"/>
+    </LinearLayout>
 
     <!-- Seção Inferior - Quantidade e Botão -->
     <LinearLayout

@@ -22,7 +22,7 @@ class LoginViewModel : ViewModel() {
                 // Isso garante para o Lint que NUNCA passaremos null.
                 errorMessage.postValue(error ?: "Ocorreu um erro desconhecido.")
             }
-            
+
 
         }
     }

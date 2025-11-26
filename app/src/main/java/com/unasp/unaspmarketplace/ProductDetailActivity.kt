@@ -21,6 +21,7 @@ import com.unasp.unaspmarketplace.models.User
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
 
+
 class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private lateinit var product: Product
     private var currentQuantity = 1
@@ -252,10 +253,6 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
                     finish()
                     true
                 }
-                /*R.id.nav_notifications -> {
-                    Toast.makeText(this, "Notificações em breve", Toast.LENGTH_SHORT).show()
-                    true
-                }*/
                 R.id.nav_cart -> {
                     val intent = Intent(this, CartActivity::class.java)
                     startActivity(intent)
