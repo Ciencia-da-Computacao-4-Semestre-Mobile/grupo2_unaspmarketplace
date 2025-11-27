@@ -1,23 +1,14 @@
 package com.unasp.unaspmarketplace
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.unasp.unaspmarketplace.OrderPreviewActivity.Companion.COUNTDOWN_SECONDS
 import com.unasp.unaspmarketplace.models.Order
 import com.unasp.unaspmarketplace.models.OrderItem
 import com.unasp.unaspmarketplace.models.User
@@ -29,6 +20,12 @@ import kotlinx.coroutines.tasks.await
 
 class OrderPreviewActivity : AppCompatActivity() {
 
+    private lateinit var txtOrderPreview: TextView
+    private lateinit var txtCountdown: TextView
+    private lateinit var btnSendNow: Button
+    private lateinit var btnCancel: Button
+
+    private var countDownTimer: CountDownTimer? = null
     private var order: Order? = null
     private var customerWhatsApp: String? = null
 
@@ -42,11 +39,34 @@ class OrderPreviewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.order_preview_activity)
+
+        initViews()
+        setupButtons()
         generateOrder()
+        startCountdown()
+    }
+
+    private fun initViews() {
+        txtOrderPreview = findViewById(R.id.txtOrderPreview)
+        txtCountdown = findViewById(R.id.txtCountdown)
+        btnSendNow = findViewById(R.id.btnSendNow)
+        btnCancel = findViewById(R.id.btnCancel)
+    }
+
+    private fun setupButtons() {
+        btnSendNow.setOnClickListener {
+            cancelCountdown()
+            sendOrder()
+        }
+
+        btnCancel.setOnClickListener {
+            cancelCountdown()
+            finish()
+        }
     }
 
     private fun generateOrder() {
-        // Monta o Order com base nos extras e itens do carrinho
         val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: return
         val customerName = intent.getStringExtra(EXTRA_CUSTOMER_NAME) ?: return
         val paymentMethod = intent.getStringExtra(EXTRA_PAYMENT_METHOD) ?: return
@@ -80,12 +100,61 @@ class OrderPreviewActivity : AppCompatActivity() {
             totalAmount = orderItems.sumOf { it.totalPrice }
         )
 
-        // Exibe o bottom sheet com countdown e ações
-        CheckoutBottomSheet(
-            countdownSeconds = COUNTDOWN_SECONDS,
-            onSendNow = { sendOrder() },
-            onCancel = { finish() }
-        ).show(supportFragmentManager, "CheckoutBottomSheet")
+        // Mostrar preview do pedido
+        displayOrderPreview()
+    }
+
+    private fun displayOrderPreview() {
+        order?.let { order ->
+            val orderMessage = formatOrderMessage(order, customerWhatsApp)
+            txtOrderPreview.text = orderMessage
+        }
+    }
+
+    private fun formatOrderMessage(order: Order, customerWhatsApp: String?): String {
+        val itemsList = order.items.joinToString("\n") {
+            "• ${it.productName} (Qtd: ${it.quantity}) - R$ ${String.format("%.2f", it.totalPrice)}"
+        }
+        val totalAmount = order.items.sumOf { it.totalPrice }
+
+        val whatsappInfo = if (!customerWhatsApp.isNullOrBlank()) {
+            "\n📱 WhatsApp do Cliente: $customerWhatsApp"
+        } else ""
+
+        return """
+🛒 NOVO PEDIDO - UNASP MARKETPLACE
+
+📋 ID do Pedido: ${order.id}
+👤 Nome: ${order.customerName}$whatsappInfo
+📍 Local de Retirada: ${order.pickupLocation}
+📅 Data da Compra: ${order.orderDate}
+💳 Forma de Pagamento: ${order.paymentMethod} (na retirada)
+
+🛍️ Itens Comprados:
+$itemsList
+
+💰 Total: R$ ${String.format("%.2f", totalAmount)}
+
+Por favor, confirme o recebimento deste pedido.
+        """.trimIndent()
+    }
+
+    private fun startCountdown() {
+        countDownTimer = object : CountDownTimer((COUNTDOWN_SECONDS * 1000).toLong(), 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsLeft = millisUntilFinished / 1000
+                txtCountdown.text = getString(R.string.redirecting_in, secondsLeft.toInt())
+            }
+
+            override fun onFinish() {
+                sendOrder()
+            }
+        }.start()
+    }
+
+    private fun cancelCountdown() {
+        countDownTimer?.cancel()
+        countDownTimer = null
     }
 
     private fun sendOrder() {
@@ -110,11 +179,9 @@ class OrderPreviewActivity : AppCompatActivity() {
                     }, 1000) // 1 segundo de delay
 
                 } catch (e: Exception) {
-                    Toast.makeText(
-                        this@OrderPreviewActivity,
+                    Toast.makeText(this@OrderPreviewActivity,
                         "Erro ao processar pedido: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                        Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -140,6 +207,7 @@ class OrderPreviewActivity : AppCompatActivity() {
                 }
             }
         }
+
         // Para cada vendedor, buscar WhatsApp e enviar mensagem
         for ((sellerId, items) in itemsBySeller) {
             try {
@@ -149,11 +217,7 @@ class OrderPreviewActivity : AppCompatActivity() {
 
                     // Enviar mensagem para o vendedor
                     runOnUiThread {
-                        WhatsAppHelper.sendMessage(
-                            this@OrderPreviewActivity,
-                            sellerMessage,
-                            sellerWhatsApp
-                        )
+                        WhatsAppHelper.sendMessage(this@OrderPreviewActivity, sellerMessage, sellerWhatsApp)
                     }
 
                     // Pequeno delay entre mensagens
@@ -181,10 +245,40 @@ class OrderPreviewActivity : AppCompatActivity() {
         }
     }
 
+    private fun formatSellerMessage(order: Order, items: List<OrderItem>, customerWhatsApp: String?): String {
+        val itemsList = items.joinToString("\n") {
+            "• ${it.productName} (Qtd: ${it.quantity}) - R$ ${String.format("%.2f", it.totalPrice)}"
+        }
+        val subtotal = items.sumOf { it.totalPrice }
+
+        val whatsappInfo = if (!customerWhatsApp.isNullOrBlank()) {
+            "\n📱 WhatsApp do Cliente: $customerWhatsApp"
+        } else ""
+
+        return """
+🛒 NOVO PEDIDO - UNASP MARKETPLACE
+
+📋 ID do Pedido: ${order.id}
+👤 Cliente: ${order.customerName}$whatsappInfo
+📅 Data: ${order.orderDate}
+💳 Pagamento: ${order.paymentMethod} (na retirada)
+
+🛍️ Seus produtos vendidos:
+$itemsList
+
+💰 Subtotal dos seus produtos: R$ ${String.format("%.2f", subtotal)}
+
+📍 Local de retirada: Campus UNASP
+
+⚠️ IMPORTANTE: Entre em contato com o cliente para coordenar a entrega!
+        """.trimIndent()
+    }
+
     private fun saveUserDataIfNeeded(customerName: String, whatsappNumber: String?) {
         lifecycleScope.launch {
             try {
                 val currentUser = UserUtils.getCurrentUser() ?: return@launch
+
                 var shouldUpdate = false
                 var updatedUser = currentUser
 
@@ -218,123 +312,14 @@ class OrderPreviewActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun formatSellerMessage(
-        order: Order,
-        items: List<OrderItem>,
-        customerWhatsApp: String?
-    ): String {
-        val itemsList = items.joinToString("\n") {
-            "• ${it.productName} (Qtd: ${it.quantity}) - R$ ${String.format("%.2f", it.totalPrice)}"
-        }
-        val subtotal = items.sumOf { it.totalPrice }
 
-        val whatsappInfo = if (!customerWhatsApp.isNullOrBlank()) {
-            "\n📱 WhatsApp do Cliente: $customerWhatsApp"
-        } else ""
-
-        return """
-🛒 NOVO PEDIDO - UNASP MARKETPLACE
-
-📋 ID do Pedido: ${order.id}
-👤 Cliente: ${order.customerName}$whatsappInfo
-📅 Data: ${order.orderDate}
-💳 Pagamento: ${order.paymentMethod} (na retirada)
-
-🛍️ Seus produtos vendidos:
-$itemsList
-
-💰 Subtotal dos seus produtos: R$ ${String.format("%.2f", subtotal)}
-
-📍 Local de retirada: Campus UNASP
-
-⚠️ IMPORTANTE: Entre em contato com o cliente para coordenar a entrega!
-        """.trimIndent()
+    override fun onDestroy() {
+        super.onDestroy()
+        cancelCountdown()
     }
 
-    class CheckoutBottomSheet(
-        private val countdownSeconds: Int = 8,
-        private val onSendNow: () -> Unit,
-        private val onCancel: () -> Unit
-    ) : BottomSheetDialogFragment() {
-
-        private var countDownTimer: CountDownTimer? = null
-        private lateinit var txtCountdown: TextView
-
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            isCancelable = true // permite cancelar com toque fora / back
-        }
-
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View {
-            return inflater.inflate(R.layout.order_preview_activity, container, false)
-        }
-
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-
-            dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-            txtCountdown = view.findViewById<TextView>(R.id.txtCountdown)
-            val btnSendNow = view.findViewById<Button>(R.id.btnSendNow)
-            val btnCancel = view.findViewById<Button>(R.id.btnCancel)
-
-            btnSendNow.setOnClickListener {
-                onSendNow()
-                dismiss()
-            }
-
-            btnCancel.setOnClickListener {
-                onCancel()
-                dismiss()
-            }
-
-            dialog?.setCanceledOnTouchOutside(true)
-            startCountdown()
-        }
-
-        override fun onCancel(dialog: DialogInterface) {
-            super.onCancel(dialog)
-            onCancel()
-        }
-
-        override fun onStart() {
-            super.onStart()
-            val bottomSheet =
-                dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let {
-                val behavior = BottomSheetBehavior.from(it)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                behavior.isDraggable = true
-                behavior.isHideable = true
-            }
-        }
-
-        private fun startCountdown() {
-            countDownTimer = object : CountDownTimer((countdownSeconds * 1000).toLong(), 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    val secondsLeft = (millisUntilFinished / 1000).toInt()
-                    txtCountdown.text = getString(R.string.redirecting_in, secondsLeft)
-                }
-
-                override fun onFinish() {
-                    onSendNow()
-                    dismiss()
-                }
-            }.start()
-        }
-
-        private fun cancelCountdown() {
-            countDownTimer?.cancel()
-            countDownTimer = null
-        }
-
-        override fun onDestroyView() {
-            super.onDestroyView()
-            cancelCountdown()
-        }
+    override fun onBackPressed() {
+        cancelCountdown()
+        super.onBackPressed()
     }
 }
