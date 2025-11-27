@@ -14,15 +14,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.unasp.unaspmarketplace.OrderPreviewActivity.Companion.COUNTDOWN_SECONDS
 import com.unasp.unaspmarketplace.models.Order
 import com.unasp.unaspmarketplace.models.OrderItem
+import com.unasp.unaspmarketplace.models.User
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.WhatsAppHelper
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class OrderPreviewActivity : AppCompatActivity() {
 
@@ -88,23 +91,93 @@ class OrderPreviewActivity : AppCompatActivity() {
     private fun sendOrder() {
         order?.let { order ->
             // Mostrar feedback para o usuário
-            Toast.makeText(this, "Abrindo WhatsApp...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Processando pedido...", Toast.LENGTH_SHORT).show()
 
             // Salvar dados do usuário se necessário
             saveUserDataIfNeeded(order.customerName, customerWhatsApp)
 
-            // Limpar o carrinho
-            CartManager.clearCart()
+            // Buscar WhatsApps dos vendedores e enviar mensagens
+            lifecycleScope.launch {
+                try {
+                    sendMessagesToSellers(order)
 
-            // Enviar via WhatsApp
-            val orderMessage = formatOrderMessage(order, customerWhatsApp)
-            WhatsAppHelper.sendMessage(this, orderMessage)
+                    // Limpar o carrinho apenas após sucesso
+                    CartManager.clearCart()
 
-            // Dar um pequeno delay antes de ir para tela de sucesso
-            // para permitir que o WhatsApp abra
-            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                goToSuccess(order)
-            }, 1500) // 1.5 segundos de delay
+                    // Ir para tela de sucesso
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        goToSuccess(order)
+                    }, 1000) // 1 segundo de delay
+
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        this@OrderPreviewActivity,
+                        "Erro ao processar pedido: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private suspend fun sendMessagesToSellers(order: Order) {
+        // Agrupar itens por vendedor
+        val itemsBySeller = mutableMapOf<String, MutableList<OrderItem>>()
+
+        // Buscar dados dos produtos para obter sellerId
+        val cartItems = CartManager.getCartItems()
+        for (cartItem in cartItems) {
+            val sellerId = cartItem.product.sellerId
+            if (sellerId.isNotBlank()) {
+                if (!itemsBySeller.containsKey(sellerId)) {
+                    itemsBySeller[sellerId] = mutableListOf()
+                }
+
+                // Encontrar o item correspondente no pedido
+                val orderItem = order.items.find { it.productId == cartItem.product.id }
+                orderItem?.let {
+                    itemsBySeller[sellerId]?.add(it)
+                }
+            }
+        }
+        // Para cada vendedor, buscar WhatsApp e enviar mensagem
+        for ((sellerId, items) in itemsBySeller) {
+            try {
+                val sellerWhatsApp = getSellerWhatsApp(sellerId)
+                if (sellerWhatsApp.isNotBlank()) {
+                    val sellerMessage = formatSellerMessage(order, items, customerWhatsApp)
+
+                    // Enviar mensagem para o vendedor
+                    runOnUiThread {
+                        WhatsAppHelper.sendMessage(
+                            this@OrderPreviewActivity,
+                            sellerMessage,
+                            sellerWhatsApp
+                        )
+                    }
+
+                    // Pequeno delay entre mensagens
+                    kotlinx.coroutines.delay(1000)
+                }
+            } catch (e: Exception) {
+                // Log do erro mas continue para outros vendedores
+                android.util.Log.e("OrderPreview", "Erro ao enviar para vendedor $sellerId", e)
+            }
+        }
+    }
+
+    private suspend fun getSellerWhatsApp(sellerId: String): String {
+        return try {
+            val userDoc = FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(sellerId)
+                .get()
+                .await()
+
+            val user = userDoc.toObject(User::class.java)
+            user?.whatsappNumber ?: ""
+        } catch (e: Exception) {
+            ""
         }
     }
 
@@ -145,11 +218,16 @@ class OrderPreviewActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun formatOrderMessage(order: Order, customerWhatsApp: String?): String {
-        val itemsList = order.items.joinToString("\n") {
+    private fun formatSellerMessage(
+        order: Order,
+        items: List<OrderItem>,
+        customerWhatsApp: String?
+    ): String {
+        val itemsList = items.joinToString("\n") {
             "• ${it.productName} (Qtd: ${it.quantity}) - R$ ${String.format("%.2f", it.totalPrice)}"
         }
-        val totalAmount = order.items.sumOf { it.totalPrice }
+        val subtotal = items.sumOf { it.totalPrice }
+
         val whatsappInfo = if (!customerWhatsApp.isNullOrBlank()) {
             "\n📱 WhatsApp do Cliente: $customerWhatsApp"
         } else ""
@@ -158,99 +236,105 @@ class OrderPreviewActivity : AppCompatActivity() {
 🛒 NOVO PEDIDO - UNASP MARKETPLACE
 
 📋 ID do Pedido: ${order.id}
-👤 Nome: ${order.customerName}$whatsappInfo
-📍 Local de Retirada: ${order.pickupLocation}
-📅 Data da Compra: ${order.orderDate}
-💳 Forma de Pagamento: ${order.paymentMethod} (na retirada)
+👤 Cliente: ${order.customerName}$whatsappInfo
+📅 Data: ${order.orderDate}
+💳 Pagamento: ${order.paymentMethod} (na retirada)
 
-🛍️ Itens Comprados:
+🛍️ Seus produtos vendidos:
 $itemsList
 
-💰 Total: R$ ${String.format("%.2f", totalAmount)}
+💰 Subtotal dos seus produtos: R$ ${String.format("%.2f", subtotal)}
 
-Por favor, confirme o recebimento deste pedido.
+📍 Local de retirada: Campus UNASP
+
+⚠️ IMPORTANTE: Entre em contato com o cliente para coordenar a entrega!
         """.trimIndent()
     }
-}
 
-class CheckoutBottomSheet(
-    private val countdownSeconds: Int = 8,
-    private val onSendNow: () -> Unit,
-    private val onCancel: () -> Unit
-) : BottomSheetDialogFragment() {
+    class CheckoutBottomSheet(
+        private val countdownSeconds: Int = 8,
+        private val onSendNow: () -> Unit,
+        private val onCancel: () -> Unit
+    ) : BottomSheetDialogFragment() {
 
-    private var countDownTimer: CountDownTimer? = null
-    private lateinit var txtCountdown: TextView
+        private var countDownTimer: CountDownTimer? = null
+        private lateinit var txtCountdown: TextView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        isCancelable = true // permite cancelar com toque fora / back
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.order_preview_activity, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        txtCountdown = view.findViewById<TextView>(R.id.txtCountdown)
-        val btnSendNow = view.findViewById<Button>(R.id.btnSendNow)
-        val btnCancel = view.findViewById<Button>(R.id.btnCancel)
-
-        btnSendNow.setOnClickListener {
-            onSendNow()
-            dismiss()
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            isCancelable = true // permite cancelar com toque fora / back
         }
 
-        btnCancel.setOnClickListener {
-            onCancel()
-            dismiss()
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View {
+            return inflater.inflate(R.layout.order_preview_activity, container, false)
         }
 
-        dialog?.setCanceledOnTouchOutside(true)
-        startCountdown()
-    }
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
 
-    override fun onCancel(dialog: DialogInterface) {
-        super.onCancel(dialog)
-        onCancel()
-    }
+            dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-    override fun onStart() {
-        super.onStart()
-        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-        bottomSheet?.let {
-            val behavior = BottomSheetBehavior.from(it)
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            behavior.isDraggable = true
-            behavior.isHideable = true
-        }
-    }
+            txtCountdown = view.findViewById<TextView>(R.id.txtCountdown)
+            val btnSendNow = view.findViewById<Button>(R.id.btnSendNow)
+            val btnCancel = view.findViewById<Button>(R.id.btnCancel)
 
-    private fun startCountdown() {
-        countDownTimer = object : CountDownTimer((countdownSeconds * 1000).toLong(), 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val secondsLeft = (millisUntilFinished / 1000).toInt()
-                txtCountdown.text = getString(R.string.redirecting_in, secondsLeft)
-            }
-
-            override fun onFinish() {
+            btnSendNow.setOnClickListener {
                 onSendNow()
                 dismiss()
             }
-        }.start()
-    }
 
-    private fun cancelCountdown() {
-        countDownTimer?.cancel()
-        countDownTimer = null
-    }
+            btnCancel.setOnClickListener {
+                onCancel()
+                dismiss()
+            }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        cancelCountdown()
+            dialog?.setCanceledOnTouchOutside(true)
+            startCountdown()
+        }
+
+        override fun onCancel(dialog: DialogInterface) {
+            super.onCancel(dialog)
+            onCancel()
+        }
+
+        override fun onStart() {
+            super.onStart()
+            val bottomSheet =
+                dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.let {
+                val behavior = BottomSheetBehavior.from(it)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                behavior.isDraggable = true
+                behavior.isHideable = true
+            }
+        }
+
+        private fun startCountdown() {
+            countDownTimer = object : CountDownTimer((countdownSeconds * 1000).toLong(), 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val secondsLeft = (millisUntilFinished / 1000).toInt()
+                    txtCountdown.text = getString(R.string.redirecting_in, secondsLeft)
+                }
+
+                override fun onFinish() {
+                    onSendNow()
+                    dismiss()
+                }
+            }.start()
+        }
+
+        private fun cancelCountdown() {
+            countDownTimer?.cancel()
+            countDownTimer = null
+        }
+
+        override fun onDestroyView() {
+            super.onDestroyView()
+            cancelCountdown()
+        }
     }
 }

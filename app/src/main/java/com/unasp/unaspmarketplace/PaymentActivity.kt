@@ -203,9 +203,11 @@ class PaymentActivity : AppCompatActivity() {
     }
     private fun updateButtonState() {
         val hasName = txtCustomerNameValue?.text?.toString()?.trim()?.isNotEmpty() == true
-        val hasPaymentMethod = getSelectedPaymentMethod().isNotEmpty()
-        btnConfirmPayment.isEnabled = hasName && hasPaymentMethod
-        btnConfirmPayment.alpha = if (btnConfirmPayment.isEnabled) 1.0f else 0.5f
+        val hasWhatsApp = txtWhatsappValue?.text?.toString()?.trim()?.isNotEmpty() == true
+        val hasPaymentMethod = rgPaymentMethods.checkedRadioButtonId != -1
+
+        btnConfirmPayment.isEnabled = hasName && hasWhatsApp && hasPaymentMethod
+        btnConfirmPayment.alpha = if (hasName && hasWhatsApp && hasPaymentMethod) 1.0f else 0.5f
     }
 
     private fun updateTotal() {
@@ -221,6 +223,11 @@ class PaymentActivity : AppCompatActivity() {
         // Validações
         if (customerName.isNullOrEmpty()) {
             Toast.makeText(this, "Digite seu nome completo", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (whatsappNumber.isNullOrEmpty()) {
+            Toast.makeText(this, "Digite seu número de WhatsApp", Toast.LENGTH_SHORT).show()
             return
         }
 
