@@ -11,9 +11,9 @@
         android:icon="@drawable/ic_home" />
 
     <item
-        android:id="@+id/nav_profile"
-        android:title="Perfil"
-        android:icon="@drawable/ic_person" />
+        android:id="@+id/nav_notifications"
+        android:title="Notificações"
+        android:icon="@drawable/ic_notifications" />
 
     <item
         android:id="@+id/nav_cart"

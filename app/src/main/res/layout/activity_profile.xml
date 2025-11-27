@@ -105,13 +105,13 @@
                     android:textColorHint="@android:color/white"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Campo WhatsApp -->
+            <!-- Campo Telefone -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilPhoneNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="WhatsApp (opcional)"
+                android:hint="@string/default_number"
                 app:startIconDrawable="@drawable/ic_phone"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 app:boxStrokeColor="@color/white_outline"
@@ -121,7 +121,7 @@
                     android:id="@+id/etNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone"
+                    android:inputType="phone|number"
                     android:maxLines="1"
                     android:textColor="@android:color/white"
                     android:textColorHint="@android:color/white"/>
@@ -151,18 +151,7 @@
                         android:textColor="@color/blue_default"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-
-                    <!-- Info para contas Google -->
-                    <TextView
-                        android:id="@+id/txtPasswordInfo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="💡 Se você entrou com Google, pode vincular uma senha para também fazer login com email/senha."
-                        android:textColor="@color/gray_700"
-                        android:textSize="12sp"
-                        android:layout_marginBottom="12dp"
-                        android:visibility="gone" />
+                        android:layout_marginBottom="16dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilCurrentPassword"
@@ -249,17 +238,6 @@
                     android:text="@string/profile_save_changes"
                     android:textSize="16sp"
                     android:backgroundTint="#005bb5"
-                    app:cornerRadius="8dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnLogout"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="Sair da Conta"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:backgroundTint="@color/gray_700"
                     app:cornerRadius="8dp" />
 
                 <com.google.android.material.button.MaterialButton

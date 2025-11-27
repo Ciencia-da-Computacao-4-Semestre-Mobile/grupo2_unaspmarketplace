@@ -15,7 +15,6 @@ import com.google.android.gms.common.api.ApiException
 import com.unasp.unaspmarketplace.repository.UserRepository
 import kotlinx.coroutines.launch
 import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
 import com.unasp.unaspmarketplace.auth.GoogleAuthHelper
 import com.unasp.unaspmarketplace.utils.UserUtils
 
@@ -72,20 +71,6 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // TEMPORÁRIO: Comentado para permitir acesso ao registro
-        // TODO: Reativar depois de testar
-        /*
-        // Verificar se o usuário já está logado
-        if (FirebaseAuth.getInstance().currentUser != null) {
-            // Usuário já está logado, redirecionar para Home
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-            finish()
-            return
-        }
-        */
-
         setContentView(R.layout.register_activity)
 
         // Inicializa Firebase (se não estiver inicializado no Application)
