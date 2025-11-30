@@ -102,15 +102,48 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     }
 
     val excludes = listOf(
+        // Android / build generated
         "**/R.class",
         "**/R$*.class",
-        "**/*\$ViewBinder*.*",
         "**/BuildConfig.*",
         "**/Manifest*.*",
+        "**/generated/**",
+        "**/intermediates/**",
+
+        // DataBinding / ViewBinding
+        "**/databinding/**",
+
+        // Application class (inicialização do app)
+        "**/UnaspMarketplaceApplication.*",
+
+        // DI / annotation processors
+        "**/*_Factory.class",
+        "**/*_MembersInjector*.*",
+        "**/Dagger*.*",
+        "**/hilt_*/**",
+
+        // Test classes / test helpers
         "**/*Test*.*",
+        "**/test/**",
+
+        // Activities simples, sem lógica relevante
+        "**/OrderSuccessActivity.*",
+
+        // Auth helpers e utils com Firebase
+        "**/auth/**",
+        "**/utils/UserUtils.*",
+        "**/utils/EmailService.*",
+
+        // Third party libs / stdlib
         "**/androidx/**",
         "**/com/google/**",
-        "**/databinding/*.*"
+        "**/com/facebook/**",
+        "**/com/github/**",
+        "**/kotlin/**",
+
+        // Metadata / resources
+        "**/META-INF/**",
+        "**/resources/**"
     )
 
     val buildDirFile = layout.buildDirectory.get().asFile
@@ -169,6 +202,8 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation("org.robolectric:robolectric:4.12.2")
     testImplementation("androidx.test:core:1.6.1")
+    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:2.0.21")
 
     // Android instrumented tests (mantidos para compatibilidade)
     androidTestImplementation(libs.androidx.junit)
