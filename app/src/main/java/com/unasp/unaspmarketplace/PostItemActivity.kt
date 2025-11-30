@@ -45,7 +45,6 @@ class PostItemActivity : AppCompatActivity() {
     private val storage = FirebaseStorage.getInstance()
 
     companion object {
-        private const val CAMERA_PERMISSION_CODE = 100
         private const val STORAGE_PERMISSION_CODE = 101
     }
 
@@ -63,12 +62,12 @@ class PostItemActivity : AppCompatActivity() {
                         Toast.makeText(this, "Erro: adapter não inicializado", Toast.LENGTH_SHORT).show()
                     }
                 } ?: run {
-                    Toast.makeText(this, "Nenhuma imagem selecionada", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Nenhuma foto selecionada", Toast.LENGTH_SHORT).show()
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Erro ao processar imagem: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Erro ao processar foto: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -159,7 +158,7 @@ class PostItemActivity : AppCompatActivity() {
         }
 
         btnAddImage.setOnClickListener {
-            showImagePickerDialog()
+            openGallery()
         }
 
         btnRemoveImage.setOnClickListener {
@@ -167,19 +166,6 @@ class PostItemActivity : AppCompatActivity() {
                 showRemoveImageDialog()
             }
         }
-    }
-
-    private fun showImagePickerDialog() {
-        val options = arrayOf("Galeria", "Câmera")
-        AlertDialog.Builder(this)
-            .setTitle("Selecionar Imagem")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> openGallery()
-                    1 -> openCamera()
-                }
-            }
-            .show()
     }
 
     private fun openGallery() {
@@ -191,7 +177,7 @@ class PostItemActivity : AppCompatActivity() {
                 requestStoragePermission()
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Erro ao abrir galeria: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Erro ao abrir galeria de fotos: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -210,46 +196,14 @@ class PostItemActivity : AppCompatActivity() {
         )
     }
 
-    private fun openCamera() {
-        try {
-            if (checkCameraPermission()) {
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                if (intent.resolveActivity(packageManager) != null) {
-                    imagePickerLauncher.launch(intent)
-                } else {
-                    Toast.makeText(this, "Câmera não disponível", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                requestCameraPermission()
-            }
-        } catch (e: Exception) {
-            Toast.makeText(this, "Erro ao abrir câmera: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun checkCameraPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this,
-            android.Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestCameraPermission() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(android.Manifest.permission.CAMERA),
-            CAMERA_PERMISSION_CODE
-        )
-    }
-
     private fun showRemoveImageDialog() {
         val images = imageAdapter.getImages()
         if (images.isEmpty()) return
 
-        val imageNames = images.mapIndexed { index, _ -> "Imagem ${index + 1}" }.toTypedArray()
+        val imageNames = images.mapIndexed { index, _ -> "Foto ${index + 1}" }.toTypedArray()
 
         AlertDialog.Builder(this)
-            .setTitle("Remover Imagem")
+            .setTitle("Remover Foto")
             .setItems(imageNames) { _, which ->
                 imageAdapter.removeImage(which)
                 btnRemoveImage.isEnabled = imageAdapter.getImages().isNotEmpty()
@@ -259,6 +213,47 @@ class PostItemActivity : AppCompatActivity() {
     }
 
     private fun saveProduct() {
+        // Verificar se o usuário tem WhatsApp cadastrado primeiro
+        lifecycleScope.launch {
+            try {
+                val currentUser = com.unasp.unaspmarketplace.utils.UserUtils.getCurrentUser()
+                if (currentUser?.whatsappNumber.isNullOrBlank()) {
+                    runOnUiThread {
+                        showWhatsAppRequiredDialog()
+                    }
+                    return@launch
+                }
+
+                // Continuar com validações normais
+                validateAndSaveProduct()
+
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Toast.makeText(this@PostItemActivity,
+                        "Erro ao verificar dados do usuário: ${e.message}",
+                        Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun showWhatsAppRequiredDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("WhatsApp Obrigatório")
+            .setMessage("Para vender produtos no marketplace, você precisa cadastrar um número de WhatsApp no seu perfil. " +
+                       "Assim, compradores poderão entrar em contato com você!\n\n" +
+                       "Deseja ir para o perfil e cadastrar seu WhatsApp agora?")
+            .setPositiveButton("Ir para Perfil") { _, _ ->
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun validateAndSaveProduct() {
         // Validar campos
         val name = edtName.text.toString().trim()
         val description = edtDescription.text.toString().trim()
@@ -394,18 +389,11 @@ class PostItemActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            CAMERA_PERMISSION_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    openCamera()
-                } else {
-                    Toast.makeText(this, "Permissão de câmera negada", Toast.LENGTH_SHORT).show()
-                }
-            }
             STORAGE_PERMISSION_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openGallery()
                 } else {
-                    Toast.makeText(this, "Permissão de armazenamento negada", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Permissão de armazenamento necessária para selecionar fotos", Toast.LENGTH_LONG).show()
                 }
             }
         }

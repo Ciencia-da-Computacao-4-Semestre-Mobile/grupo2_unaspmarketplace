@@ -1,6 +1,8 @@
 package com.unasp.unaspmarketplace.utils
 
 import com.unasp.unaspmarketplace.models.Product
+import kotlin.collections.remove
+import kotlin.text.clear
 
 data class CartItem(
     val product: Product,
@@ -13,18 +15,26 @@ data class CartItem(
 object CartManager {
     private val cartItems = mutableListOf<CartItem>()
     private val listeners = mutableListOf<CartUpdateListener>()
+    private val actionListeners = mutableListOf<CartActionListener>()
 
+    // Listener para atualização de contagem de itens e preço total
     interface CartUpdateListener {
         fun onCartUpdated(itemCount: Int, totalPrice: Double)
     }
 
-    fun addListener(listener: CartUpdateListener) {
-        listeners.add(listener)
+    // Listener para eventos de ação (remoção de itens, limpeza do carrinho)
+    interface CartActionListener {
+        fun onItemsRemoved(removed: List<CartItem>) {}
+        fun onCartCleared(removed: List<CartItem>) {}
     }
 
-    fun removeListener(listener: CartUpdateListener) {
-        listeners.remove(listener)
-    }
+    fun addListener(listener: CartUpdateListener) { listeners.add(listener) }
+
+    fun removeListener(listener: CartUpdateListener) { listeners.remove(listener) }
+
+    fun addActionListener(listener: CartActionListener) { actionListeners.add(listener) }
+
+    fun removeActionListener(listener: CartActionListener) { actionListeners.remove(listener) }
 
     private fun notifyListeners() {
         val itemCount = getTotalItemCount()
@@ -58,9 +68,20 @@ object CartManager {
         }
     }
 
-    fun removeFromCart(productId: String) {
-        cartItems.removeAll { it.product.id == productId }
+    // Helper de deleção com notificação
+    private fun removeWhere(predicate: (CartItem) -> Boolean): List<CartItem> {
+        val removed = cartItems.filter(predicate)
+        if (removed.isEmpty()) return emptyList()
+        cartItems.removeAll(predicate)
         notifyListeners()
+        return removed
+    }
+
+    fun removeFromCart(productId: String) {
+        val removed = removeWhere { it.product.id == productId }
+        if (removed.isNotEmpty()) {
+            actionListeners.forEach { it.onItemsRemoved(removed) }
+        }
     }
 
     fun updateQuantity(productId: String, newQuantity: Int): Boolean {
@@ -69,14 +90,20 @@ object CartManager {
             item.quantity = newQuantity
             notifyListeners()
             true
+        } else if (item != null && newQuantity <= 0) {
+            removeFromCart(productId)
+            true
         } else {
             false
         }
     }
 
     fun clearCart() {
+        if (cartItems.isEmpty()) return
+        val removedSnapshot = cartItems.map { it.copy() }
         cartItems.clear()
         notifyListeners()
+        actionListeners.forEach { it.onCartCleared(removedSnapshot) }
     }
 
     fun getCartItems(): List<CartItem> = cartItems.toList()

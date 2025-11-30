@@ -15,18 +15,14 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.FirebaseApp
-
 import com.google.firebase.auth.FirebaseAuth
 import com.unasp.unaspmarketplace.auth.FacebookAuthHelper
-
 import com.unasp.unaspmarketplace.auth.GoogleAuthHelper
 import com.unasp.unaspmarketplace.auth.GitHubAuthHelper
 import com.unasp.unaspmarketplace.services.PasswordResetService
 import com.unasp.unaspmarketplace.utils.UserUtils
 import com.unasp.unaspmarketplace.data.model.LoginViewModel
 import kotlinx.coroutines.launch
-import com.google.firebase.auth.FirebaseAuth
-import android.widget.CheckBox
 
 
 
@@ -73,6 +69,22 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // TEMPORÁRIO: Comentado para permitir acesso ao login
+        // TODO: Reativar depois de testar
+        /*
+        // Verificar se o usuário já está logado
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            // Usuário já está logado, redirecionar para Home
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+        */
+
+        // TEMPORÁRIO: Forçar logout para testes (remover depois)
+        forceLogoutForTesting()
 
         try {
             // Inicializar Firebase
@@ -265,4 +277,22 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * MÉTODO TEMPORÁRIO: Força logout completo para testes
+     * TODO: Remover após resolver problemas de sessão
+     */
+    private fun forceLogoutForTesting() {
+        try {
+            // Logout do Firebase Auth
+            FirebaseAuth.getInstance().signOut()
+
+            // Limpar Google Sign In
+            val googleSignInClient = GoogleAuthHelper.getClient(this)
+            googleSignInClient.signOut()
+
+            Log.d("LoginActivity", "Logout forçado realizado")
+        } catch (e: Exception) {
+            Log.e("LoginActivity", "Erro no logout forçado", e)
+        }
+    }
 }

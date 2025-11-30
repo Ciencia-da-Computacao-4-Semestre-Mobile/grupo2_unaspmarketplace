@@ -8,19 +8,21 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.firestore.FirebaseFirestore
 import com.unasp.unaspmarketplace.models.Order
 import com.unasp.unaspmarketplace.models.OrderItem
+import com.unasp.unaspmarketplace.models.User
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.WhatsAppHelper
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class OrderPreviewActivity : AppCompatActivity() {
 
     private lateinit var txtOrderPreview: TextView
     private lateinit var txtCountdown: TextView
     private lateinit var btnSendNow: Button
-    private lateinit var btnTestWhatsApp: Button
     private lateinit var btnCancel: Button
 
     private var countDownTimer: CountDownTimer? = null
@@ -49,7 +51,6 @@ class OrderPreviewActivity : AppCompatActivity() {
         txtOrderPreview = findViewById(R.id.txtOrderPreview)
         txtCountdown = findViewById(R.id.txtCountdown)
         btnSendNow = findViewById(R.id.btnSendNow)
-        btnTestWhatsApp = findViewById(R.id.btnTestWhatsApp)
         btnCancel = findViewById(R.id.btnCancel)
     }
 
@@ -57,10 +58,6 @@ class OrderPreviewActivity : AppCompatActivity() {
         btnSendNow.setOnClickListener {
             cancelCountdown()
             sendOrder()
-        }
-
-        btnTestWhatsApp.setOnClickListener {
-            testWhatsApp()
         }
 
         btnCancel.setOnClickListener {
@@ -163,24 +160,118 @@ Por favor, confirme o recebimento deste pedido.
     private fun sendOrder() {
         order?.let { order ->
             // Mostrar feedback para o usuário
-            Toast.makeText(this, "Abrindo WhatsApp...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Processando pedido...", Toast.LENGTH_SHORT).show()
 
             // Salvar dados do usuário se necessário
             saveUserDataIfNeeded(order.customerName, customerWhatsApp)
 
-            // Limpar o carrinho
-            CartManager.clearCart()
+            // Buscar WhatsApps dos vendedores e enviar mensagens
+            lifecycleScope.launch {
+                try {
+                    sendMessagesToSellers(order)
 
-            // Enviar via WhatsApp
-            val orderMessage = formatOrderMessage(order, customerWhatsApp)
-            WhatsAppHelper.sendMessage(this, orderMessage)
+                    // Limpar o carrinho apenas após sucesso
+                    CartManager.clearCart()
 
-            // Dar um pequeno delay antes de ir para tela de sucesso
-            // para permitir que o WhatsApp abra
-            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                goToSuccess(order)
-            }, 1500) // 1.5 segundos de delay
+                    // Ir para tela de sucesso
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        goToSuccess(order)
+                    }, 1000) // 1 segundo de delay
+
+                } catch (e: Exception) {
+                    Toast.makeText(this@OrderPreviewActivity,
+                        "Erro ao processar pedido: ${e.message}",
+                        Toast.LENGTH_LONG).show()
+                }
+            }
         }
+    }
+
+    private suspend fun sendMessagesToSellers(order: Order) {
+        // Agrupar itens por vendedor
+        val itemsBySeller = mutableMapOf<String, MutableList<OrderItem>>()
+
+        // Buscar dados dos produtos para obter sellerId
+        val cartItems = CartManager.getCartItems()
+        for (cartItem in cartItems) {
+            val sellerId = cartItem.product.sellerId
+            if (sellerId.isNotBlank()) {
+                if (!itemsBySeller.containsKey(sellerId)) {
+                    itemsBySeller[sellerId] = mutableListOf()
+                }
+
+                // Encontrar o item correspondente no pedido
+                val orderItem = order.items.find { it.productId == cartItem.product.id }
+                orderItem?.let {
+                    itemsBySeller[sellerId]?.add(it)
+                }
+            }
+        }
+
+        // Para cada vendedor, buscar WhatsApp e enviar mensagem
+        for ((sellerId, items) in itemsBySeller) {
+            try {
+                val sellerWhatsApp = getSellerWhatsApp(sellerId)
+                if (sellerWhatsApp.isNotBlank()) {
+                    val sellerMessage = formatSellerMessage(order, items, customerWhatsApp)
+
+                    // Enviar mensagem para o vendedor
+                    runOnUiThread {
+                        WhatsAppHelper.sendMessage(this@OrderPreviewActivity, sellerMessage, sellerWhatsApp)
+                    }
+
+                    // Pequeno delay entre mensagens
+                    kotlinx.coroutines.delay(1000)
+                }
+            } catch (e: Exception) {
+                // Log do erro mas continue para outros vendedores
+                android.util.Log.e("OrderPreview", "Erro ao enviar para vendedor $sellerId", e)
+            }
+        }
+    }
+
+    private suspend fun getSellerWhatsApp(sellerId: String): String {
+        return try {
+            val userDoc = FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(sellerId)
+                .get()
+                .await()
+
+            val user = userDoc.toObject(User::class.java)
+            user?.whatsappNumber ?: ""
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
+    private fun formatSellerMessage(order: Order, items: List<OrderItem>, customerWhatsApp: String?): String {
+        val itemsList = items.joinToString("\n") {
+            "• ${it.productName} (Qtd: ${it.quantity}) - R$ ${String.format("%.2f", it.totalPrice)}"
+        }
+        val subtotal = items.sumOf { it.totalPrice }
+
+        val whatsappInfo = if (!customerWhatsApp.isNullOrBlank()) {
+            "\n📱 WhatsApp do Cliente: $customerWhatsApp"
+        } else ""
+
+        return """
+🛒 NOVO PEDIDO - UNASP MARKETPLACE
+
+📋 ID do Pedido: ${order.id}
+👤 Cliente: ${order.customerName}$whatsappInfo
+📅 Data: ${order.orderDate}
+💳 Pagamento: ${order.paymentMethod} (na retirada)
+
+🛍️ Seus produtos vendidos:
+$itemsList
+
+💰 Subtotal dos seus produtos: R$ ${String.format("%.2f", subtotal)}
+
+📍 Local de retirada: Campus UNASP
+
+⚠️ IMPORTANTE: Entre em contato com o cliente para coordenar a entrega!
+        """.trimIndent()
     }
 
     private fun saveUserDataIfNeeded(customerName: String, whatsappNumber: String?) {
@@ -221,12 +312,6 @@ Por favor, confirme o recebimento deste pedido.
         finish()
     }
 
-    private fun testWhatsApp() {
-        val testMessage = "🧪 TESTE - UNASP MARKETPLACE\n\nEste é um teste de conectividade.\nSe você recebeu esta mensagem, a integração está funcionando!"
-
-        Toast.makeText(this, "Enviando mensagem de teste...", Toast.LENGTH_SHORT).show()
-        WhatsAppHelper.sendMessage(this, testMessage)
-    }
 
     override fun onDestroy() {
         super.onDestroy()

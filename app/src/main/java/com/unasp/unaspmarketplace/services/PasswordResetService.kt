@@ -26,19 +26,19 @@ class PasswordResetService {
         private const val SMTP_PORT = "587"
 
         // ⚠️ IMPORTANTE: Configure estas credenciais com valores reais
-        private const val EMAIL_USERNAME = "marketplace.unasp@gmail.com" // Substitua pelo email real
-        private const val EMAIL_PASSWORD = "password" // Use App Password do Gmail
+        private const val EMAIL_USERNAME = "game4edu5@gmail.com" // Substitua pelo email real
+        private const val EMAIL_PASSWORD = "bblx zmzn rhso fgld" // Use App Password do Gmail
 
         // Detectar se as credenciais estão configuradas
         private fun areCredentialsConfigured(): Boolean {
             return EMAIL_USERNAME != "seu.email@gmail.com" &&
-                   EMAIL_USERNAME != "marketplace.unasp@gmail.com" &&
-                   EMAIL_PASSWORD != "sua_senha_de_app" &&
-                   EMAIL_PASSWORD != "password" &&
-                   EMAIL_USERNAME.isNotEmpty() &&
-                   EMAIL_PASSWORD.isNotEmpty() &&
-                   EMAIL_USERNAME.contains("@") &&
-                   EMAIL_PASSWORD.length >= 16  // Senhas de app do Gmail têm 16 chars
+                    EMAIL_USERNAME != "game4edu5@gmail.com" &&
+                    EMAIL_PASSWORD != "bblx zmzn rhso fgld" &&
+                    EMAIL_PASSWORD != "@Eduardo1806ok" &&
+                    EMAIL_USERNAME.isNotEmpty() &&
+                    EMAIL_PASSWORD.isNotEmpty() &&
+                    EMAIL_USERNAME.contains("@") &&
+                    EMAIL_PASSWORD.length >= 16  // Senhas de app do Gmail têm 16 chars
         }
 
         @Volatile
