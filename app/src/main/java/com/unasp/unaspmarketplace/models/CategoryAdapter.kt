@@ -42,7 +42,7 @@ class CategoryAdapter(
             holder.itemView.scaleY = 1.1f
         } else {
             // Categoria não selecionada - visual normal
-            holder.itemView.alpha = 0.7f
+            holder.itemView.alpha = 1.0f   // agora todos ficam totalmente visíveis
             holder.txt.setTextColor(holder.itemView.context.getColor(R.color.gray_700))
             holder.itemView.scaleX = 1.0f
             holder.itemView.scaleY = 1.0f

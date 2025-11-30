@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.unasp.unaspmarketplace.models.Category
 import com.unasp.unaspmarketplace.models.CategoryAdapter
 import com.unasp.unaspmarketplace.models.ProductAdapter
+import android.view.View
 import android.content.Intent
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
@@ -23,11 +24,14 @@ import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.CartBadgeManager
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
+import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import android.widget.TextView
 import android.content.SharedPreferences
 
 class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
+
+    // 🔹 Atributos da Activity (estado e referências)
     private lateinit var productRepository: ProductRepository
     private lateinit var productAdapter: ProductAdapter
     private lateinit var recyclerProducts: RecyclerView
@@ -38,30 +42,53 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private lateinit var categoryAdapter: CategoryAdapter
     private var selectedCategory: String = "Todos"
 
+    // 🔹 Ciclo de vida da Activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
 
-        // Verificar e garantir que os dados do usuário existam
+        // Inicialização das views
+        searchView = findViewById(R.id.searchView)
+        val bannerPromo = findViewById<ImageView>(R.id.bannerPromo)
+        val recyclerCategorys = findViewById<RecyclerView>(R.id.recyclerCategorys)
+        val txtCategorias = findViewById<TextView>(R.id.txtCategorias)
+
+        // Configuração da barra de pesquisa
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (!query.isNullOrEmpty()) {
+                    // 🔹 Pesquisa ativa → esconder banner + categorias
+                    bannerPromo.visibility = View.GONE
+                    recyclerCategorys.visibility = View.GONE
+                    txtCategorias.visibility = View.GONE
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText.isNullOrEmpty()) {
+                    // 🔹 Pesquisa limpa → mostrar tudo de novo
+                    bannerPromo.visibility = View.VISIBLE
+                    recyclerCategorys.visibility = View.VISIBLE
+                    txtCategorias.visibility = View.VISIBLE
+                }
+                return true
+            }
+        })
+
+        // Inicialização de dados e lógica
         ensureUserData()
-
-        // Inicializar repositório
         productRepository = ProductRepository()
-
-        // Inicializar SharedPreferences para histórico de busca
         searchPrefs = getSharedPreferences("search_history", MODE_PRIVATE)
 
         setupCategories()
         setupProducts()
-        setupSearchView()
         setupNavigation()
-
-        // Carregar produtos
         loadProducts()
 
-        // Registrar listener do carrinho
         CartManager.addListener(this)
     }
+
 
     private fun ensureUserData() {
         lifecycleScope.launch {
@@ -305,73 +332,63 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     }
 
     private fun setupNavigation() {
-        // Configuração do menu lateral
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         val navigationView = findViewById<NavigationView>(R.id.navigationView)
-
-        // Verificar se deve abrir o menu automaticamente
-        if (intent.getBooleanExtra("openMenu", false)) {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
-
-        // Configuração da hotbar inferior
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
-        // Configurar badge do carrinho
-        CartBadgeManager.setupCartBadge(bottomNavigation)
-        CartBadgeManager.updateBadge(CartManager.getTotalItemCount())
+        // Home marcado por padrão
+        bottomNavigation.selectedItemId = R.id.nav_home
 
+        // Hotbar inferior
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_menu -> {
-                    // Abre o menu lateral
-                    drawerLayout.openDrawer(GravityCompat.START)
-                    true
-                }
                 R.id.nav_home -> {
-                    // Já estamos na home, não precisa fazer nada
-                    Toast.makeText(this, "Você já está na Home", Toast.LENGTH_SHORT).show()
-                    true
+                    // já está na Home
+                    true // mantém marcado
+                }
+                R.id.nav_menu -> {
+                    drawerLayout.openDrawer(GravityCompat.START)
+                    true // marca o menu enquanto está aberto
                 }
                 R.id.nav_profile -> {
-                    // Navegar para o perfil
-                    val intent = Intent(this, ProfileActivity::class.java)
-                    startActivity(intent)
-                    true
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    false // não deixa marcado
                 }
                 R.id.nav_cart -> {
-                    // Navegar para o carrinho
-                    val intent = Intent(this, CartActivity::class.java)
-                    startActivity(intent)
-                    true
+                    startActivity(Intent(this, CartActivity::class.java))
+                    false // não deixa marcado
                 }
                 else -> false
             }
         }
 
-        // Configuração do menu lateral
+        // Listener do Drawer para alternar marcação
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+
+            override fun onDrawerOpened(drawerView: View) {
+                bottomNavigation.selectedItemId = R.id.nav_menu
+            }
+
+            override\zmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm asczxgdfgdf´´z\xc, mm fun onDrawerClosed(drawerView: View) {
+                bottomNavigation.selectedItemId = R.id.nav_home
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
+
+        // Menu lateral
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_post_item -> {
-                    val intent = Intent(this, PostItemActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.nav_posted_items -> {
-                    val intent = Intent(this, PostedItemsActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.nav_history -> {
-                    val intent = Intent(this, SettingsActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.nav_logout -> {
-                    showLogoutConfirmationDialog()
-                }
+                R.id.nav_post_item -> startActivity(Intent(this, PostItemActivity::class.java))
+                R.id.nav_posted_items -> startActivity(Intent(this, PostedItemsActivity::class.java))
+                R.id.nav_history -> startActivity(Intent(this, SettingsActivity::class.java))
+                R.id.nav_logout -> showLogoutConfirmationDialog()
             }
-            drawerLayout.closeDrawers() // fecha o menu depois do clique
+            drawerLayout.closeDrawers()
             true
         }
-    }
+    }XXupç|X
 
     private fun loadProducts() {
         lifecycleScope.launch {

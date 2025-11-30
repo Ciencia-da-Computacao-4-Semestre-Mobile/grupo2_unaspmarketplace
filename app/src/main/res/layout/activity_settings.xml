@@ -53,7 +53,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_person"
+                    android:src="@drawable/ic_perfil"
                     android:tint="@color/gray_700" />
 
                 <LinearLayout

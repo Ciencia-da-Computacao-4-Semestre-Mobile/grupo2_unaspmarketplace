@@ -30,29 +30,41 @@
             <!-- AppBar Simplificada -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:orientation="horizontal"
                 android:padding="16dp"
                 android:gravity="center_vertical"
-                android:background="@color/white"
+                android:background="@color/blue_secondary"
                 android:elevation="4dp">
 
                 <!-- Logo -->
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/logounaspmarketplace"
+                    android:src="@drawable/logounaspmarketplacebranco"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="3dp"
                     android:layout_marginEnd="12dp" />
 
-                <!-- Título -->
-                <TextView
-                    android:text="@string/title"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="@color/blue_default"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+                <!-- Container da barra de pesquisa -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@drawable/search_container_background"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="0dp"
+                    android:padding="4dp"
+                    android:layout_margin="0dp">
+
+                    <androidx.appcompat.widget.SearchView
+                        android:id="@+id/searchView"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:queryHint="Buscar produtos..."
+                        android:iconifiedByDefault="false" />
+                </LinearLayout>
+
 
                 <!-- Ícone pesquisa -->
 <!--                <ImageView-->
@@ -63,16 +75,6 @@
 <!--                    android:background="?android:attr/selectableItemBackgroundBorderless"-->
 <!--                    android:padding="4dp" />-->
             </LinearLayout>
-
-            <!-- Campo de Pesquisa -->
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:queryHint="Buscar produtos..."
-                android:iconifiedByDefault="false"
-                android:layout_margin="8dp"/>
-
             <!-- Banner -->
             <ImageView
                 android:id="@+id/bannerPromo"
@@ -84,12 +86,13 @@
 
             <!-- Texto categorias -->
             <TextView
+                android:id="@+id/txtCategorias"
                 android:text="@string/categorias"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:padding="8dp"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
+                android:layout_width="wrap_content"/>mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj,.kn
 
             <!-- RecyclerView Horizontal -->
             <androidx.recyclerview.widget.RecyclerView
@@ -100,20 +103,30 @@
                 android:orientation="horizontal"/>
 
             <!-- Texto destaque -->
-            <TextView
-                android:text="Produtos em Destaque"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:padding="8dp"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
-
-            <!-- RecyclerView Grid de Produtos -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerProducts"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"/>
+                android:orientation="vertical"
+                android:background="@color/gray_300"
+                app:cardCornerRadius="16dp"
+                android:padding="12dp"
+                android:layout_margin="12dp"
+                android:clipToOutline="true">
+
+                <TextView
+                    android:text="Produtos em Destaque"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:padding="8dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerProducts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"/>
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -121,8 +134,8 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:layout_height="120dp"
+            android:background="@color/blue_secondary"
             android:elevation="8dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
@@ -142,12 +155,14 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- MENU LATERAL -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        android:background="@color/white"
-        app:menu="@menu/drawer_menu"/>
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigationView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="true"
+            android:background="@color/white"
+            app:menu="@menu/drawer_menu"
+            app:itemTextColor="@color/black"
+            app:itemIconTint="@color/black"/>
 </androidx.drawerlayout.widget.DrawerLayout>
