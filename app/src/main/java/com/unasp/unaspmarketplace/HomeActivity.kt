@@ -370,7 +370,7 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                 bottomNavigation.selectedItemId = R.id.nav_menu
             }
 
-            override\zmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm asczxgdfgdf´´z\xc, mm fun onDrawerClosed(drawerView: View) {
+            override fun onDrawerClosed(drawerView: View) {
                 bottomNavigation.selectedItemId = R.id.nav_home
             }
 
@@ -388,7 +388,7 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
             drawerLayout.closeDrawers()
             true
         }
-    }XXupç|X
+    }
 
     private fun loadProducts() {
         lifecycleScope.launch {
