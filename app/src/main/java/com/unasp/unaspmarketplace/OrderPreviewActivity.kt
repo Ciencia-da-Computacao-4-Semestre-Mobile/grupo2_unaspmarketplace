@@ -6,6 +6,7 @@ import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.firestore.FirebaseFirestore
@@ -43,6 +44,7 @@ class OrderPreviewActivity : AppCompatActivity() {
 
         initViews()
         setupButtons()
+        setupBackPressedHandler()
         generateOrder()
         startCountdown()
     }
@@ -179,9 +181,11 @@ Por favor, confirme o recebimento deste pedido.
                     }, 1000) // 1 segundo de delay
 
                 } catch (e: Exception) {
-                    Toast.makeText(this@OrderPreviewActivity,
+                    Toast.makeText(
+                        this@OrderPreviewActivity,
                         "Erro ao processar pedido: ${e.message}",
-                        Toast.LENGTH_LONG).show()
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -217,7 +221,11 @@ Por favor, confirme o recebimento deste pedido.
 
                     // Enviar mensagem para o vendedor
                     runOnUiThread {
-                        WhatsAppHelper.sendMessage(this@OrderPreviewActivity, sellerMessage, sellerWhatsApp)
+                        WhatsAppHelper.sendMessage(
+                            this@OrderPreviewActivity,
+                            sellerMessage,
+                            sellerWhatsApp
+                        )
                     }
 
                     // Pequeno delay entre mensagens
@@ -245,7 +253,11 @@ Por favor, confirme o recebimento deste pedido.
         }
     }
 
-    private fun formatSellerMessage(order: Order, items: List<OrderItem>, customerWhatsApp: String?): String {
+    private fun formatSellerMessage(
+        order: Order,
+        items: List<OrderItem>,
+        customerWhatsApp: String?
+    ): String {
         val itemsList = items.joinToString("\n") {
             "• ${it.productName} (Qtd: ${it.quantity}) - R$ ${String.format("%.2f", it.totalPrice)}"
         }
@@ -318,8 +330,11 @@ $itemsList
         cancelCountdown()
     }
 
-    override fun onBackPressed() {
-        cancelCountdown()
-        super.onBackPressed()
+
+    private fun setupBackPressedHandler() {
+        onBackPressedDispatcher.addCallback(this) {
+            cancelCountdown()
+            finish()
+        }
     }
 }
