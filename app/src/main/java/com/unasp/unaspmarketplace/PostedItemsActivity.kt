@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -34,6 +35,7 @@ class PostedItemsActivity : AppCompatActivity() {
         setupToolbar()
         setupSwipeRefresh()
         setupRecyclerView()
+        setupFab()
         loadPostedItems()
     }
 
@@ -100,6 +102,14 @@ class PostedItemsActivity : AppCompatActivity() {
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@PostedItemsActivity)
             adapter = postedItemsAdapter
+        }
+    }
+
+    private fun setupFab() {
+        val fabReceivedOrders = findViewById<FloatingActionButton>(R.id.fabReceivedOrders)
+        fabReceivedOrders.setOnClickListener {
+            val intent = Intent(this, SellerOrdersActivity::class.java)
+            startActivity(intent)
         }
     }
 

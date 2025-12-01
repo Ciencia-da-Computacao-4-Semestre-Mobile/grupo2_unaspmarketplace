@@ -36,10 +36,6 @@
     <string name="facebook_app_id">728278693617290</string>
     <string name="facebook_client_token">fb728278693617290</string>
 
-    <!-- Payment Activity Strings -->
-    <string name="payment_method">Forma de Pagamento</string>
-    <string name="pickup_info_title">Local de Retirada</string>
-    <string name="pickup_info_description">Todos os produtos devem ser retirados no campus da UNASP</string>
     <string name="customer_info">Dados do Cliente</string>
     <string name="full_name">Nome Completo</string>
     <string name="whatsapp_number_optional">WhatsApp (opcional)</string>
@@ -49,6 +45,9 @@
     <string name="payment_credit">Cartão de Crédito</string>
     <string name="payment_pix">PIX</string>
     <string name="payment_cash">Dinheiro</string>
+    <string name="payment_method">Forma de Pagamento</string>
+    <string name="pickup_info_title">Informações de Retirada</string>
+    <string name="pickup_info_description">Retire seu pedido na UNASP Store no horário de funcionamento</string>
     <string name="confirm_payment">Gerar Pedido</string>
 
     <!-- Profile Activity Strings -->
@@ -61,6 +60,7 @@
     <string name="profile_delete_account">Excluir Conta</string>
 
     <!-- Password Reset Strings -->
+
     <string name="reset_verify_reset_code">Verificar Código</string>
     <string name="reset_code_sent_to_email">Código enviado para o email</string>
     <string name="reset_verification_code">Codigo de verificação</string>
@@ -91,8 +91,17 @@
     <string name="order_sent_message">Seu pedido foi enviado para a UNASP Store via WhatsApp.\nAguarde a confirmação do recebimento.</string>
     <string name="back_to_home">Voltar ao Início</string>
 
+
+    <!-- Profile Activity Strings -->
+
     <!-- Profile Activity Additional Strings -->
+<!--    <string name="profile_save_changes">Salvar Alterações</string>-->
+<!--    <string name="profile_delete_account">Excluir Conta</string>-->
+
+
+
     <string name="profile_toolbar_profile">Meu Perfil</string>
+
 
 
 </resources>

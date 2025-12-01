@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.unasp.unaspmarketplace.models.Order
 import com.unasp.unaspmarketplace.models.OrderItem
+import com.unasp.unaspmarketplace.repository.OrderRepository
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
@@ -29,11 +30,15 @@ class PaymentActivity : AppCompatActivity() {
     private lateinit var rbCash: RadioButton
     private lateinit var txtTotal: TextView
     private lateinit var btnConfirmPayment: Button
+    private lateinit var orderRepository: OrderRepository
 
     private var totalAmount: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Initialize repository
+        orderRepository = OrderRepository()
+
         setContentView(R.layout.payment_activity)
 
         // Receber o total do carrinho
@@ -148,29 +153,99 @@ class PaymentActivity : AppCompatActivity() {
             return
         }
 
-        // Converter itens do carrinho para itens do pedido
-        val orderItems = cartItems.map { cartItem ->
-            OrderItem(
-                productId = cartItem.product.id,
-                productName = cartItem.product.name,
-                quantity = cartItem.quantity,
-                unitPrice = cartItem.product.price
-            )
+        btnConfirmPayment.isEnabled = false
+        btnConfirmPayment.text = "Processando..."
+
+        lifecycleScope.launch {
+            try {
+                val currentUser = UserUtils.getCurrentUser()
+                val buyerId = currentUser?.id ?: ""
+                val buyerEmail = currentUser?.email ?: ""
+
+                // Converter itens do carrinho para itens do pedido
+                val orderItems = cartItems.map { cartItem ->
+                    OrderItem(
+                        productId = cartItem.product.id,
+                        productName = cartItem.product.name,
+                        productImage = if (cartItem.product.imageUrls.isNotEmpty()) cartItem.product.imageUrls[0] else "",
+                        quantity = cartItem.quantity,
+                        unitPrice = cartItem.product.price,
+                        totalPrice = cartItem.quantity * cartItem.product.price
+                    )
+                }
+
+                // Criar mensagem do WhatsApp
+                val whatsAppMessage = createWhatsAppMessage(customerName, orderItems, selectedPaymentMethod)
+
+                // Criar o pedido
+                val order = Order(
+                    buyerId = buyerId,
+                    sellerId = cartItems[0].product.sellerId, // Assumindo que todos os produtos são do mesmo vendedor
+                    sellerName = "", // Será preenchido depois se necessário
+                    buyerName = customerName,
+                    buyerEmail = buyerEmail,
+                    buyerWhatsApp = whatsappNumber,
+                    items = orderItems,
+                    totalAmount = orderItems.sumOf { it.totalPrice },
+                    paymentMethod = selectedPaymentMethod,
+                    whatsAppMessage = whatsAppMessage
+                )
+
+                // Salvar pedido no Firebase
+                val result = orderRepository.createOrder(order)
+
+                runOnUiThread {
+                    btnConfirmPayment.isEnabled = true
+                    btnConfirmPayment.text = "Gerar Pedido"
+
+                    if (result.isSuccess) {
+                        val orderId = result.getOrNull()!!
+                        Toast.makeText(this@PaymentActivity, "✅ Pedido criado com sucesso!", Toast.LENGTH_SHORT).show()
+
+                        // Ir para tela de preview com o pedido criado
+                        goToOrderPreview(order.copy(id = orderId), whatsappNumber)
+                    } else {
+                        val error = result.exceptionOrNull()
+                        Toast.makeText(this@PaymentActivity, "❌ Erro ao criar pedido: ${error?.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    btnConfirmPayment.isEnabled = true
+                    btnConfirmPayment.text = "Gerar Pedido"
+                    Toast.makeText(this@PaymentActivity, "❌ Erro: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun createWhatsAppMessage(customerName: String, orderItems: List<OrderItem>, paymentMethod: String): String {
+        val message = StringBuilder()
+        message.appendLine("🛒 *NOVO PEDIDO - UNASP MARKETPLACE*")
+        message.appendLine("━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        message.appendLine()
+        message.appendLine("👤 *Cliente:* $customerName")
+        message.appendLine("📞 *WhatsApp:* ${edtWhatsappNumber.text}")
+        message.appendLine()
+        message.appendLine("🛍️ *ITENS DO PEDIDO:*")
+
+        var total = 0.0
+        orderItems.forEach { item ->
+            message.appendLine("• ${item.quantity}x ${item.productName}")
+            message.appendLine("   💰 R$ ${String.format("%.2f", item.unitPrice)} cada = R$ ${String.format("%.2f", item.totalPrice)}")
+            total += item.totalPrice
         }
 
-        // Criar o pedido
-        val order = Order(
-            id = Order.generateOrderId(),
-            userId = UserUtils.getCurrentUserId() ?: "",
-            customerName = customerName,
-            items = orderItems,
-            orderDate = Order.getCurrentDate(),
-            paymentMethod = selectedPaymentMethod,
-            totalAmount = orderItems.sumOf { it.totalPrice }
-        )
+        message.appendLine()
+        message.appendLine("💳 *Pagamento:* $paymentMethod (na retirada)")
+        message.appendLine("💰 *TOTAL:* R$ ${String.format("%.2f", total)}")
+        message.appendLine()
+        message.appendLine("📍 *Retirada:* UNASP Store")
+        message.appendLine("🕒 *Horário:* Segunda à Sexta, 8h às 17h")
+        message.appendLine()
+        message.appendLine("✅ *Confirme este pedido para prosseguir*")
 
-        // Mostrar confirmação
-        showOrderConfirmation(order, whatsappNumber)
+        return message.toString()
     }
 
     private fun getSelectedPaymentMethod(): String {
@@ -192,11 +267,11 @@ class PaymentActivity : AppCompatActivity() {
         } else ""
 
         builder.setMessage(
-            "Nome: ${order.customerName}$whatsappInfo\n" +
+            "Nome: ${order.buyerName}$whatsappInfo\n" +
             "Itens: ${order.items.size} produto(s)\n" +
-            "Total: R$ %.2f\n".format(order.items.sumOf { it.totalPrice }) +
+            "Total: R$ ${String.format("%.2f", order.totalAmount)}\n" +
             "Pagamento: ${order.paymentMethod} (na retirada)\n" +
-            "Local: ${order.pickupLocation}\n\n" +
+            "Local: UNASP Store\n\n" +
             "Deseja visualizar o pedido antes de enviar?"
         )
 
@@ -213,17 +288,17 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun goToOrderPreview(order: Order, customerWhatsApp: String?) {
         val intent = Intent(this, OrderPreviewActivity::class.java)
-        intent.putExtra(OrderPreviewActivity.EXTRA_ORDER_ID, order.id)
-        intent.putExtra(OrderPreviewActivity.EXTRA_CUSTOMER_NAME, order.customerName)
-        intent.putExtra(OrderPreviewActivity.EXTRA_PAYMENT_METHOD, order.paymentMethod)
+        intent.putExtra("ORDER_ID", order.id)
+        intent.putExtra("CUSTOMER_NAME", order.buyerName)
+        intent.putExtra("PAYMENT_METHOD", order.paymentMethod)
+        intent.putExtra("TOTAL_AMOUNT", order.totalAmount)
+        intent.putExtra("WHATSAPP_MESSAGE", order.whatsAppMessage)
 
         if (!customerWhatsApp.isNullOrBlank()) {
-            intent.putExtra(OrderPreviewActivity.EXTRA_CUSTOMER_WHATSAPP, customerWhatsApp)
+            intent.putExtra("CUSTOMER_WHATSAPP", customerWhatsApp)
         }
 
         startActivity(intent)
         finish()
     }
 }
-
-

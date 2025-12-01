@@ -17,6 +17,7 @@ import com.unasp.unaspmarketplace.repository.UserRepository
 import com.unasp.unaspmarketplace.utils.AccountLinkingHelper
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.UserUtils
+import com.unasp.unaspmarketplace.utils.LogoutManager
 import kotlinx.coroutines.launch
 
 class ProfileActivity : AppCompatActivity() {
@@ -71,7 +72,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         btnSaveProfile.setOnClickListener { saveProfile() }
         btnChangePassword.setOnClickListener { changePassword() }
-        btnLogout.setOnClickListener { showLogoutConfirmationDialog() }
+        btnLogout.setOnClickListener { showLogoutOptionsDialog() }
         btnDeleteAccount.setOnClickListener { showDeleteAccountDialog() }
 
         // Debug: mostrar informações da conta ao clicar no email (modo desenvolvedor)
@@ -377,12 +378,38 @@ Can Login with Password: ${AccountLinkingHelper.canLoginWithPassword(user)}
             }
     }
 
+    private fun showLogoutOptionsDialog() {
+        val loginPreferences = com.unasp.unaspmarketplace.utils.LoginPreferences(this)
+
+        if (loginPreferences.isRememberMeEnabled() && loginPreferences.hasSavedCredentials()) {
+            // Show options dialog if remember me is enabled
+            AlertDialog.Builder(this)
+                .setTitle("Opções de Logout")
+                .setMessage("Como você deseja sair da sua conta?")
+                .setPositiveButton("Logout Completo") { _, _ ->
+                    // Complete logout - clear everything
+                    performCompleteLogout()
+                }
+                .setNegativeButton("Manter Credenciais") { _, _ ->
+                    // Soft logout - keep credentials for "remember me"
+                    performSoftLogout()
+                }
+                .setNeutralButton("Cancelar") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        } else {
+            // No saved credentials, just show normal logout confirmation
+            showLogoutConfirmationDialog()
+        }
+    }
+
     private fun showLogoutConfirmationDialog() {
         AlertDialog.Builder(this)
             .setTitle("Confirmar Logout")
             .setMessage("Tem certeza que deseja sair da sua conta?")
             .setPositiveButton("Sair") { _, _ ->
-                performLogout()
+                performCompleteLogout()
             }
             .setNegativeButton("Cancelar") { dialog, _ ->
                 dialog.dismiss()
@@ -390,18 +417,41 @@ Can Login with Password: ${AccountLinkingHelper.canLoginWithPassword(user)}
             .show()
     }
 
-    private fun performLogout() {
+    private fun performCompleteLogout() {
         lifecycleScope.launch {
             try {
                 // Limpar carrinho
                 CartManager.clearCart()
 
-                // Fazer logout através do repository
-                val userRepository = UserRepository()
-                userRepository.logout()
+                // Fazer logout completo usando LogoutManager
+                LogoutManager.performCompleteLogout(this@ProfileActivity)
 
                 // Mostrar mensagem de sucesso
-                Toast.makeText(this@ProfileActivity, "Logout realizado com sucesso", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ProfileActivity, "Logout completo realizado com sucesso", Toast.LENGTH_SHORT).show()
+
+                // Redirecionar para LoginActivity
+                val intent = Intent(this@ProfileActivity, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+
+            } catch (e: Exception) {
+                Toast.makeText(this@ProfileActivity, "Erro ao fazer logout: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun performSoftLogout() {
+        lifecycleScope.launch {
+            try {
+                // Limpar carrinho
+                CartManager.clearCart()
+
+                // Fazer logout suave usando LogoutManager (mantém credenciais)
+                LogoutManager.performSoftLogout(this@ProfileActivity)
+
+                // Mostrar mensagem de sucesso
+                Toast.makeText(this@ProfileActivity, "Logout realizado. Suas credenciais foram mantidas para próximo login.", Toast.LENGTH_LONG).show()
 
                 // Redirecionar para LoginActivity
                 val intent = Intent(this@ProfileActivity, LoginActivity::class.java)
