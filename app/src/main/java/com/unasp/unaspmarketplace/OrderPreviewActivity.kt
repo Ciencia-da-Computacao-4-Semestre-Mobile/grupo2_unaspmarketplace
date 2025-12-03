@@ -18,6 +18,7 @@ import com.unasp.unaspmarketplace.utils.WhatsAppHelper
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlin.or
 
 class OrderPreviewActivity : AppCompatActivity() {
 
@@ -41,6 +42,10 @@ class OrderPreviewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.order_preview_activity)
+
+        val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.appbar_order_preview)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
 
         initViews()
         setupButtons()
@@ -316,13 +321,15 @@ $itemsList
     }
 
     private fun goToSuccess(order: Order) {
-        val intent = Intent(this, OrderSuccessActivity::class.java)
-        intent.putExtra("order_id", order.id)
-        intent.putExtra("customer_name", order.customerName)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        val intent = Intent(this, OrderSuccessActivity::class.java).apply {
+            putExtra("order_id", order.id)
+            putExtra("customer_name", order.customerName)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        }
         startActivity(intent)
         finish()
     }
+
 
 
     override fun onDestroy() {
