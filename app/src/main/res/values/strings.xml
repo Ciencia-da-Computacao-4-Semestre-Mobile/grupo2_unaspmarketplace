@@ -37,9 +37,10 @@
     <string name="facebook_client_token">fb728278693617290</string>
 
     <!-- Payment Activity Strings -->
+    <string name="order_review">Resumo do Pedido</string>
     <string name="payment_method">Forma de Pagamento</string>
     <string name="pickup_info_title">Local de Retirada</string>
-    <string name="pickup_info_description">Todos os produtos devem ser retirados no campus da UNASP</string>
+    <string name="pickup_info_input">Local (dentro do campus)</string>
     <string name="customer_info">Dados do Cliente</string>
     <string name="full_name">Nome Completo</string>
     <string name="whatsapp_number_optional">WhatsApp (opcional)</string>
