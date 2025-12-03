@@ -6,6 +6,7 @@ import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,6 +18,7 @@ import com.unasp.unaspmarketplace.utils.WhatsAppHelper
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlin.or
 
 class OrderPreviewActivity : AppCompatActivity() {
 
@@ -41,8 +43,13 @@ class OrderPreviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.order_preview_activity)
 
+        val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.appbar_order_preview)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
+
         initViews()
         setupButtons()
+        setupBackPressedHandler()
         generateOrder()
         startCountdown()
     }
@@ -179,9 +186,11 @@ Por favor, confirme o recebimento deste pedido.
                     }, 1000) // 1 segundo de delay
 
                 } catch (e: Exception) {
-                    Toast.makeText(this@OrderPreviewActivity,
+                    Toast.makeText(
+                        this@OrderPreviewActivity,
                         "Erro ao processar pedido: ${e.message}",
-                        Toast.LENGTH_LONG).show()
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -217,7 +226,11 @@ Por favor, confirme o recebimento deste pedido.
 
                     // Enviar mensagem para o vendedor
                     runOnUiThread {
-                        WhatsAppHelper.sendMessage(this@OrderPreviewActivity, sellerMessage, sellerWhatsApp)
+                        WhatsAppHelper.sendMessage(
+                            this@OrderPreviewActivity,
+                            sellerMessage,
+                            sellerWhatsApp
+                        )
                     }
 
                     // Pequeno delay entre mensagens
@@ -245,7 +258,11 @@ Por favor, confirme o recebimento deste pedido.
         }
     }
 
-    private fun formatSellerMessage(order: Order, items: List<OrderItem>, customerWhatsApp: String?): String {
+    private fun formatSellerMessage(
+        order: Order,
+        items: List<OrderItem>,
+        customerWhatsApp: String?
+    ): String {
         val itemsList = items.joinToString("\n") {
             "• ${it.productName} (Qtd: ${it.quantity}) - R$ ${String.format("%.2f", it.totalPrice)}"
         }
@@ -304,13 +321,15 @@ $itemsList
     }
 
     private fun goToSuccess(order: Order) {
-        val intent = Intent(this, OrderSuccessActivity::class.java)
-        intent.putExtra("order_id", order.id)
-        intent.putExtra("customer_name", order.customerName)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        val intent = Intent(this, OrderSuccessActivity::class.java).apply {
+            putExtra("order_id", order.id)
+            putExtra("customer_name", order.customerName)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        }
         startActivity(intent)
         finish()
     }
+
 
 
     override fun onDestroy() {
@@ -318,8 +337,11 @@ $itemsList
         cancelCountdown()
     }
 
-    override fun onBackPressed() {
-        cancelCountdown()
-        super.onBackPressed()
+
+    private fun setupBackPressedHandler() {
+        onBackPressedDispatcher.addCallback(this) {
+            cancelCountdown()
+            finish()
+        }
     }
 }
