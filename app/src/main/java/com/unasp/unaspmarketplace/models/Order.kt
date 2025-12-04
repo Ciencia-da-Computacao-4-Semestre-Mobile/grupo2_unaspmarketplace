@@ -1,55 +1,55 @@
 package com.unasp.unaspmarketplace.models
 
-import com.google.firebase.firestore.IgnoreExtraProperties
-import com.google.firebase.firestore.PropertyName
+import java.text.SimpleDateFormat
+import java.util.*
 
-/**
- * Modelo para representar um pedido no sistema
- */
-@IgnoreExtraProperties
 data class Order(
-    @PropertyName("id") val id: String = "",
-    @PropertyName("buyerId") val buyerId: String = "", // ID do comprador
-    @PropertyName("sellerId") val sellerId: String = "", // ID do vendedor
-    @PropertyName("sellerName") val sellerName: String = "", // Nome do vendedor
-    @PropertyName("buyerName") val buyerName: String = "", // Nome do comprador
-    @PropertyName("buyerEmail") val buyerEmail: String = "", // Email do comprador
-    @PropertyName("buyerWhatsApp") val buyerWhatsApp: String = "", // WhatsApp do comprador
-    @PropertyName("items") val items: List<OrderItem> = emptyList(), // Itens do pedido
-    @PropertyName("totalAmount") val totalAmount: Double = 0.0, // Valor total
-    @PropertyName("paymentMethod") val paymentMethod: String = "", // Forma de pagamento
-    @PropertyName("status") val status: String = OrderStatus.PENDING.name, // Status do pedido como String
-    @PropertyName("createdAt") val createdAt: Long = System.currentTimeMillis(), // Data de criação
-    @PropertyName("updatedAt") val updatedAt: Long = System.currentTimeMillis(), // Data de atualização
-    @PropertyName("completedAt") val completedAt: Long? = null, // Data de conclusão
-    @PropertyName("whatsAppMessage") val whatsAppMessage: String = "", // Mensagem enviada para o WhatsApp
-    @PropertyName("notes") val notes: String = "" // Observações adicionais
+    val id: String = "",
+    val userId: String = "", // ID do usuário que fez o pedido
+    val customerName: String = "",
+    val pickupLocation: String = "UNASP Store",
+    val items: List<OrderItem> = emptyList(),
+    val orderDate: String = "",
+    val paymentMethod: String = "",
+    val status: String = "Concluído", // Pode ser expandido futuramente
+    val timestamp: Long = System.currentTimeMillis(),
+    val totalAmount: Double = 0.0
 ) {
-    // Construtor vazio necessário para Firebase
-    constructor() : this(
-        "", "", "", "", "", "", "",
-        emptyList(), 0.0, "", OrderStatus.PENDING.name,
-        System.currentTimeMillis(), System.currentTimeMillis(), null, "", ""
-    )
-
-    // Função helper para converter string para OrderStatus
-    fun getOrderStatus(): OrderStatus = OrderStatus.fromString(status)
-}
-
-/**
- * Status possíveis de um pedido
- */
-enum class OrderStatus(val displayName: String, val description: String) {
-    PENDING("Pendente", "Aguardando confirmação do vendedor"),
-    CONFIRMED("Confirmado", "Pedido confirmado pelo vendedor"),
-    PREPARING("Preparando", "Produto sendo preparado"),
-    READY("Pronto", "Produto pronto para retirada"),
-    COMPLETED("Concluído", "Pedido finalizado com sucesso"),
-    CANCELLED("Cancelado", "Pedido cancelado");
+    // Construtor vazio necessário para o Firebase
+    constructor() : this("", "", "", "UNASP Store", emptyList(), "", "", "Concluído", System.currentTimeMillis(), 0.0)
 
     companion object {
-        fun fromString(value: String): OrderStatus {
-            return values().find { it.name == value } ?: PENDING
+        fun generateOrderId(): String {
+            val timestamp = System.currentTimeMillis()
+            return "PED${timestamp.toString().takeLast(8)}"
+        }
+
+        fun getCurrentDate(): String {
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            return dateFormat.format(Date())
         }
     }
+
+    fun formatForWhatsApp(): String {
+        val itemsList = items.joinToString("\n") { "• ${it.productName} (Qtd: ${it.quantity}) - R$ ${String.format("%.2f", it.totalPrice)}" }
+        val calculatedTotal = items.sumOf { it.totalPrice }
+
+        return """
+🛒 *NOVO PEDIDO - UNASP MARKETPLACE*
+
+📋 *ID do Pedido:* $id
+👤 *Nome:* $customerName
+📍 *Local de Retirada:* $pickupLocation
+📅 *Data da Compra:* $orderDate
+💳 *Forma de Pagamento:* $paymentMethod (na retirada)
+
+🛍️ *Itens Comprados:*
+$itemsList
+
+💰 *Total:* R$ ${String.format("%.2f", calculatedTotal)}
+
+_Por favor, confirme o recebimento deste pedido._
+        """.trimIndent()
+    }
 }
+

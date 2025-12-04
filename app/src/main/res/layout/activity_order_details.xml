@@ -37,8 +37,7 @@
                 android:textColor="@color/gray_900"
                 android:fontFamily="monospace"
                 android:padding="16dp"
-                android:background="@drawable/rounded_background"
-                android:backgroundTint="@color/gray_50" />
+                android:background="@color/gray_100" />
 
         </LinearLayout>
 
