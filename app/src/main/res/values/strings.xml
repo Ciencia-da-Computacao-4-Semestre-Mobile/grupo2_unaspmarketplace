@@ -128,9 +128,6 @@
         <string name="checkout_desc">Botão para finalizar a compra</string>
         <string name="clear_cart_desc">Botão para esvaziar o carrinho</string>
 
-    <?xml version="1.0" encoding="utf-8"?>
-
-
 
         <!-- Toolbar / Titles -->
         <string name="title_product_detail">Detalhes do Produto</string>
@@ -159,7 +156,7 @@
         <string name="toast_minimum_quantity_reached">Quantidade mínima atingida</string>
 
         <!-- Errors / validations -->
-        <string name="error_invalid_quantity">Quantidade inválida</string>
+        <string name="error_invalid_quantity">Quantitative inválida</string>
 
         <!-- Plurals -->
         <plurals name="units">

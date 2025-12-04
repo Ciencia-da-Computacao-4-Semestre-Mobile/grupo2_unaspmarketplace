@@ -84,8 +84,9 @@ class ProductDetailActivity : AppCompatActivity(), CartManager.CartUpdateListene
         btnAddToCart = findViewById(R.id.btnAddToCart)
         btnContactSeller = findViewById(R.id.btnContactSeller)
 
-        val btnBack = findViewById<ImageView>(R.id.btnBack)
-        btnBack.setOnClickListener { finish() }
+        // Configurar botão de voltar no toolbar
+        val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbarProduct)
+        toolbar.setNavigationOnClickListener { finish() }
 
         // Configurar RecyclerView de imagens
         setupImageRecycler()
