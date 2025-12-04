@@ -50,8 +50,9 @@ class OrderHistoryAdapter(
             txtOrderDate.text = dateFormat.format(date)
 
             // Status do pedido com cores
-            txtOrderStatus.text = order.status.displayName
-            txtOrderStatus.setBackgroundColor(getStatusColor(order.status))
+            val orderStatus = order.getOrderStatus()
+            txtOrderStatus.text = orderStatus.displayName
+            txtOrderStatus.setBackgroundColor(getStatusColor(orderStatus))
 
             // Total do pedido
             txtOrderTotal.text = "R$ ${String.format("%.2f", order.totalAmount)}"

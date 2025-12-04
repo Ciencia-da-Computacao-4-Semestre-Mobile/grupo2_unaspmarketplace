@@ -153,11 +153,12 @@ class SellerOrdersActivity : AppCompatActivity() {
 
         when (tabPosition) {
             0 -> filteredOrders.addAll(allOrders) // Todos
-            1 -> filteredOrders.addAll(allOrders.filter { it.status == OrderStatus.PENDING }) // Pendentes
+            1 -> filteredOrders.addAll(allOrders.filter { it.getOrderStatus() == OrderStatus.PENDING }) // Pendentes
             2 -> filteredOrders.addAll(allOrders.filter {
-                it.status == OrderStatus.CONFIRMED || it.status == OrderStatus.PREPARING || it.status == OrderStatus.READY
+                val status = it.getOrderStatus()
+                status == OrderStatus.CONFIRMED || status == OrderStatus.PREPARING || status == OrderStatus.READY
             }) // Confirmados
-            3 -> filteredOrders.addAll(allOrders.filter { it.status == OrderStatus.COMPLETED }) // Concluídos
+            3 -> filteredOrders.addAll(allOrders.filter { it.getOrderStatus() == OrderStatus.COMPLETED }) // Concluídos
         }
 
         if (filteredOrders.isEmpty()) {
@@ -223,7 +224,7 @@ class SellerOrdersActivity : AppCompatActivity() {
             appendLine("📱 WhatsApp: ${order.buyerWhatsApp}")
             appendLine("📅 Data: ${java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(order.createdAt))}")
             appendLine("💳 Pagamento: ${order.paymentMethod}")
-            appendLine("📊 Status: ${order.status.displayName}")
+            appendLine("📊 Status: ${order.getOrderStatus().displayName}")
             appendLine()
             appendLine("🛍️ ITENS:")
             order.items.forEach { item ->

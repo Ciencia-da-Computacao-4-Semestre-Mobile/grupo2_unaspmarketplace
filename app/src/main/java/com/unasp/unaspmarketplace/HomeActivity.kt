@@ -24,7 +24,6 @@ import com.unasp.unaspmarketplace.utils.CartBadgeManager
 import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
 import androidx.appcompat.widget.SearchView
-import android.widget.TextView
 import android.content.SharedPreferences
 
 class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
@@ -352,6 +351,14 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         // Configuração do menu lateral
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
+                R.id.nav_my_purchases -> {
+                    val intent = Intent(this, OrderHistoryActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_seller_orders -> {
+                    val intent = Intent(this, SellerOrdersActivity::class.java)
+                    startActivity(intent)
+                }
                 R.id.nav_post_item -> {
                     val intent = Intent(this, PostItemActivity::class.java)
                     startActivity(intent)

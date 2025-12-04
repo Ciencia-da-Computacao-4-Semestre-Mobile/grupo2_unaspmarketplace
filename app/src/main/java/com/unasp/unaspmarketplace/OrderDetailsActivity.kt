@@ -95,7 +95,7 @@ class OrderDetailsActivity : AppCompatActivity() {
             appendLine("🆔 ID: #${order.id}")
             appendLine("📅 Criado: ${dateFormat.format(createdDate)}")
             appendLine("🔄 Atualizado: ${dateFormat.format(updatedDate)}")
-            appendLine("📊 Status: ${order.status.displayName}")
+            appendLine("📊 Status: ${order.getOrderStatus().displayName}")
             appendLine()
             appendLine("👤 INFORMAÇÕES DO CLIENTE")
             appendLine("━━━━━━━━━━━━━━━━━━━━━━━━━━")

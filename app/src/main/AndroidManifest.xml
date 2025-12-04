@@ -105,6 +105,9 @@
         <!-- Tela de Histórico de Pedidos -->
         <activity android:name=".OrderHistoryActivity" />
 
+        <!-- Tela de Pedidos Recebidos (Vendedor) -->
+        <activity android:name=".SellerOrdersActivity" />
+
         <!-- Telas de Recuperação de Senha -->
         <activity
             android:name=".VerifyResetCodeActivity"

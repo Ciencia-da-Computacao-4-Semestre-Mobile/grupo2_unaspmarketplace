@@ -56,8 +56,9 @@ class SellerOrdersAdapter(
             txtOrderDate.text = dateFormat.format(date)
 
             // Status do pedido
-            txtOrderStatus.text = order.status.displayName
-            txtOrderStatus.setBackgroundColor(getStatusColor(order.status))
+            val orderStatus = order.getOrderStatus()
+            txtOrderStatus.text = orderStatus.displayName
+            txtOrderStatus.setBackgroundColor(getStatusColor(orderStatus))
 
             // Informações do cliente
             txtCustomerName.text = "Cliente: ${order.buyerName}"
@@ -79,12 +80,12 @@ class SellerOrdersAdapter(
             txtPaymentMethod.text = "Pagamento: ${order.paymentMethod}"
 
             // Botão de concluir pedido
-            btnCompleteOrder.visibility = if (order.status == OrderStatus.PENDING ||
-                order.status == OrderStatus.CONFIRMED ||
-                order.status == OrderStatus.PREPARING ||
-                order.status == OrderStatus.READY) View.VISIBLE else View.GONE
+            btnCompleteOrder.visibility = if (orderStatus == OrderStatus.PENDING ||
+                orderStatus == OrderStatus.CONFIRMED ||
+                orderStatus == OrderStatus.PREPARING ||
+                orderStatus == OrderStatus.READY) View.VISIBLE else View.GONE
 
-            when (order.status) {
+            when (orderStatus) {
                 OrderStatus.PENDING -> {
                     btnCompleteOrder.text = "✅ Confirmar Pedido"
                     btnCompleteOrder.setBackgroundColor(itemView.context.getColor(android.R.color.holo_green_light))
@@ -109,18 +110,18 @@ class SellerOrdersAdapter(
 
             // Click listeners
             btnCompleteOrder.setOnClickListener {
-                when (order.status) {
+                when (orderStatus) {
                     OrderStatus.PENDING -> {
                         // Confirmar pedido (muda para CONFIRMED)
-                        onCompleteOrder(order.copy(status = OrderStatus.CONFIRMED))
+                        onCompleteOrder(order.copy(status = OrderStatus.CONFIRMED.name))
                     }
                     OrderStatus.CONFIRMED, OrderStatus.PREPARING -> {
                         // Marcar como pronto (muda para READY)
-                        onCompleteOrder(order.copy(status = OrderStatus.READY))
+                        onCompleteOrder(order.copy(status = OrderStatus.READY.name))
                     }
                     OrderStatus.READY -> {
                         // Concluir entrega (muda para COMPLETED)
-                        onCompleteOrder(order.copy(status = OrderStatus.COMPLETED))
+                        onCompleteOrder(order.copy(status = OrderStatus.COMPLETED.name))
                     }
                     else -> { /* Não faz nada */ }
                 }

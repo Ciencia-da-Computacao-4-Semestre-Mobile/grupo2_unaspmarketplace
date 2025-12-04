@@ -1,26 +1,40 @@
 package com.unasp.unaspmarketplace.models
 
+import com.google.firebase.firestore.IgnoreExtraProperties
+import com.google.firebase.firestore.PropertyName
+
 /**
  * Modelo para representar um pedido no sistema
  */
+@IgnoreExtraProperties
 data class Order(
-    val id: String = "",
-    val buyerId: String = "", // ID do comprador
-    val sellerId: String = "", // ID do vendedor
-    val sellerName: String = "", // Nome do vendedor
-    val buyerName: String = "", // Nome do comprador
-    val buyerEmail: String = "", // Email do comprador
-    val buyerWhatsApp: String = "", // WhatsApp do comprador
-    val items: List<OrderItem> = emptyList(), // Itens do pedido
-    val totalAmount: Double = 0.0, // Valor total
-    val paymentMethod: String = "", // Forma de pagamento
-    val status: OrderStatus = OrderStatus.PENDING, // Status do pedido
-    val createdAt: Long = System.currentTimeMillis(), // Data de criação
-    val updatedAt: Long = System.currentTimeMillis(), // Data de atualização
-    val completedAt: Long? = null, // Data de conclusão
-    val whatsAppMessage: String = "", // Mensagem enviada para o WhatsApp
-    val notes: String = "" // Observações adicionais
-)
+    @PropertyName("id") val id: String = "",
+    @PropertyName("buyerId") val buyerId: String = "", // ID do comprador
+    @PropertyName("sellerId") val sellerId: String = "", // ID do vendedor
+    @PropertyName("sellerName") val sellerName: String = "", // Nome do vendedor
+    @PropertyName("buyerName") val buyerName: String = "", // Nome do comprador
+    @PropertyName("buyerEmail") val buyerEmail: String = "", // Email do comprador
+    @PropertyName("buyerWhatsApp") val buyerWhatsApp: String = "", // WhatsApp do comprador
+    @PropertyName("items") val items: List<OrderItem> = emptyList(), // Itens do pedido
+    @PropertyName("totalAmount") val totalAmount: Double = 0.0, // Valor total
+    @PropertyName("paymentMethod") val paymentMethod: String = "", // Forma de pagamento
+    @PropertyName("status") val status: String = OrderStatus.PENDING.name, // Status do pedido como String
+    @PropertyName("createdAt") val createdAt: Long = System.currentTimeMillis(), // Data de criação
+    @PropertyName("updatedAt") val updatedAt: Long = System.currentTimeMillis(), // Data de atualização
+    @PropertyName("completedAt") val completedAt: Long? = null, // Data de conclusão
+    @PropertyName("whatsAppMessage") val whatsAppMessage: String = "", // Mensagem enviada para o WhatsApp
+    @PropertyName("notes") val notes: String = "" // Observações adicionais
+) {
+    // Construtor vazio necessário para Firebase
+    constructor() : this(
+        "", "", "", "", "", "", "",
+        emptyList(), 0.0, "", OrderStatus.PENDING.name,
+        System.currentTimeMillis(), System.currentTimeMillis(), null, "", ""
+    )
+
+    // Função helper para converter string para OrderStatus
+    fun getOrderStatus(): OrderStatus = OrderStatus.fromString(status)
+}
 
 /**
  * Status possíveis de um pedido

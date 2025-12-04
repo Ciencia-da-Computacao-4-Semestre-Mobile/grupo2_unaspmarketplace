@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.unasp.unaspmarketplace.models.Order
 import com.unasp.unaspmarketplace.models.OrderItem
+import com.unasp.unaspmarketplace.models.OrderStatus
 import com.unasp.unaspmarketplace.repository.OrderRepository
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.UserUtils
@@ -158,12 +159,26 @@ class PaymentActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
+                    android.util.Log.d("PaymentActivity", "Iniciando criação do pedido...")
+
                 val currentUser = UserUtils.getCurrentUser()
                 val buyerId = currentUser?.id ?: ""
                 val buyerEmail = currentUser?.email ?: ""
 
+                android.util.Log.d("PaymentActivity", "Usuário atual: $buyerId - $buyerEmail")
+
+                if (buyerId.isEmpty()) {
+                    runOnUiThread {
+                        btnConfirmPayment.isEnabled = true
+                        btnConfirmPayment.text = "Gerar Pedido"
+                        Toast.makeText(this@PaymentActivity, "❌ Erro: Usuário não logado", Toast.LENGTH_LONG).show()
+                    }
+                    return@launch
+                }
+
                 // Converter itens do carrinho para itens do pedido
                 val orderItems = cartItems.map { cartItem ->
+                    android.util.Log.d("PaymentActivity", "Item do carrinho: ${cartItem.product.name} - Vendedor: ${cartItem.product.sellerId}")
                     OrderItem(
                         productId = cartItem.product.id,
                         productName = cartItem.product.name,
@@ -174,13 +189,28 @@ class PaymentActivity : AppCompatActivity() {
                     )
                 }
 
+                android.util.Log.d("PaymentActivity", "Convertidos ${orderItems.size} itens do pedido")
+
+                // Verificar se temos vendedor válido
+                val sellerId = cartItems[0].product.sellerId
+                android.util.Log.d("PaymentActivity", "Vendedor ID: $sellerId")
+
+                if (sellerId.isEmpty()) {
+                    runOnUiThread {
+                        btnConfirmPayment.isEnabled = true
+                        btnConfirmPayment.text = "Gerar Pedido"
+                        Toast.makeText(this@PaymentActivity, "❌ Erro: Produto sem vendedor definido", Toast.LENGTH_LONG).show()
+                    }
+                    return@launch
+                }
+
                 // Criar mensagem do WhatsApp
                 val whatsAppMessage = createWhatsAppMessage(customerName, orderItems, selectedPaymentMethod)
 
                 // Criar o pedido
                 val order = Order(
                     buyerId = buyerId,
-                    sellerId = cartItems[0].product.sellerId, // Assumindo que todos os produtos são do mesmo vendedor
+                    sellerId = sellerId,
                     sellerName = "", // Será preenchido depois se necessário
                     buyerName = customerName,
                     buyerEmail = buyerEmail,
@@ -188,11 +218,17 @@ class PaymentActivity : AppCompatActivity() {
                     items = orderItems,
                     totalAmount = orderItems.sumOf { it.totalPrice },
                     paymentMethod = selectedPaymentMethod,
+                    status = OrderStatus.PENDING.name,
                     whatsAppMessage = whatsAppMessage
                 )
 
+                android.util.Log.d("PaymentActivity", "Pedido criado: ${order}")
+                android.util.Log.d("PaymentActivity", "Total do pedido: ${order.totalAmount}")
+
                 // Salvar pedido no Firebase
+                android.util.Log.d("PaymentActivity", "Salvando pedido no Firebase...")
                 val result = orderRepository.createOrder(order)
+                android.util.Log.d("PaymentActivity", "Resultado da criação: ${result.isSuccess}")
 
                 runOnUiThread {
                     btnConfirmPayment.isEnabled = true
@@ -200,16 +236,22 @@ class PaymentActivity : AppCompatActivity() {
 
                     if (result.isSuccess) {
                         val orderId = result.getOrNull()!!
+                        android.util.Log.d("PaymentActivity", "Pedido criado com sucesso! ID: $orderId")
                         Toast.makeText(this@PaymentActivity, "✅ Pedido criado com sucesso!", Toast.LENGTH_SHORT).show()
+
+                        // Limpar carrinho após sucesso
+                        CartManager.clearCart()
 
                         // Ir para tela de preview com o pedido criado
                         goToOrderPreview(order.copy(id = orderId), whatsappNumber)
                     } else {
                         val error = result.exceptionOrNull()
+                        android.util.Log.e("PaymentActivity", "Erro ao criar pedido: ${error?.message}", error)
                         Toast.makeText(this@PaymentActivity, "❌ Erro ao criar pedido: ${error?.message}", Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: Exception) {
+                android.util.Log.e("PaymentActivity", "Exceção durante criação do pedido: ${e.message}", e)
                 runOnUiThread {
                     btnConfirmPayment.isEnabled = true
                     btnConfirmPayment.text = "Gerar Pedido"
