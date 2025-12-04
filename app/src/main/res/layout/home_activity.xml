@@ -92,7 +92,7 @@
                 android:textSize="16sp"
                 android:padding="8dp"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
+                android:layout_width="wrap_content"/>mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj,.kn
 
             <!-- RecyclerView Horizontal -->
             <androidx.recyclerview.widget.RecyclerView
@@ -124,7 +124,30 @@
                         android:padding="8dp"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/gray_300"
+                app:cardCornerRadius="16dp"
+                android:padding="12dp"
+                android:layout_margin="12dp"
+                android:clipToOutline="true">
 
+                <TextView
+                    android:text="Produtos em Destaque"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:padding="8dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerProducts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"/>
+            </LinearLayout>
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerProducts"
                         android:layout_width="match_parent"

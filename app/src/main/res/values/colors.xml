@@ -9,7 +9,9 @@
     <color name="blue_light">#4da6ff</color>
     <color name="blue_default">#0073e6</color>
 
+
     <!-- Cores de apoio -->
+    <color name="gray_50">#FAFAFA</color>
     <color name="gray_100">#F5F5F5</color>
     <color name="gray_200">#EEEEEE</color>
     <color name="gray_300">#E0E0E0</color>
@@ -23,9 +25,11 @@
     <color name="background_light">#FAFAFA</color>
 
     <!-- Cores de status -->
-    <color name="red">#F44336</color>
     <color name="green">#4CAF50</color>
-    <color name="orange">#FF9800</color>
+    <color name="red">#F44336</color>
+
+    <!-- Cores de background -->
+    <color name="background_light">#FAFAFA</color>
 
     <!-- Cores deprecated (manter para compatibilidade) -->
     <color name="purple_500">#673AB7</color>

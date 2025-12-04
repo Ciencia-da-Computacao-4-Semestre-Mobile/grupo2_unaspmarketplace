@@ -42,7 +42,6 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
     private lateinit var categoryAdapter: CategoryAdapter
     private var selectedCategory: String = "Todos"
 
-
     // 🔹 Ciclo de vida da Activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,11 +78,13 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         setupCategories()
         setupProducts()
         setupNavigation()
+
+        // Carregar produtos
         loadProducts()
 
+        // Registrar listener do carrinho
         CartManager.addListener(this)
     }
-
 
     private fun ensureUserData() {
         lifecycleScope.launch {
@@ -334,7 +335,6 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         // Home marcado por padrão
         bottomNavigation.selectedItemId = R.id.nav_home
 
-        // Hotbar inferior
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
@@ -343,7 +343,7 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
                 }
                 R.id.nav_menu -> {
                     drawerLayout.openDrawer(GravityCompat.START)
-                    true // marca o menu enquanto está aberto
+                    true
                 }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ProfileActivity::class.java))

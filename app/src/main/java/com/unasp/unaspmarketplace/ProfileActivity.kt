@@ -17,6 +17,7 @@ import com.unasp.unaspmarketplace.repository.UserRepository
 import com.unasp.unaspmarketplace.utils.AccountLinkingHelper
 import com.unasp.unaspmarketplace.utils.CartManager
 import com.unasp.unaspmarketplace.utils.UserUtils
+import com.unasp.unaspmarketplace.utils.LogoutManager
 import kotlinx.coroutines.launch
 
 class ProfileActivity : AppCompatActivity() {
@@ -71,7 +72,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         btnSaveProfile.setOnClickListener { saveProfile() }
         btnChangePassword.setOnClickListener { changePassword() }
-        btnLogout.setOnClickListener { showLogoutConfirmationDialog() }
+        btnLogout.setOnClickListener { showLogoutOptionsDialog() }
         btnDeleteAccount.setOnClickListener { showDeleteAccountDialog() }
 
         // Debug: mostrar informações da conta ao clicar no email (modo desenvolvedor)
@@ -192,6 +193,12 @@ Can Login with Password: ${AccountLinkingHelper.canLoginWithPassword(user)}
 
         if (newName.isEmpty()) {
             etName.error = "Nome não pode estar vazio"
+            return
+        }
+
+        // Validar formato do WhatsApp apenas se foi preenchido
+        if (newWhatsapp.isNotEmpty() && newWhatsapp.length < 10) {
+            etWhatsappNumber.error = "Digite um número de WhatsApp válido"
             return
         }
 
@@ -382,7 +389,7 @@ Can Login with Password: ${AccountLinkingHelper.canLoginWithPassword(user)}
             .setTitle("Confirmar Logout")
             .setMessage("Tem certeza que deseja sair da sua conta?")
             .setPositiveButton("Sair") { _, _ ->
-                performLogout()
+                performCompleteLogout()
             }
             .setNegativeButton("Cancelar") { dialog, _ ->
                 dialog.dismiss()
@@ -390,28 +397,45 @@ Can Login with Password: ${AccountLinkingHelper.canLoginWithPassword(user)}
             .show()
     }
 
-    private fun performLogout() {
+    private fun performCompleteLogout() {
         lifecycleScope.launch {
             try {
-                // Limpar carrinho
                 CartManager.clearCart()
+                LogoutManager.performCompleteLogout(this@ProfileActivity)
 
-                // Fazer logout através do repository
-                val userRepository = UserRepository()
-                userRepository.logout()
+                Toast.makeText(this@ProfileActivity, "Logout completo realizado com sucesso", Toast.LENGTH_SHORT).show()
 
-                // Mostrar mensagem de sucesso
-                Toast.makeText(this@ProfileActivity, "Logout realizado com sucesso", Toast.LENGTH_SHORT).show()
-
-                // Redirecionar para LoginActivity
                 val intent = Intent(this@ProfileActivity, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
                 finish()
-
             } catch (e: Exception) {
                 Toast.makeText(this@ProfileActivity, "Erro ao fazer logout: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+
+    private fun performSoftLogout() {
+        lifecycleScope.launch {
+            try {
+                CartManager.clearCart()
+                LogoutManager.performSoftLogout(this@ProfileActivity)
+
+                Toast.makeText(
+                    this@ProfileActivity,
+                    "Logout realizado. Suas credenciais foram mantidas para próximo login.",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                val intent = Intent(this@ProfileActivity, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            } catch (e: Exception) {
+                Toast.makeText(this@ProfileActivity, "Erro ao fazer logout: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
 

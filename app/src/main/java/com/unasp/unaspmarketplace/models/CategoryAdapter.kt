@@ -33,6 +33,45 @@ class CategoryAdapter(
         holder.img.setImageResource(categoria.iconRes)
         holder.txt.text = categoria.name
 
+        override fun onBindViewHolder(holder: CategoriaViewHolder, position: Int) {
+            val categoria = categorys[position]
+
+            // Destaque visual conforme seleção
+            if (position == selectedPosition) {
+                holder.itemView.alpha = 1.0f
+                holder.txt.setTextColor(holder.itemView.context.getColor(R.color.blue_default))
+                holder.itemView.scaleX = 1.1f
+                holder.itemView.scaleY = 1.1f
+            } else {
+                holder.itemView.alpha = 1.0f
+                holder.txt.setTextColor(holder.itemView.context.getColor(R.color.gray_700))
+                holder.itemView.scaleX = 1.0f
+                holder.itemView.scaleY = 1.0f
+            }
+
+            // Clique para selecionar categoria
+            holder.itemView.setOnClickListener {
+                val clickedPosition = holder.adapterPosition
+                if (clickedPosition != RecyclerView.NO_POSITION) {
+                    val previousPosition = selectedPosition
+                    selectedPosition = clickedPosition
+
+                    // Atualizar visual dos itens
+                    notifyItemChanged(previousPosition)
+                    notifyItemChanged(selectedPosition)
+
+                    // Animação de clique
+                    animateClick(holder.itemView)
+
+                    // Callback para busca
+                    onCategoryClick?.invoke(categoria.name)
+                }
+            }
+
+            holder.itemView.isClickable = true
+            holder.itemView.isFocusable = true
+        }
+
         // Aplicar estilo visual baseado na seleção
         if (position == selectedPosition) {
             // Categoria selecionada - destaque visual
@@ -47,56 +86,18 @@ class CategoryAdapter(
             holder.itemView.scaleX = 1.0f
             holder.itemView.scaleY = 1.0f
         }
-
-        // Adicionar click listener para buscar por categoria
-        holder.itemView.setOnClickListener {
-            // Atualizar seleção
-            val oldPosition = selectedPosition
-            selectedPosition = position
-
-            // Notificar mudança visual
-            notifyItemChanged(oldPosition)
-            notifyItemChanged(selectedPosition)
-
-            // Animação de clique
-            animateClick(holder.itemView)
-
-            // Callback para busca
-            onCategoryClick?.invoke(categoria.name)
-        }
-
-        // Configurar como clicável
-        holder.itemView.isClickable = true
-        holder.itemView.isFocusable = true
     }
 
+    override fun getItemCount(): Int = categorys.size
+
+    // Método público para definir categoria selecionada programaticamente
     fun setSelectedCategory(categoryName: String) {
         val newPosition = categorys.indexOfFirst { it.name == categoryName }
         if (newPosition != -1 && newPosition != selectedPosition) {
-            val oldPosition = selectedPosition
+            val previousPosition = selectedPosition
             selectedPosition = newPosition
-            notifyItemChanged(oldPosition)
+            notifyItemChanged(previousPosition)
             notifyItemChanged(selectedPosition)
         }
     }
-
-    private fun animateClick(view: View) {
-        // Animação de escala ao clicar
-        val scaleDown = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.9f)
-        val scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.9f)
-        val scaleUp = ObjectAnimator.ofFloat(view, "scaleX", 0.9f, 1f)
-        val scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 0.9f, 1f)
-
-        scaleDown.duration = 100
-        scaleDownY.duration = 100
-        scaleUp.duration = 100
-        scaleUpY.duration = 100
-
-        val animatorSet = AnimatorSet()
-        animatorSet.play(scaleDown).with(scaleDownY)
-        animatorSet.play(scaleUp).with(scaleUpY).after(scaleDown)
-        animatorSet.start()
-    }
-
-    override fun getItemCount() = categorys.size
 }

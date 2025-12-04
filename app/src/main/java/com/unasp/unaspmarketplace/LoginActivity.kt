@@ -21,6 +21,7 @@ import com.unasp.unaspmarketplace.auth.GoogleAuthHelper
 import com.unasp.unaspmarketplace.auth.GitHubAuthHelper
 import com.unasp.unaspmarketplace.services.PasswordResetService
 import com.unasp.unaspmarketplace.utils.UserUtils
+import com.unasp.unaspmarketplace.utils.LoginPreferences
 import com.unasp.unaspmarketplace.data.model.LoginViewModel
 import kotlinx.coroutines.launch
 
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private val viewModel = LoginViewModel()
+    private lateinit var loginPreferences: LoginPreferences
 
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -70,6 +72,16 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Initialize login preferences
+        loginPreferences = LoginPreferences(this)
+
+        // Check for auto-login
+        if (loginPreferences.isAutoLoginEnabled() && loginPreferences.hasSavedCredentials()) {
+            // Auto-login is enabled and we have saved credentials
+            attemptAutoLogin()
+            return
+        }
+
         // TEMPORÁRIO: Comentado para permitir acesso ao login
         // TODO: Reativar depois de testar
         /*
@@ -94,6 +106,7 @@ class LoginActivity : AppCompatActivity() {
 
             setupLoginButtons()
             observeLoginState()
+            loadSavedCredentials() // Load saved credentials if "remember me" is enabled
 
             // 🔹 Novo trecho: texto clicável para cadastro
             val register = findViewById<TextView>(R.id.sign_in_text)
@@ -113,13 +126,64 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Attempts auto-login using saved credentials
+     */
+    private fun attemptAutoLogin() {
+        val email = loginPreferences.getSavedEmail()
+        val password = loginPreferences.getSavedPassword()
+
+        if (!email.isNullOrEmpty() && !password.isNullOrEmpty()) {
+            // Show loading or splash screen
+            setContentView(R.layout.login_activity)
+
+            // Update UI to show auto-login attempt
+            Toast.makeText(this, "Fazendo login automaticamente...", Toast.LENGTH_SHORT).show()
+
+            // Attempt login
+            viewModel.login(email, password)
+        } else {
+            // Saved credentials are invalid, proceed with normal login
+            loginPreferences.clearSavedCredentials()
+        }
+    }
+
+    /**
+     * Loads saved credentials into the form if remember me is enabled
+     */
+    private fun loadSavedCredentials() {
+        if (loginPreferences.isRememberMeEnabled()) {
+            val savedEmail = loginPreferences.getSavedEmail()
+            val savedPassword = loginPreferences.getSavedPassword()
+
+            if (!savedEmail.isNullOrEmpty()) {
+                findViewById<EditText>(R.id.edtEmail).setText(savedEmail)
+            }
+
+            if (!savedPassword.isNullOrEmpty()) {
+                findViewById<EditText>(R.id.edtSenha).setText(savedPassword)
+            }
+
+            // Set remember me checkbox
+            findViewById<CheckBox>(R.id.login_remember_me).isChecked = true
+        }
+    }
+
     private fun setupLoginButtons() {
         // Email/Password login
         findViewById<com.google.android.material.button.MaterialButton>(R.id.btnLogin).setOnClickListener {
             val email = findViewById<EditText>(R.id.edtEmail).text.toString().trim()
             val password = findViewById<EditText>(R.id.edtSenha).text.toString().trim()
+            val rememberMe = findViewById<CheckBox>(R.id.login_remember_me).isChecked
 
             if (validateInput(email, password)) {
+                // Save credentials if remember me is checked
+                if (rememberMe) {
+                    loginPreferences.saveLoginSession(email, password, true, false)
+                } else {
+                    loginPreferences.clearSavedCredentials()
+                }
+
                 viewModel.login(email, password)
             }
         }
@@ -128,7 +192,6 @@ class LoginActivity : AppCompatActivity() {
         findViewById<LinearLayout>(R.id.btnGoogleLogin).setOnClickListener {
             signInWithGoogle()
         }
-
     }
 
     private fun signInWithGoogle() {
@@ -168,6 +231,11 @@ class LoginActivity : AppCompatActivity() {
     private fun observeLoginState() {
         viewModel.loginState.observe(this) { success: Boolean ->
             if (success) {
+                // Update last login time if remember me is enabled
+                if (loginPreferences.isRememberMeEnabled()) {
+                    loginPreferences.updateLastLoginTime()
+                }
+
                 // Garantir que os dados do usuário existam no Firestore
                 lifecycleScope.launch {
                     try {
@@ -289,6 +357,9 @@ class LoginActivity : AppCompatActivity() {
             // Limpar Google Sign In
             val googleSignInClient = GoogleAuthHelper.getClient(this)
             googleSignInClient.signOut()
+
+            // Clear login preferences for testing (comment this out if you want to test remember me)
+            // loginPreferences.clearAllPreferences()
 
             Log.d("LoginActivity", "Logout forçado realizado")
         } catch (e: Exception) {
