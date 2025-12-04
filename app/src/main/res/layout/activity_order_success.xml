@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    android:background="@color/background_light">
+
+    <!-- Ícone de sucesso -->
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@android:drawable/ic_menu_send"
+        android:tint="@color/blue_default"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Título -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pedido Enviado!"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/gray_900"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Descrição -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seu pedido foi enviado para o vendedor via WhatsApp. Você receberá uma confirmação em breve e poderá acompanhar o status no histórico de pedidos."
+        android:textSize="16sp"
+        android:textColor="@color/gray_600"
+        android:textAlignment="center"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Status -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="📊 Status: Pendente"
+        android:textSize="16sp"
+        android:textColor="@color/gray_700"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_background"
+        android:backgroundTint="@color/gray_100"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Botões -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📋 Ver Histórico de Pedidos"
+            android:backgroundTint="@color/blue_default"
+            android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnContinueShopping"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🛍️ Continuar Comprando"
+            android:textColor="@color/blue_default" />
+
+    </LinearLayout>
+
+</LinearLayout>

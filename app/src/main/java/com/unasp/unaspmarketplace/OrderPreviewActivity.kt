@@ -8,17 +8,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.google.firebase.firestore.FirebaseFirestore
-import com.unasp.unaspmarketplace.models.Order
-import com.unasp.unaspmarketplace.models.OrderItem
-import com.unasp.unaspmarketplace.models.User
 import com.unasp.unaspmarketplace.utils.CartManager
-import com.unasp.unaspmarketplace.utils.WhatsAppHelper
-import com.unasp.unaspmarketplace.utils.UserUtils
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlin.or
+
+import com.unasp.unaspmarketplace.utils.WhatsAppManager
+
 
 class OrderPreviewActivity : AppCompatActivity() {
 
@@ -28,14 +21,8 @@ class OrderPreviewActivity : AppCompatActivity() {
     private lateinit var btnCancel: Button
 
     private var countDownTimer: CountDownTimer? = null
-    private var order: Order? = null
-    private var customerWhatsApp: String? = null
 
     companion object {
-        const val EXTRA_ORDER_ID = "order_id"
-        const val EXTRA_CUSTOMER_NAME = "customer_name"
-        const val EXTRA_CUSTOMER_WHATSAPP = "customer_whatsapp"
-        const val EXTRA_PAYMENT_METHOD = "payment_method"
         const val COUNTDOWN_SECONDS = 8 // 8 segundos para o usuário ler
     }
 
@@ -74,83 +61,23 @@ class OrderPreviewActivity : AppCompatActivity() {
     }
 
     private fun generateOrder() {
-        val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: return
-        val customerName = intent.getStringExtra(EXTRA_CUSTOMER_NAME) ?: return
-        val paymentMethod = intent.getStringExtra(EXTRA_PAYMENT_METHOD) ?: return
-        customerWhatsApp = intent.getStringExtra(EXTRA_CUSTOMER_WHATSAPP)
+        val orderId = intent.getStringExtra("ORDER_ID") ?: return
+        val customerName = intent.getStringExtra("CUSTOMER_NAME") ?: return
+        val paymentMethod = intent.getStringExtra("PAYMENT_METHOD") ?: return
+        val totalAmount = intent.getDoubleExtra("TOTAL_AMOUNT", 0.0)
+        val whatsAppMessage = intent.getStringExtra("WHATSAPP_MESSAGE") ?: ""
 
-        // Obter itens do carrinho
-        val cartItems = CartManager.getCartItems()
-        if (cartItems.isEmpty()) {
-            finish()
-            return
-        }
+        // Exibir a mensagem do pedido
+        txtOrderPreview.text = whatsAppMessage
 
-        // Converter itens do carrinho para itens do pedido
-        val orderItems = cartItems.map { cartItem ->
-            OrderItem(
-                productId = cartItem.product.id,
-                productName = cartItem.product.name,
-                quantity = cartItem.quantity,
-                unitPrice = cartItem.product.price
-            )
-        }
-
-        // Criar o pedido
-        order = Order(
-            id = orderId,
-            userId = UserUtils.getCurrentUserId() ?: "",
-            customerName = customerName,
-            items = orderItems,
-            orderDate = Order.getCurrentDate(),
-            paymentMethod = paymentMethod,
-            totalAmount = orderItems.sumOf { it.totalPrice }
-        )
-
-        // Mostrar preview do pedido
-        displayOrderPreview()
-    }
-
-    private fun displayOrderPreview() {
-        order?.let { order ->
-            val orderMessage = formatOrderMessage(order, customerWhatsApp)
-            txtOrderPreview.text = orderMessage
-        }
-    }
-
-    private fun formatOrderMessage(order: Order, customerWhatsApp: String?): String {
-        val itemsList = order.items.joinToString("\n") {
-            "• ${it.productName} (Qtd: ${it.quantity}) - R$ ${String.format("%.2f", it.totalPrice)}"
-        }
-        val totalAmount = order.items.sumOf { it.totalPrice }
-
-        val whatsappInfo = if (!customerWhatsApp.isNullOrBlank()) {
-            "\n📱 WhatsApp do Cliente: $customerWhatsApp"
-        } else ""
-
-        return """
-🛒 NOVO PEDIDO - UNASP MARKETPLACE
-
-📋 ID do Pedido: ${order.id}
-👤 Nome: ${order.customerName}$whatsappInfo
-📍 Local de Retirada: ${order.pickupLocation}
-📅 Data da Compra: ${order.orderDate}
-💳 Forma de Pagamento: ${order.paymentMethod} (na retirada)
-
-🛍️ Itens Comprados:
-$itemsList
-
-💰 Total: R$ ${String.format("%.2f", totalAmount)}
-
-Por favor, confirme o recebimento deste pedido.
-        """.trimIndent()
+        Toast.makeText(this, "✅ Pedido #${orderId.take(8)} criado com sucesso!", Toast.LENGTH_SHORT).show()
     }
 
     private fun startCountdown() {
         countDownTimer = object : CountDownTimer((COUNTDOWN_SECONDS * 1000).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsLeft = millisUntilFinished / 1000
-                txtCountdown.text = getString(R.string.redirecting_in, secondsLeft.toInt())
+                txtCountdown.text = "Redirecionando em $secondsLeft segundos..."
             }
 
             override fun onFinish() {
@@ -165,21 +92,24 @@ Por favor, confirme o recebimento deste pedido.
     }
 
     private fun sendOrder() {
-        order?.let { order ->
-            // Mostrar feedback para o usuário
-            Toast.makeText(this, "Processando pedido...", Toast.LENGTH_SHORT).show()
+        val whatsAppMessage = intent.getStringExtra("WHATSAPP_MESSAGE") ?: ""
 
-            // Salvar dados do usuário se necessário
-            saveUserDataIfNeeded(order.customerName, customerWhatsApp)
+        if (whatsAppMessage.isNotEmpty()) {
+            // Enviar para WhatsApp
+            WhatsAppManager.sendOrderToWhatsApp(this, whatsAppMessage)
 
-            // Buscar WhatsApps dos vendedores e enviar mensagens
-            lifecycleScope.launch {
-                try {
-                    sendMessagesToSellers(order)
+            // Limpar carrinho após enviar para WhatsApp
+            CartManager.clearCart()
 
-                    // Limpar o carrinho apenas após sucesso
-                    CartManager.clearCart()
+            // Ir para tela de sucesso
+            goToSuccess()
+        } else {
+            Toast.makeText(this, "Erro: mensagem não encontrada", Toast.LENGTH_SHORT).show()
+        }
+    }
 
+    private fun goToSuccess() {
+        val intent = Intent(this, OrderSuccessActivity::class.java)
                     // Ir para tela de sucesso
                     android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                         goToSuccess(order)

@@ -26,7 +26,6 @@ import com.unasp.unaspmarketplace.utils.UserUtils
 import kotlinx.coroutines.launch
 import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
-import android.widget.TextView
 import android.content.SharedPreferences
 
 class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
@@ -380,10 +379,31 @@ class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
         // Menu lateral
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_post_item -> startActivity(Intent(this, PostItemActivity::class.java))
-                R.id.nav_posted_items -> startActivity(Intent(this, PostedItemsActivity::class.java))
-                R.id.nav_history -> startActivity(Intent(this, SettingsActivity::class.java))
-                R.id.nav_logout -> showLogoutConfirmationDialog()
+
+                R.id.nav_my_purchases -> {
+                    val intent = Intent(this, OrderHistoryActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_seller_orders -> {
+                    val intent = Intent(this, SellerOrdersActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_post_item -> {
+                    val intent = Intent(this, PostItemActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_posted_items -> {
+                    val intent = Intent(this, PostedItemsActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_history -> {
+                    val intent = Intent(this, SettingsActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_logout -> {
+                    showLogoutConfirmationDialog()
+                }
+
             }
             drawerLayout.closeDrawers()
             true

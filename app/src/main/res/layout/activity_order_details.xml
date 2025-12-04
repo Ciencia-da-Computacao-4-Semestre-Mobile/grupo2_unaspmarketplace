@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_light">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/blue_default"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="Detalhes do Pedido"
+        app:titleTextColor="@android:color/white" />
+
+    <!-- ScrollView para o conteúdo -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/txtOrderDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Carregando detalhes..."
+                android:textSize="14sp"
+                android:textColor="@color/gray_900"
+                android:fontFamily="monospace"
+                android:padding="16dp"
+                android:background="@drawable/rounded_background"
+                android:backgroundTint="@color/gray_50" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Botão para fechar -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnClose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="✅ Fechar"
+        android:backgroundTint="@color/blue_default"
+        android:layout_margin="16dp" />
+
+</LinearLayout>

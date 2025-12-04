@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Ícone de carrinho simples (outline). O tint pode ser aplicado no ImageView via app:tint ou android:tint -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M7,18c-1.1,0 -1.99,0.9 -1.99,2 0,1.1 0.89,2 1.99,2 1.1,0 2,-0.9 2,-2 0,-1.1 -0.9,-2 -2,-2zM17,18c-1.1,0 -1.99,0.9 -1.99,2 0,1.1 0.89,2 1.99,2 1.1,0 2,-0.9 2,-2 0,-1.1 -0.9,-2 -2,-2zM7.16,14l0.84,-4h7.69l1.34,4H7.16zM20,6H7.55L6.27,2H2v2h2l3.6,7.59 -1.35,2.44C6.52,14.37 7.48,16 9,16h9v-2H9.42l0.83,-1.5h7.45c0.75,0 1.41,-0.41 1.75,-1.03L22,8V6z" />
+</vector>

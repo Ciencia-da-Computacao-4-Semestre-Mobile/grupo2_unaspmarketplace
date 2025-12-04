@@ -1,105 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardProduct"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:clipToPadding="false"
-    android:clipChildren="false" >
+    android:minHeight="96dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true">
 
-    <!-- Background: Fundo vermelho para swipe-to-delete -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/view_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="@android:color/holo_red_dark"
-        android:clickable="false"
-        android:focusable="false"
-        android:visibility="invisible">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp">
-
-            <!-- Ícone de lixeira à esquerda (Para swipe á direita) -->
-            <ImageView
-                android:id="@+id/icon_delete_left"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:scaleX="0"
-                android:scaleY="0"
-                android:alpha="0"
-                android:src="@drawable/ic_delete"
-                app:tint="@android:color/white"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <!-- Ícone de lixeira à direita (Para swipe á esquerda) -->
-            <ImageView
-                android:id="@+id/icon_delete_right"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:scaleX="0"
-                android:scaleY="0"
-                android:alpha="0"
-                android:src="@drawable/ic_delete"
-                app:tint="@android:color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Foreground: cart_item -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/view_foreground"
+    <!-- ConstraintLayout gives better control so items don't get "espremidos" -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp">
+        android:padding="12dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <!-- Product image -->
+        <ImageView
+            android:id="@+id/imgProduct"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/product_image"
+            android:background="@drawable/edittext_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Name / price / stock stacked -->
+        <LinearLayout
+            android:id="@+id/textContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:clipChildren="false"
-            android:clipToPadding="false">
-
-            <!-- Imagem do produto -->
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imgProduct"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:scaleType="centerCrop"
-                android:background="@color/gray_500"
-                app:strokeColor="@color/gray_300"
-                app:strokeWidth="1dp"
-                app:shapeAppearanceOverlay="@style/RoundedImageView"
-                android:src="@drawable/ic_launcher_background"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/imgProduct"
+            app:layout_constraintEnd_toStartOf="@id/controls"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <!-- Nome do produto -->
             <TextView
                 android:id="@+id/txtName"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Nome do Produto"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="48dp"
-                app:layout_constraintStart_toEndOf="@id/imgProduct"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:maxLines="2"
+                android:ellipsize="end" />
 
             <!-- Preço -->
             <TextView
@@ -110,85 +62,93 @@
                 android:textSize="14sp"
                 android:textColor="@color/blue_default"
                 android:textStyle="bold"
-                android:layout_marginTop="4dp"
-                app:layout_constraintStart_toStartOf="@id/txtName"
-                app:layout_constraintTop_toBottomOf="@id/txtName"/>
+                android:layout_marginTop="6dp" />
 
-            <!-- Controle de quantidade -->
-
-            <!-- Botão de diminuir quantidade -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDecrease"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                app:icon="@drawable/ic_remove"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@color/blue_default"
-                android:backgroundTint="@color/white"
-                android:stateListAnimator="@null"
-                android:elevation="2dp"
-                app:cornerRadius="18dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                style="@style/Widget.MaterialComponents.Button"
-                app:layout_constraintEnd_toStartOf="@id/txtQuantity"
-                app:layout_constraintBottom_toBottomOf="@id/txtQuantity"/>
-
-            <!-- Quantidade -->
             <TextView
-                android:id="@+id/txtQuantity"
-                android:layout_width="40dp"
-                android:layout_height="36dp"
-                android:text="1"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:id="@+id/txtStock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Estoque: 5"
+                android:textSize="12sp"
+                android:textColor="@color/gray_500"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- Controls: quantity + remove -->
+        <LinearLayout
+            android:id="@+id/controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- quantity controls row -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@id/btnDecrease"
-                app:layout_constraintBottom_toBottomOf="@id/imgProduct"/>
+                android:background="@android:color/transparent">
 
-            <!-- Botão de aumentar quantidade -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnIncrease"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                app:icon="@drawable/ic_add"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@color/blue_default"
-                android:backgroundTint="@color/white"
-                android:elevation="2dp"
-                app:cornerRadius="18dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:layout_marginStart="8dp"
-                style="@style/Widget.MaterialComponents.Button"
-                app:layout_constraintStart_toEndOf="@id/txtQuantity"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/txtQuantity"/>
+                <!-- Decrease -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnDecrease"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="-"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/blue_default"
+                    android:padding="0dp"
+                    android:layout_marginEnd="8dp"
+                    app:cornerRadius="18dp" />
 
-            <!-- Botão de remover item -->
-            <com.google.android.material.button.MaterialButton
+                <!-- Quantity -->
+                <TextView
+                    android:id="@+id/txtQuantity"
+                    android:layout_width="44dp"
+                    android:layout_height="36dp"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:background="@drawable/ic_quantity_bg"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- Increase -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnIncrease"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="+"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/blue_default"
+                    android:padding="0dp"
+                    app:cornerRadius="18dp" />
+            </LinearLayout>
+
+            <!-- Remove button (compact) -->
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnRemove"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                app:icon="@drawable/ic_delete"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconSize="18dp"
-                app:iconTint="@android:color/holo_red_dark"
-                android:backgroundTint="@color/white"
-                android:elevation="0.5dp"
-                app:cornerRadius="16dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                style="@style/Widget.MaterialComponents.Button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Remover"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/red"
+                android:layout_marginTop="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                app:cornerRadius="6dp" />
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
-
-</FrameLayout>
+</androidx.cardview.widget.CardView>
