@@ -12,6 +12,7 @@ class OrderSuccessActivity : AppCompatActivity() {
         setContentView(R.layout.activity_order_success)
 
         setupButtons()
+        setupBackPress()
     }
 
     private fun setupButtons() {

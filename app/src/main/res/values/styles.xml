@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="RoundedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <!-- Tema transparente para a Activity que mostra o BottomSheet -->
+    <style name="Theme.Transparent" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <style name="Theme.App" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- cores principais -->
+        <item name="colorPrimary">#20507A</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <!-- componentes de superfície (cards, sheets) -->
+        <item name="colorSurface">#FFFFFFFF</item>
+
+        <!-- controla cor de destaque em componentes Material -->
+        <item name="colorSecondary">#20507A</item>
+    </style>
+
+    <!-- estilo opcional para botões -->
+    <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">#0073e6</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+    </style>
+</resources>

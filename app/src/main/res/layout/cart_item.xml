@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardProduct"
     android:layout_width="match_parent"
@@ -41,6 +41,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
+            <!-- Nome do produto -->
             <TextView
                 android:id="@+id/txtName"
                 android:layout_width="match_parent"
@@ -52,6 +53,7 @@
                 android:maxLines="2"
                 android:ellipsize="end" />
 
+            <!-- Preço -->
             <TextView
                 android:id="@+id/txtPrice"
                 android:layout_width="wrap_content"

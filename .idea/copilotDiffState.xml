@@ -67,6 +67,8 @@
             </PendingDiffInfo>
           </value>
         </entry>
+
+
         <entry key="$PROJECT_DIR$/FINAL_COLOR_FIX_SOLUTION.md">
           <value>
             <PendingDiffInfo>
@@ -123,6 +125,7 @@
             </PendingDiffInfo>
           </value>
         </entry>
+
         <entry key="$PROJECT_DIR$/app/src/main/res/drawable/ic_arrow_forward.xml">
           <value>
             <PendingDiffInfo>
@@ -131,6 +134,7 @@
             </PendingDiffInfo>
           </value>
         </entry>
+
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/order_success_activity.xml">
           <value>
             <PendingDiffInfo>
@@ -148,6 +152,7 @@
             </PendingDiffInfo>
           </value>
         </entry>
+
         <entry key="$PROJECT_DIR$/deep_clean_build.bat">
           <value>
             <PendingDiffInfo>
