@@ -1,175 +1,336 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="10dp"
     android:background="@color/white">
 
     <!-- Header -->
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/appbar_payment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+        app:elevation="8dp"
+        android:outlineAmbientShadowColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationContentDescription="back"
+        app:title="@string/payment_method"
+        app:titleTextColor="@color/blue_default" />
 
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@android:drawable/ic_media_previous"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="4dp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/payment_method"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/blue_default"
-            android:gravity="center"
-            android:layout_marginStart="8dp" />
-
-    </LinearLayout>
-
-    <!-- Informação sobre retirada -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:background="@color/blue_default"
-        android:layout_marginBottom="24dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pickup_info_title"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pickup_info_description"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:gravity="center" />
-
-    </LinearLayout>
-
-    <!-- Título das formas de pagamento -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/customer_info"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textColor="@color/blue_default"
-        android:layout_marginBottom="8dp" />
-
-    <!-- Campo de nome -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:hint="@string/full_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtCustomerName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Campo de WhatsApp (obrigatório) -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="@string/whatsapp_number_required"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtWhatsappNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="phone" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Título das formas de pagamento -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/choose_payment_method"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/blue_default"
-        android:layout_marginBottom="16dp" />
-
-    <!-- RadioGroup para formas de pagamento -->
-    <RadioGroup
-        android:id="@+id/rgPaymentMethods"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:fillViewport="true">
 
-        <RadioButton
-            android:id="@+id/rbDebit"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/payment_debit"
-            android:textSize="14sp"
-            android:padding="14dp"
-            android:layout_marginBottom="8dp" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <RadioButton
-            android:id="@+id/rbCredit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/payment_credit"
-            android:textSize="14sp"
-            android:padding="14dp"
-            android:layout_marginBottom="8dp" />
+            <!-- Sessão 1: Listagem dos pedidos -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="#D0E6F6"
+                app:strokeWidth="1dp" >
 
-        <RadioButton
-            android:id="@+id/rbCash"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:padding="14dp"
-            android:text="@string/payment_cash"
-            android:textSize="14sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-        <RadioButton
-            android:id="@+id/rbPix"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:padding="14dp"
-            android:text="@string/payment_pix"
-            android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/txtOrderTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/order_review"
+                        android:textColor="@color/blue_default"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
 
-    </RadioGroup>
+                    <TextView
+                        android:id="@+id/txtOrderSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
+                        tools:text="1x Livro A, 2x Livro B, 1x Livro C" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-    <!-- Footer com total e botão -->
+            <!-- Sessão 2: Resumo do cliente + Alterar -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="#D0E6F6"
+                app:strokeWidth="1dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Cabeçalho da sessão -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/customer_info"
+                            android:textColor="@color/blue_default"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnEditCustomer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Alterar"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:minHeight="36dp"
+                            android:textAllCaps="false"
+                            android:textColor="@color/blue_default"
+                            android:backgroundTint="@android:color/transparent"
+                            app:strokeColor="@color/blue_default"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="8dp"
+                            app:rippleColor="@color/blue_primary" />
+                    </LinearLayout>
+
+                    <!-- Nome -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/full_name"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/black" />
+
+                        <TextView
+                            android:id="@+id/txtCustomerNameValue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:textColor="@android:color/black"
+                            tools:text="João Silva" />
+                    </LinearLayout>
+
+                    <!-- WhatsApp -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="WhatsApp:"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/black" />
+
+                        <TextView
+                            android:id="@+id/txtWhatsappValue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:textColor="@android:color/black"
+                            tools:text="(11) 99999-9999" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Sessão 3: Forma de pagamento (PIX padrão) + Alterar -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="#D0E6F6"
+                app:strokeWidth="1dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Cabeçalho da sessão -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/choose_payment_method"
+                            android:textColor="@color/blue_default"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnEditPayment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Alterar"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:minHeight="36dp"
+                            android:textAllCaps="false"
+                            android:textColor="@color/blue_default"
+                            android:backgroundTint="@android:color/transparent"
+                            app:strokeColor="@color/blue_default"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="8dp"
+                            app:rippleColor="@color/blue_primary" />
+                    </LinearLayout>
+
+                    <!-- Resumo da forma selecionada -->
+                    <TextView
+                        android:id="@+id/txtPaymentSelected"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/payment_pix" />
+
+                    <!-- Opções (oculto por padrão, mostrar ao clicar em Alterar) -->
+                    <RadioGroup
+                        android:id="@+id/rgPaymentMethods"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <RadioButton
+                            android:id="@+id/rbDebit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/payment_debit"
+                            android:textSize="16sp"
+                            android:padding="12dp" />
+
+                        <RadioButton
+                            android:id="@+id/rbCredit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/payment_credit"
+                            android:textSize="16sp"
+                            android:padding="12dp" />
+
+                        <RadioButton
+                            android:id="@+id/rbPix"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/payment_pix"
+                            android:textSize="16sp"
+                            android:padding="12dp"
+                            android:checked="true" />
+
+                        <RadioButton
+                            android:id="@+id/rbCash"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/payment_cash"
+                            android:textSize="16sp"
+                            android:padding="12dp" />
+                    </RadioGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Sessão 4: Local de retirada (caixa de texto) -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="#D0E6F6"
+                app:strokeWidth="1dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Local de retirada"
+                        android:textColor="@color/blue_default"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/pickup_info_input"
+                        app:boxBackgroundColor="#FAFBFC" >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edtPickupLocation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:minLines="1"
+                            android:maxLines="3" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Rodapé (permanece o mesmo) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/blue_default"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/txtTotal"
@@ -189,7 +350,6 @@
             android:text="@string/confirm_payment"
             android:textColor="@android:color/white"
             android:enabled="false" />
-
     </LinearLayout>
 
 </LinearLayout>

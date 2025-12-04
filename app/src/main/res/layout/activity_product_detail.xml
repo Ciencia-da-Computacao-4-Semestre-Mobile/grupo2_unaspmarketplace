@@ -1,68 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootProductDetail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- Header -->
-    <LinearLayout
-        android:id="@+id/header_product"
-        android:layout_width="match_parent"
+    <!-- Header: usar MaterialToolbar facilita integração com navigation -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarProduct"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical"
         android:background="@color/white"
+        android:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
+        app:title="Detalhes do Produto"
+        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        app:titleCentered="true"
+        app:navigationIcon="@android:drawable/ic_media_previous"
+        android:contentDescription="@string/desc_back_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:elevation="4dp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
 
-
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@android:drawable/ic_media_previous"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="4dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Detalhes do Produto"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/blue_default"
-            android:gravity="center"
-            android:layout_marginStart="12dp" />
-
-        <View
-            android:layout_width="32dp"
-            android:layout_height="32dp" />
-    </LinearLayout>
-
-    <!-- Conteúdo Principal -->
-    <ScrollView
-        android:layout_width="match_parent"
+    <!-- Conteúdo principal rolável -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollProductDetail"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/header_product"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbarProduct"
         app:layout_constraintBottom_toTopOf="@id/bottom_section"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
+            android:id="@+id/contentContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Imagem do Produto -->
+            <!-- Imagem principal do produto -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardProductImage"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
+                app:cardElevation="6dp"
                 android:layout_marginBottom="12dp">
 
                 <ImageView
@@ -70,30 +58,35 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:background="@color/gray_500"
-                    android:alpha="0.1"
-                    android:src="@drawable/ic_launcher_background" />
+                    android:contentDescription="@string/desc_product_image"
+                    android:transitionName="productImage"
+                    android:src="@drawable/ic_launcher_background"
+                    tools:ignore="ContentDescription"
+                    tools:src="@drawable/ic_launcher_background" />
             </androidx.cardview.widget.CardView>
 
-            <!-- RecyclerView para imagens secundárias -->
+            <!-- RecyclerView horizontal para imagens secundárias (thumbnails) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerProductImages"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="72dp"
+                android:clipToPadding="false"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 android:layout_marginBottom="16dp"
-                android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <!-- Nome do Produto -->
+            <!-- Nome -->
             <TextView
                 android:id="@+id/txtProductName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Nome do Produto"
-                android:textSize="24sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="6dp"
+                tools:text="Tênis Esportivo XYZ" />
 
             <!-- Categoria -->
             <TextView
@@ -103,7 +96,8 @@
                 android:text="Categoria"
                 android:textSize="14sp"
                 android:textColor="@color/blue_default"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="12dp"
+                tools:text="Esportes / Calçados" />
 
             <!-- Preço -->
             <TextView
@@ -114,10 +108,12 @@
                 android:textSize="28sp"
                 android:textStyle="bold"
                 android:textColor="@color/blue_default"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="12dp"
+                tools:text="R$ 199,90" />
 
             <!-- Estoque -->
             <LinearLayout
+                android:id="@+id/rowStock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -125,9 +121,10 @@
                 android:layout_marginBottom="16dp">
 
                 <TextView
+                    android:id="@+id/labelStock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📦 Estoque: "
+                    android:text="Estoque:"
                     android:textSize="16sp"
                     android:textColor="@color/black" />
 
@@ -138,14 +135,17 @@
                     android:text="0 unidades"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@color/blue_default" />
+                    android:textColor="@color/blue_default"
+                    android:layout_marginStart="8dp"
+                    tools:text="12 unidades" />
             </LinearLayout>
 
             <!-- Descrição -->
             <TextView
+                android:id="@+id/labelDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="📝 Descrição"
+                android:text="Descrição"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -159,13 +159,15 @@
                 android:textSize="16sp"
                 android:textColor="@color/black"
                 android:lineSpacingExtra="4dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                tools:text="Descrição detalhada, materiais, cuidados e garantias." />
 
             <!-- Vendedor -->
             <TextView
+                android:id="@+id/labelSeller"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="👤 Vendedor"
+                android:text="Vendedor"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -179,44 +181,45 @@
                 android:textSize="16sp"
                 android:textColor="@color/blue_default"
                 android:textStyle="bold"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                tools:text="Loja Exemplo" />
 
-            <!-- Botão Falar com o Vendedor -->
+            <!-- Botão de contato -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnContactSeller"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:text="💬 Falar com o Vendedor"
                 android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:textAllCaps="false"
                 android:backgroundTint="@color/green"
                 app:cornerRadius="8dp"
+                android:contentDescription="@string/desc_contact_seller"
                 android:layout_marginBottom="24dp" />
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- Seção Inferior - Quantidade e Botão -->
+    <!-- Seção inferior fixa: quantidade + adicionar ao carrinho -->
     <LinearLayout
         android:id="@+id/bottom_section"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/white"
         android:elevation="8dp"
-        android:padding="16dp"
+        android:padding="12dp"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation_product"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Controle de Quantidade -->
+        <!-- Controle de quantidade -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="12dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -233,17 +236,18 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDecrease"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:text="-"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:cornerRadius="24dp"
-                android:backgroundTint="@color/gray_500" />
+                android:contentDescription="@string/desc_decrease_quantity"
+                android:backgroundTint="@color/gray_300"
+                app:cornerRadius="22dp" />
 
             <TextView
                 android:id="@+id/txtQuantity"
-                android:layout_width="60dp"
+                android:layout_width="56dp"
                 android:layout_height="wrap_content"
                 android:text="1"
                 android:textSize="18sp"
@@ -254,13 +258,14 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnIncrease"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:text="+"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:cornerRadius="24dp"
-                android:backgroundTint="@color/blue_default" />
+                android:contentDescription="@string/desc_increase_quantity"
+                android:backgroundTint="@color/blue_default"
+                app:cornerRadius="22dp" />
         </LinearLayout>
 
         <!-- Botão Adicionar ao Carrinho -->
@@ -268,35 +273,34 @@
             android:id="@+id/btnAddToCart"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="🛒 Adicionar ao Carrinho"
+            android:text="Adicionar ao Carrinho"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
             android:backgroundTint="@color/blue_default"
             app:cornerRadius="12dp"
-            android:elevation="4dp" />
+            android:elevation="4dp"
+            android:contentDescription="@string/desc_add_to_cart" />
     </LinearLayout>
 
-    <!-- HOTBAR - BARRA DE NAVEGAÇÃO INFERIOR -->
+    <!-- Bottom navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_product"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:elevation="8dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:itemIconTint="@color/bottom_navigation_colors"
         app:itemTextColor="@color/bottom_navigation_colors"
         app:itemIconSize="24dp"
         app:itemTextAppearanceActive="@style/TextAppearance.AppCompat.Caption"
         app:itemTextAppearanceInactive="@style/TextAppearance.AppCompat.Caption"
         app:labelVisibilityMode="labeled"
-        app:itemPaddingTop="4dp"
-        app:itemPaddingBottom="4dp"
-        app:menu="@menu/bottom_navigation_menu" />
+        app:menu="@menu/bottom_navigation_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

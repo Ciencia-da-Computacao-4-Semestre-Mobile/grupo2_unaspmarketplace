@@ -12,6 +12,16 @@
 <!--        android:icon="@android:drawable/ic_menu_agenda"/>-->
 
     <item
+        android:id="@+id/nav_my_purchases"
+        android:title="Minhas Compras"
+        android:icon="@android:drawable/ic_menu_agenda"/>
+
+    <item
+        android:id="@+id/nav_seller_orders"
+        android:title="Pedidos Recebidos"
+        android:icon="@android:drawable/ic_menu_sort_by_size"/>
+
+    <item
         android:id="@+id/nav_posted_items"
         android:title="Meus Itens Postados"
         android:icon="@drawable/ic_money"/>
