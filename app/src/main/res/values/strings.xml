@@ -32,13 +32,19 @@
     <string name="default_web_client_id">524313708339-2tmt7fo1ackpjsc435il2vsuaf09jlas.apps.googleusercontent.com</string>
     <string name="fb_login_protocol_scheme">fb728278693617290</string>
 
+    <!-- Facebook App Configuration -->
+    <string name="facebook_app_id">728278693617290</string>
+    <string name="facebook_client_token">fb728278693617290</string>
+
     <!-- Payment Activity Strings -->
+    <string name="order_review">Resumo do Pedido</string>
     <string name="payment_method">Forma de Pagamento</string>
     <string name="pickup_info_title">Local de Retirada</string>
-    <string name="pickup_info_description">Todos os produtos devem ser retirados na UNASP Store</string>
+    <string name="pickup_info_input">Local (dentro do campus)</string>
     <string name="customer_info">Dados do Cliente</string>
     <string name="full_name">Nome Completo</string>
     <string name="whatsapp_number_optional">WhatsApp (opcional)</string>
+    <string name="whatsapp_number_required">WhatsApp (obrigatório)</string>
     <string name="choose_payment_method">Escolha sua forma de pagamento na retirada:</string>
     <string name="payment_debit">Cartão de Débito</string>
     <string name="payment_credit">Cartão de Crédito</string>
@@ -56,7 +62,6 @@
     <string name="profile_delete_account">Excluir Conta</string>
 
     <!-- Password Reset Strings -->
-
     <string name="reset_verify_reset_code">Verificar Código</string>
     <string name="reset_code_sent_to_email">Código enviado para o email</string>
     <string name="reset_verification_code">Codigo de verificação</string>
@@ -87,17 +92,8 @@
     <string name="order_sent_message">Seu pedido foi enviado para a UNASP Store via WhatsApp.\nAguarde a confirmação do recebimento.</string>
     <string name="back_to_home">Voltar ao Início</string>
 
-
-    <!-- Profile Activity Strings -->
-
-<!--    <string name="profile_new_password">Nova Senha</string>-->
-<!--    <string name="profile_confirm_password">Confirmar Senha</string>-->
-<!--    <string name="profile_save_changes">Salvar Alterações</string>-->
-<!--    <string name="profile_delete_account">Excluir Conta</string>-->
-<!--    <string name="profile_account_infos">Dados de cadastro</string>-->
-
+    <!-- Profile Activity Additional Strings -->
     <string name="profile_toolbar_profile">Meu Perfil</string>
-
 
 
 </resources>

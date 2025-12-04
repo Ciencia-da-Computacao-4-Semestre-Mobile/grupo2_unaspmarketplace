@@ -1,71 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:padding="16dp">
+    android:background="@color/white">
 
     <!-- Header -->
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/appbar_order_preview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationContentDescription="back"
+        app:title="@string/order_preview"
+        app:titleTextColor="@color/blue_default" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/order_preview"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/blue_default"
-            android:gravity="center" />
-
-    </LinearLayout>
-
-    <!-- Card do Pedido -->
-    <LinearLayout
+    <!-- Conteúdo rolável em card -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        android:padding="16dp"
-        android:elevation="4dp">
+        android:fillViewport="true">
 
-        <!-- ScrollView para o conteúdo do pedido -->
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <TextView
-                android:id="@+id/txtOrderPreview"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@android:color/black"
-                android:fontFamily="monospace"
-                android:lineSpacingExtra="4dp"
-                android:text="Carregando pedido..." />
+                android:layout_marginBottom="16dp"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="#D0E6F6"
+                app:strokeWidth="1dp">
 
-        </ScrollView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-    </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/order_preview"
+                        android:textColor="@color/blue_default"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
 
-    <!-- Footer com contador e informações -->
+                    <TextView
+                        android:id="@+id/txtOrderPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/black"
+                        android:fontFamily="monospace"
+                        android:lineSpacingExtra="4dp"
+                        android:text="Carregando pedido..." />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Rodapé -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@color/blue_default"
-        android:padding="16dp"
-        android:layout_marginTop="16dp">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Contador -->
         <TextView
             android:id="@+id/txtCountdown"
             android:layout_width="match_parent"
@@ -77,21 +90,19 @@
             android:gravity="center"
             android:layout_marginBottom="8dp" />
 
-        <!-- Informação -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/order_preview_info"
             android:textColor="@android:color/white"
             android:textSize="12sp"
-            android:gravity="center" />
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
 
-        <!-- Botões -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnSendNow"
@@ -101,18 +112,7 @@
                 android:text="@string/send_now"
                 android:backgroundTint="#000000"
                 android:textColor="@android:color/white"
-                android:layout_marginEnd="4dp" />
-
-            <Button
-                android:id="@+id/btnTestWhatsApp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Teste Zap"
-                android:backgroundTint="#25D366"
-                android:textColor="@android:color/white"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="2dp" />
+                android:layout_marginEnd="8dp" />
 
             <Button
                 android:id="@+id/btnCancel"
@@ -122,10 +122,8 @@
                 android:text="@string/cancel"
                 android:backgroundTint="@android:color/darker_gray"
                 android:textColor="@android:color/white"
-                android:layout_marginStart="4dp" />
-
+                android:layout_marginStart="8dp" />
         </LinearLayout>
-
     </LinearLayout>
 
 </LinearLayout>
