@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
@@ -104,9 +103,6 @@
 
         <!-- Tela de Histórico de Pedidos -->
         <activity android:name=".OrderHistoryActivity" />
-
-        <!-- Tela de Pedidos Recebidos (Vendedor) -->
-        <activity android:name=".SellerOrdersActivity" />
 
         <!-- Telas de Recuperação de Senha -->
         <activity

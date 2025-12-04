@@ -1,9 +1,8 @@
-import org.gradle.api.JavaVersion
 
-val javaVersion = JavaVersion.current()
-if (javaVersion > JavaVersion.VERSION_17) {
+val javaFeature = Runtime.version().feature()
+if (javaFeature > 17) {
     throw GradleException(
-        "Versão do Java detectada no Gradle daemon: $javaVersion\n" +
+        "Versão do Java detectada no Gradle daemon: $javaFeature\n" +
                 "O build requer JDK 17 para o daemon. Ações possíveis:\n" +
                 " - Em Android Studio: File > Settings > Build, Execution, Deployment > Build Tools > Gradle > escolha Gradle JDK 17\n" +
                 " - Para executar no terminal sem mudar variáveis globais, rode o wrapper definindo JAVA_HOME temporariamente (exemplos abaixo)\n" +
