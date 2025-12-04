@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import android.content.SharedPreferences
+import android.widget.TextView
 
 class HomeActivity : AppCompatActivity(), CartManager.CartUpdateListener {
 
