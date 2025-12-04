@@ -1,10 +1,17 @@
 package com.unasp.unaspmarketplace
 
 import android.app.Application
+import android.content.Intent
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.FirebaseApp
+import com.unasp.unaspmarketplace.auth.GoogleAuthHelper
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -13,23 +20,42 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows
+import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowToast
 
 @RunWith(RobolectricTestRunner::class)
-class RegisterActivityTest {
+class RegisterActivityTest : BaseFirebaseTest() {
+
+    private lateinit var controller: ActivityController<RegisterActivity>
+    private lateinit var activity: RegisterActivity
 
     @Before
-    fun setUp() {
-        val context = RuntimeEnvironment.getApplication() as Application
-        if (FirebaseApp.getApps(context).isEmpty()) {
-            FirebaseApp.initializeApp(context)
+    override fun setupFirebase() {
+        super.setupFirebase()
+
+        // Prevent heavy Google sign-in wiring during tests
+        mockkObject(GoogleAuthHelper)
+        val mockClient = mockk<GoogleSignInClient>(relaxed = true)
+        val fakeIntent = Intent("com.unasp.FAKE_GOOGLE_SIGN_IN")
+        io.mockk.every { GoogleAuthHelper.getClient(any()) } returns mockClient
+        io.mockk.every { mockClient.signInIntent } returns fakeIntent
+
+        controller = Robolectric.buildActivity(RegisterActivity::class.java)
+        activity = controller.get()
+    }
+
+    @After
+    override fun tearDownFirebase() {
+        if (::controller.isInitialized) {
+            controller.pause().stop().destroy()
         }
+        unmockkObject(GoogleAuthHelper)
+        super.tearDownFirebase()
     }
 
     @Test
     fun shouldNavigateToLoginOnLoginTextClick() {
-        val controller = Robolectric.buildActivity(RegisterActivity::class.java).setup()
-        val activity = controller.get()
+        controller.create().start().resume().visible()
 
         val loginText = activity.findViewById<TextView>(R.id.log_in_text)
         loginText.performClick()
@@ -41,8 +67,7 @@ class RegisterActivityTest {
 
     @Test
     fun shouldShowErrorForEmptyFields() {
-        val controller = Robolectric.buildActivity(RegisterActivity::class.java).setup()
-        val activity = controller.get()
+        controller.create().start().resume().visible()
 
         val btnCadastrar = activity.findViewById<LinearLayout>(R.id.btnCadastrar)
         btnCadastrar.performClick()
@@ -52,8 +77,7 @@ class RegisterActivityTest {
 
     @Test
     fun shouldShowErrorForPasswordMismatch() {
-        val controller = Robolectric.buildActivity(RegisterActivity::class.java).setup()
-        val activity = controller.get()
+        controller.create().start().resume().visible()
 
         activity.findViewById<EditText>(R.id.edtNome).setText("Teste")
         activity.findViewById<EditText>(R.id.edtEmailSignIn).setText("teste@email.com")
@@ -68,8 +92,7 @@ class RegisterActivityTest {
 
     @Test
     fun shouldShowErrorForShortPassword() {
-        val controller = Robolectric.buildActivity(RegisterActivity::class.java).setup()
-        val activity = controller.get()
+        controller.create().start().resume().visible()
 
         activity.findViewById<EditText>(R.id.edtNome).setText("Teste")
         activity.findViewById<EditText>(R.id.edtEmailSignIn).setText("teste@email.com")
@@ -84,8 +107,7 @@ class RegisterActivityTest {
 
     @Test
     fun shouldShowErrorForInvalidEmail() {
-        val controller = Robolectric.buildActivity(RegisterActivity::class.java).setup()
-        val activity = controller.get()
+        controller.create().start().resume().visible()
 
         activity.findViewById<EditText>(R.id.edtNome).setText("Teste")
         activity.findViewById<EditText>(R.id.edtEmailSignIn).setText("emailinvalido")

@@ -82,6 +82,12 @@ configure<JacocoPluginExtension> {
 }
 
 tasks.withType<Test>().configureEach {
+    maxHeapSize = "1024m"
+    jvmArgs(
+        "-XX:MaxMetaspaceSize=256m",
+        "-XX:+UseG1GC",
+        "-XX:MaxGCPauseMillis=100"
+    )
     configure<JacocoTaskExtension> {
         isIncludeNoLocationClasses = true
         excludes = listOf("jdk.internal.*")
@@ -109,6 +115,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         "**/Manifest*.*",
         "**/generated/**",
         "**/intermediates/**",
+
 
         // DataBinding / ViewBinding
         "**/databinding/**",
@@ -208,6 +215,15 @@ dependencies {
     // Android instrumented tests (mantidos para compatibilidade)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Firebase Test Lab e mocks
+    testImplementation(platform("com.google.firebase:firebase-bom:32.2.3"))
+    testImplementation("com.google.firebase:firebase-auth-ktx")
+    testImplementation("com.google.firebase:firebase-firestore-ktx")
+    testImplementation("org.mockito:mockito-core:5.8.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+
 
     // Firebase e demais libs do app
     implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
