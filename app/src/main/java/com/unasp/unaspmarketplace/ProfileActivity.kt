@@ -202,6 +202,12 @@ Can Login with Password: ${AccountLinkingHelper.canLoginWithPassword(user)}
             return
         }
 
+        // Validar formato do WhatsApp apenas se foi preenchido
+        if (newWhatsapp.isNotEmpty() && newWhatsapp.length < 10) {
+            etWhatsappNumber.error = "Digite um número de WhatsApp válido"
+            return
+        }
+
         btnSaveProfile.isEnabled = false
         btnSaveProfile.text = "Salvando..."
 
@@ -378,32 +384,6 @@ Can Login with Password: ${AccountLinkingHelper.canLoginWithPassword(user)}
             }
     }
 
-    private fun showLogoutOptionsDialog() {
-        val loginPreferences = com.unasp.unaspmarketplace.utils.LoginPreferences(this)
-
-        if (loginPreferences.isRememberMeEnabled() && loginPreferences.hasSavedCredentials()) {
-            // Show options dialog if remember me is enabled
-            AlertDialog.Builder(this)
-                .setTitle("Opções de Logout")
-                .setMessage("Como você deseja sair da sua conta?")
-                .setPositiveButton("Logout Completo") { _, _ ->
-                    // Complete logout - clear everything
-                    performCompleteLogout()
-                }
-                .setNegativeButton("Manter Credenciais") { _, _ ->
-                    // Soft logout - keep credentials for "remember me"
-                    performSoftLogout()
-                }
-                .setNeutralButton("Cancelar") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
-        } else {
-            // No saved credentials, just show normal logout confirmation
-            showLogoutConfirmationDialog()
-        }
-    }
-
     private fun showLogoutConfirmationDialog() {
         AlertDialog.Builder(this)
             .setTitle("Confirmar Logout")
@@ -420,48 +400,42 @@ Can Login with Password: ${AccountLinkingHelper.canLoginWithPassword(user)}
     private fun performCompleteLogout() {
         lifecycleScope.launch {
             try {
-                // Limpar carrinho
                 CartManager.clearCart()
-
-                // Fazer logout completo usando LogoutManager
                 LogoutManager.performCompleteLogout(this@ProfileActivity)
 
-                // Mostrar mensagem de sucesso
                 Toast.makeText(this@ProfileActivity, "Logout completo realizado com sucesso", Toast.LENGTH_SHORT).show()
 
-                // Redirecionar para LoginActivity
                 val intent = Intent(this@ProfileActivity, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
                 finish()
-
             } catch (e: Exception) {
                 Toast.makeText(this@ProfileActivity, "Erro ao fazer logout: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+
     private fun performSoftLogout() {
         lifecycleScope.launch {
             try {
-                // Limpar carrinho
                 CartManager.clearCart()
-
-                // Fazer logout suave usando LogoutManager (mantém credenciais)
                 LogoutManager.performSoftLogout(this@ProfileActivity)
 
-                // Mostrar mensagem de sucesso
-                Toast.makeText(this@ProfileActivity, "Logout realizado. Suas credenciais foram mantidas para próximo login.", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this@ProfileActivity,
+                    "Logout realizado. Suas credenciais foram mantidas para próximo login.",
+                    Toast.LENGTH_LONG
+                ).show()
 
-                // Redirecionar para LoginActivity
                 val intent = Intent(this@ProfileActivity, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
                 finish()
-
             } catch (e: Exception) {
                 Toast.makeText(this@ProfileActivity, "Erro ao fazer logout: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+
         }
     }
 

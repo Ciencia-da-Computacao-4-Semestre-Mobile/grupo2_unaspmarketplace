@@ -105,7 +105,6 @@ class PaymentActivity : AppCompatActivity() {
         txtOrderSummary?.text = summaryText
     }
 
-
     private fun loadUserData() {
         lifecycleScope.launch {
             try {

@@ -74,6 +74,7 @@
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
                 android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <!-- Nome -->
@@ -292,15 +293,17 @@
         android:elevation="8dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:itemIconTint="@color/bottom_navigation_colors"
         app:itemTextColor="@color/bottom_navigation_colors"
         app:itemIconSize="24dp"
         app:itemTextAppearanceActive="@style/TextAppearance.AppCompat.Caption"
         app:itemTextAppearanceInactive="@style/TextAppearance.AppCompat.Caption"
         app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_navigation_menu"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:itemPaddingTop="4dp"
+        app:itemPaddingBottom="4dp"
+        app:menu="@menu/bottom_navigation_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
