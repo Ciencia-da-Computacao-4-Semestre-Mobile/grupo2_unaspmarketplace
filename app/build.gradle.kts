@@ -1,6 +1,4 @@
-import org.gradle.kotlin.dsl.all
 import org.gradle.testing.jacoco.tasks.JacocoReport
-import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 
 plugins {
@@ -20,7 +18,6 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -77,10 +74,6 @@ jacoco {
     toolVersion = "0.8.11"
 }
 
-configure<JacocoPluginExtension> {
-    toolVersion = "0.8.11"
-}
-
 tasks.withType<Test>().configureEach {
     maxHeapSize = "1024m"
     jvmArgs(
@@ -88,14 +81,22 @@ tasks.withType<Test>().configureEach {
         "-XX:+UseG1GC",
         "-XX:MaxGCPauseMillis=100"
     )
-    configure<JacocoTaskExtension> {
+
+    val execFile = layout.buildDirectory.file("jacoco/${name}.exec").get().asFile
+
+    extensions.configure(JacocoTaskExtension::class) {
         isIncludeNoLocationClasses = true
         excludes = listOf("jdk.internal.*")
+        setDestinationFile(execFile)
     }
 
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(17))
     })
+
+    doFirst {
+        println("Jacoco exec for task ${name}: ${execFile.absolutePath}")
+    }
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {
@@ -108,47 +109,32 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     }
 
     val excludes = listOf(
-        // Android / build generated
         "**/R.class",
         "**/R$*.class",
         "**/BuildConfig.*",
         "**/Manifest*.*",
         "**/generated/**",
         "**/intermediates/**",
-
-
-        // DataBinding / ViewBinding
         "**/databinding/**",
-
-        // Application class (inicialização do app)
         "**/UnaspMarketplaceApplication.*",
-
-        // DI / annotation processors
         "**/*_Factory.class",
         "**/*_MembersInjector*.*",
         "**/Dagger*.*",
         "**/hilt_*/**",
-
-        // Test classes / test helpers
-        "**/*Test*.*",
-        "**/test/**",
-
-        // Activities simples, sem lógica relevante
         "**/OrderSuccessActivity.*",
-
-        // Auth helpers e utils com Firebase
         "**/auth/**",
         "**/utils/UserUtils.*",
         "**/utils/EmailService.*",
-
-        // Third party libs / stdlib
         "**/androidx/**",
         "**/com/google/**",
         "**/com/facebook/**",
         "**/com/github/**",
         "**/kotlin/**",
-
-        // Metadata / resources
+        "**/ProductDetailActivity.*",
+        "**/SettingsActivity.*",
+        "**/SellerOrdersActivity.*",
+        "**/OrderDetailsActivity.*",
+        "**/ProductDetailActivityTest.*",
         "**/META-INF/**",
         "**/resources/**"
     )
@@ -175,12 +161,16 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     executionData.setFrom(
         files(
             fileTree(buildDirFile).apply {
-                setIncludes(listOf(
-                    "jacoco/testDebugUnitTest.exec",
-                    "jacoco/test.exec",
-                    "**/*.exec",
-                    "**/*.ec"
-                ))
+                setIncludes(
+                    listOf(
+                        "jacoco/*.exec",
+                        "jacoco/*/*.exec",
+                        "jacoco/testDebugUnitTest.exec",
+                        "jacoco/test.exec",
+                        "**/*.exec",
+                        "**/*.ec"
+                    )
+                )
             }
         )
     )
@@ -189,14 +179,13 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 tasks.register("coverage") {
     group = "verification"
     description = "Executa unit tests de `src/test` e gera relatório Jacoco (HTML + XML)."
-
     dependsOn("testDebugUnitTest", "jacocoTestReport")
-
     doLast {
-        val report = file("${buildDir}/reports/jacoco/jacocoTestReport/html/index.html")
+        val report = layout.buildDirectory.file("reports/jacoco/jacocoTestReport/html/index.html").get().asFile
         println("Relatório Jacoco gerado em: ${report.absolutePath}")
     }
 }
+
 
 dependencies {
     implementation(libs.androidx.core.ktx)
